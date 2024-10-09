@@ -36,13 +36,15 @@ const playAudio = async (index: number) => {
     return;
   }
 
+  if (isPlaying.value) {
+    await audioElement.value.pause();
+  }
+
   try {
     audioElement.value.src = audioUrl;
-    audioElement.value.addEventListener('canplaythrough', () => {
-      audioElement.value?.play();
-      isPlaying.value = true;
-      localStorage.setItem('lastPlayedIndex', audioIndex.value.toString());
-    }, { once: true });
+    audioElement.value?.play();
+    isPlaying.value = true;
+    localStorage.setItem('lastPlayedIndex', audioIndex.value.toString());
   } catch (error) {
     console.error('播放错误:', error);
     await playNextAudio();
