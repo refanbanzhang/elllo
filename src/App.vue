@@ -36,15 +36,13 @@ const playAudio = async (index: number) => {
     return;
   }
 
-  audioElement.value.src = audioUrl;
-  audioElement.value.playbackRate = playbackRate.value;
   try {
-    await new Promise((resolve) => {
-      audioElement.value?.addEventListener('canplaythrough', resolve, { once: true });
-    });
-    localStorage.setItem('lastPlayedIndex', audioIndex.value.toString());
-    await audioElement.value?.play();
-    isPlaying.value = true;
+    audioElement.value.src = audioUrl;
+    audioElement.value.addEventListener('canplaythrough', () => {
+      audioElement.value?.play();
+      isPlaying.value = true;
+      localStorage.setItem('lastPlayedIndex', audioIndex.value.toString());
+    }, { once: true });
   } catch (error) {
     console.error('播放错误:', error);
     await playNextAudio();
@@ -127,12 +125,10 @@ onMounted(() => {
         <li :class="['audio', audioIndex === index ? 'audio--active' : '']" v-for="(url, index) in audios"
           :id="`audio-${index}`" :key="url">
           <div class="audio__link" :href="url">{{ url }}</div>
-          <div class="audio__control">
-            <t-button v-if="audioIndex === index && isPlaying" size="small" theme="primary" @click="pauseAudio">
-              暂停
-            </t-button>
-            <t-button v-else size="small" theme="primary" @click="onPlay(index)">播放</t-button>
-          </div>
+          <t-button v-if="audioIndex === index && isPlaying" size="small" theme="primary" @click="pauseAudio">
+            暂停
+          </t-button>
+          <t-button v-else size="small" theme="primary" @click="onPlay(index)">播放</t-button>
         </li>
       </ul>
     </main>
@@ -180,23 +176,14 @@ main {
 }
 
 .audio__link {
-  flex: 1;
   margin-right: 10px;
 }
 
 .audio--active {
-  background: #f7f7f8;
+  background: #9b6060;
 
   .audio__link {
-    text-decoration: none;
+    color: #fff;
   }
-}
-
-.audio__control {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
 }
 </style>
