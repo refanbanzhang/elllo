@@ -10,6 +10,5 @@ declare module 'vue' {
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     TButton: typeof import('tdesign-mobile-vue')['Button']
     TSlider: typeof import('tdesign-mobile-vue')['Slider']
-    TSticky: typeof import('tdesign-mobile-vue')['Sticky']
   }
 }
