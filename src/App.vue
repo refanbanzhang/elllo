@@ -1,17 +1,27 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import audios from './audios.json'
 
-const audioElement = ref<HTMLAudioElement | null>(null);
-const playbackRate = ref<number>(1);
-const audioIndex = ref<number>(0);
-const isPlaying = ref<boolean>(false);
 const marksRange = ref({
   0.5: '0.5',
   1: '1',
   1.5: '1.5',
   2: '2',
 });
+const audioElement = ref<HTMLAudioElement | null>(null);
+const playbackRate = ref<number>(1);
+const audioIndex = ref<number>(0);
+const isPlaying = ref<boolean>(false);
+const isPaused = computed<boolean>(() => !isPlaying.value && (audioElement.value?.currentTime ?? 0) > 0);
+const mainElement = ref<HTMLElement | null>(null);
+
+const onPlay = (index: number) => {
+  if (isPaused.value) {
+    resumeAudio();
+  } else {
+    playAudio(index);
+  }
+};
 
 const playAudio = async (index: number) => {
   audioIndex.value = index;
@@ -29,7 +39,11 @@ const playAudio = async (index: number) => {
   audioElement.value.src = audioUrl;
   audioElement.value.playbackRate = playbackRate.value;
   try {
-    await audioElement.value.play();
+    await new Promise((resolve) => {
+      audioElement.value?.addEventListener('canplaythrough', resolve, { once: true });
+    });
+    localStorage.setItem('lastPlayedIndex', audioIndex.value.toString());
+    await audioElement.value?.play();
     isPlaying.value = true;
   } catch (error) {
     console.error('播放错误:', error);
@@ -68,6 +82,37 @@ watch(playbackRate, (newRate) => {
     audioElement.value.playbackRate = newRate;
   }
 });
+
+watch(audioIndex, (newIndex) => {
+  const audioUrl = audios[newIndex];
+  if (audioElement.value && audioUrl) {
+    audioElement.value.src = audioUrl;
+  }
+});
+
+const loadLastPlayedAudio = () => {
+  const lastPlayedIndex = localStorage.getItem('lastPlayedIndex');
+  if (lastPlayedIndex) {
+    audioIndex.value = parseInt(lastPlayedIndex);
+  }
+};
+
+const scrollToAudio = (index: number) => {
+  const audioElement = document.getElementById(`audio-${index}`);
+
+  if (audioElement && mainElement.value) {
+    mainElement.value.scrollTop = audioElement.offsetTop - mainElement.value.offsetTop - 15;
+  }
+};
+
+const restoreScrollPosition = () => {
+  scrollToAudio(audioIndex.value);
+};
+
+onMounted(() => {
+  loadLastPlayedAudio();
+  restoreScrollPosition();
+});
 </script>
 
 <template>
@@ -77,18 +122,16 @@ watch(playbackRate, (newRate) => {
       <audio class="audio" ref="audioElement" controls @ended="playNextAudio"></audio>
       <t-slider v-model="playbackRate" :marks="marksRange" :min="0.5" :max="2" :step="0.5" />
     </header>
-    <main>
+    <main ref="mainElement">
       <ul>
-        <li :class="['audio', audioIndex === index ? 'audio--active' : '']" v-for="(url, index) in audios" :key="url">
+        <li :class="['audio', audioIndex === index ? 'audio--active' : '']" v-for="(url, index) in audios"
+          :id="`audio-${index}`" :key="url">
           <div class="audio__link" :href="url">{{ url }}</div>
           <div class="audio__control">
             <t-button v-if="audioIndex === index && isPlaying" size="small" theme="primary" @click="pauseAudio">
               暂停
             </t-button>
-            <t-button v-else-if="audioIndex === index && !isPlaying" size="small" theme="primary" @click="resumeAudio">
-              恢复
-            </t-button>
-            <t-button v-else size="small" theme="primary" @click="playAudio(index)">播放</t-button>
+            <t-button v-else size="small" theme="primary" @click="onPlay(index)">播放</t-button>
           </div>
         </li>
       </ul>
