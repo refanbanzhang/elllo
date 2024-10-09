@@ -6,6 +6,12 @@ const audioElement = ref<HTMLAudioElement | null>(null);
 const playbackRate = ref<number>(1);
 const audioIndex = ref<number>(0);
 const isPlaying = ref<boolean>(false);
+const marksRange = ref({
+  0.5: '0.5',
+  1: '1',
+  1.5: '1.5',
+  2: '2',
+});
 
 const playAudio = async (index: number) => {
   audioIndex.value = index;
@@ -66,57 +72,57 @@ watch(playbackRate, (newRate) => {
 
 <template>
   <div class="container">
-    <header class="header">
+    <header>
       <h1 class="title">Elllo</h1>
       <audio class="audio" ref="audioElement" controls @ended="playNextAudio"></audio>
-      <select class="speed" v-model="playbackRate">
-        <option :value="0.5">0.5x</option>
-        <option :value="0.75">0.75x</option>
-        <option :value="1">1x</option>
-        <option :value="1.25">1.25x</option>
-        <option :value="1.5">1.5x</option>
-        <option :value="2">2x</option>
-      </select>
+      <t-slider v-model="playbackRate" :marks="marksRange" :min="0.5" :max="2" :step="0.5" />
     </header>
-    <ul>
-      <li :class="['audio', audioIndex === index ? 'audio--active' : '']" v-for="(url, index) in audios" :key="url">
-        <div class="audio__link" :href="url">{{ url }}</div>
-        <div class="audio__control">
-          <button v-if="audioIndex === index && isPlaying" class="audio__btn" @click="pauseAudio">
-            暂停
-          </button>
-          <button v-else-if="audioIndex === index && !isPlaying" class="audio__btn" @click="resumeAudio">
-            恢复
-          </button>
-          <button v-else class="audio__btn" @click="playAudio(index)">
-            播放
-          </button>
-        </div>
-      </li>
-    </ul>
+    <main>
+      <ul>
+        <li :class="['audio', audioIndex === index ? 'audio--active' : '']" v-for="(url, index) in audios" :key="url">
+          <div class="audio__link" :href="url">{{ url }}</div>
+          <div class="audio__control">
+            <t-button v-if="audioIndex === index && isPlaying" size="small" theme="primary" @click="pauseAudio">
+              暂停
+            </t-button>
+            <t-button v-else-if="audioIndex === index && !isPlaying" size="small" theme="primary" @click="resumeAudio">
+              恢复
+            </t-button>
+            <t-button v-else size="small" theme="primary" @click="playAudio(index)">播放</t-button>
+          </div>
+        </li>
+      </ul>
+    </main>
   </div>
 </template>
 
 <style lang='less' scoped>
 .container {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
-.header {
-  position: sticky;
-  top: 0;
-  padding-top: 20px;
-  background: #fff;
+header {
+  flex-shrink: 0;
+  padding: 15px;
+  background: #f7f7f8;
+}
+
+main {
+  flex: 1;
+  overflow: auto;
+  padding: 15px;
 }
 
 .title {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .speed {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   padding: 10px;
 }
 
@@ -125,13 +131,9 @@ watch(playbackRate, (newRate) => {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   border-radius: 6px;
-  padding: 10px;
-}
-
-.audio__btn {
-  padding: 5px 15px;
+  padding: 15px;
 }
 
 .audio__link {
@@ -140,11 +142,9 @@ watch(playbackRate, (newRate) => {
 }
 
 .audio--active {
-  color: #fff;
-  background: rgba(0, 0, 0, 0.3);
+  background: #f7f7f8;
 
   .audio__link {
-    color: #fff;
     text-decoration: none;
   }
 }
