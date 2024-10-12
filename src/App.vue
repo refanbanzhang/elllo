@@ -1,95 +1,95 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, nextTick } from 'vue';
-import audios from './audios.json'
+import { computed, onMounted, ref, watch, nextTick } from "vue"
+import audios from "./audios.json"
 
 const marksRange = ref({
-  0.5: '0.5',
-  1: '1',
-  1.5: '1.5',
-  2: '2',
-});
-const audioElement = ref<HTMLAudioElement | null>(null);
-const playbackRate = ref<number>(1);
-const audioIndex = ref<number>(0);
-const isPlaying = ref<boolean>(false);
-const mainElement = ref<HTMLElement | null>(null);
-const isPaused = computed<boolean>(() => !isPlaying.value && (audioElement.value?.currentTime ?? 0) > 0);
-const audioSrc = computed<string>(() => audios[audioIndex.value]);
+  0.5: "0.5",
+  1: "1",
+  1.5: "1.5",
+  2: "2",
+})
+const audioElement = ref<HTMLAudioElement | null>(null)
+const playbackRate = ref<number>(1)
+const audioIndex = ref<number>(0)
+const isPlaying = ref<boolean>(false)
+const mainElement = ref<HTMLElement | null>(null)
+const isPaused = computed<boolean>(() => !isPlaying.value && (audioElement.value?.currentTime ?? 0) > 0)
+const audioSrc = computed<string>(() => audios[audioIndex.value])
 
 const onPlay = (index: number) => {
   if (isPaused.value) {
-    resumeAudio();
+    resumeAudio()
   } else {
-    playAudio(index);
+    playAudio(index)
   }
-};
+}
 
 const playAudio = async (index: number) => {
-  audioIndex.value = index;
+  audioIndex.value = index
 
   if (isPlaying.value) {
-    audioElement.value?.pause();
+    audioElement.value?.pause()
   }
 
   try {
     // 这里加这个有什么用
     await nextTick()
-    audioElement.value?.play();
-    isPlaying.value = true;
-    localStorage.setItem('lastPlayedIndex', audioIndex.value.toString());
+    audioElement.value?.play()
+    isPlaying.value = true
+    localStorage.setItem("lastPlayedIndex", audioIndex.value.toString())
   } catch (error) {
-    console.error('播放错误:', error);
-    playNextAudio();
+    console.error("播放错误:", error)
+    playNextAudio()
   }
-};
+}
 
 const playNextAudio = () => {
-  playAudio(audioIndex.value + 1);
-};
+  playAudio(audioIndex.value + 1)
+}
 
 const pauseAudio = () => {
   if (isPlaying.value) {
-    audioElement.value?.pause();
-    isPlaying.value = false;
+    audioElement.value?.pause()
+    isPlaying.value = false
   }
-};
+}
 
 const resumeAudio = () => {
   if (!isPlaying.value) {
-    audioElement.value?.play();
-    isPlaying.value = true;
+    audioElement.value?.play()
+    isPlaying.value = true
   }
-};
+}
 
 watch(playbackRate, (newRate) => {
   if (audioElement.value) {
-    audioElement.value.playbackRate = newRate;
+    audioElement.value.playbackRate = newRate
   }
-});
+})
 
 const scrollToAudio = (index: number) => {
-  const audioElement = document.getElementById(`audio-${index}`);
+  const audioElement = document.getElementById(`audio-${index}`)
 
   if (audioElement && mainElement.value) {
-    mainElement.value.scrollTop = audioElement.offsetTop - mainElement.value.offsetTop - 15;
+    mainElement.value.scrollTop = audioElement.offsetTop - mainElement.value.offsetTop - 15
   }
-};
+}
 
 const restoreScrollPosition = () => {
-  scrollToAudio(audioIndex.value);
-};
+  scrollToAudio(audioIndex.value)
+}
 
 const loadLastPlayedIndex = () => {
-  const lastPlayedIndex = localStorage.getItem('lastPlayedIndex');
+  const lastPlayedIndex = localStorage.getItem("lastPlayedIndex")
   if (lastPlayedIndex) {
-    audioIndex.value = parseInt(lastPlayedIndex);
+    audioIndex.value = parseInt(lastPlayedIndex)
   }
-};
+}
 
 onMounted(() => {
   loadLastPlayedIndex()
-  restoreScrollPosition();
-});
+  restoreScrollPosition()
+})
 </script>
 
 <template>
