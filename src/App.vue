@@ -95,19 +95,54 @@ onMounted(() => {
 <template>
   <div class="container">
     <header>
-      <h1 class="title">Elllo</h1>
-      <audio class="audio" ref="audioElement" :src="audioSrc" controls @ended="playNextAudio"></audio>
-      <t-slider v-model="playbackRate" :marks="marksRange" :min="0.5" :max="2" :step="0.5" />
+      <h1 class="title">
+        Elllo
+      </h1>
+      <audio
+        class="audio"
+        ref="audioElement"
+        :src="audioSrc"
+        controls
+        @ended="playNextAudio"
+      />
+      <t-slider
+        v-model="playbackRate"
+        :marks="marksRange"
+        :min="0.5"
+        :max="2"
+        :step="0.5"
+      />
     </header>
     <main ref="mainElement">
       <ul>
-        <li :class="['audio', audioIndex === index ? 'audio--active' : '']" v-for="(url, index) in audios"
-          :id="`audio-${index}`" :key="url">
-          <div class="audio__link" :href="url">{{ url }}</div>
-          <t-button v-if="audioIndex === index && isPlaying" size="small" theme="primary" @click="pauseAudio">
+        <li
+          :class="['audio', audioIndex === index ? 'audio--active' : '']"
+          v-for="(url, index) in audios"
+          :id="`audio-${index}`"
+          :key="url"
+        >
+          <div
+            class="audio__link"
+            :href="url"
+          >
+            {{ url }}
+          </div>
+          <t-button
+            v-if="audioIndex === index && isPlaying"
+            size="small"
+            theme="primary"
+            @click="pauseAudio"
+          >
             暂停
           </t-button>
-          <t-button v-else size="small" theme="primary" @click="onPlay(index)">播放</t-button>
+          <t-button
+            v-else
+            size="small"
+            theme="primary"
+            @click="onPlay(index)"
+          >
+            播放
+          </t-button>
         </li>
       </ul>
     </main>
