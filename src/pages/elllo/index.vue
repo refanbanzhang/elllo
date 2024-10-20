@@ -72,6 +72,7 @@ const resumeAudio = () => {
 }
 
 watch(playbackRate, (newRate) => {
+  localStorage.setItem("playbackRate", newRate.toString())
   if (audioElement.value) {
     audioElement.value.playbackRate = newRate
   }
@@ -91,8 +92,12 @@ const restoreScrollPosition = () => {
 
 const loadLastPlayedIndex = () => {
   const lastPlayedIndex = localStorage.getItem("lastPlayedIndex")
+  const playbackRateString = localStorage.getItem("playbackRate")
   if (lastPlayedIndex) {
     audioIndex.value = parseInt(lastPlayedIndex)
+  }
+  if (playbackRateString) {
+    playbackRate.value = parseFloat(playbackRateString)
   }
 }
 
