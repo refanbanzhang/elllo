@@ -32,8 +32,18 @@ const playAudio = async (index: number) => {
   }
 
   try {
-    // 这里加这个有什么用
+
+    // 这里加这个有什么用？
+    // 如果不加这个，会报错：
+    // runtime-dom.esm-bundler.js:660 Uncaught (in promise) AbortError: The play() request was interrupted by a new load request.
     await nextTick()
+    // 由于上面更新audioIndex.value是一个异步操作
+    // 这里调用play时，audioElement.value的src还是旧的
+    // 可是不应会播放旧的src吗？难道是正要播放旧的src时，src更新了？导致旧的播放不了
+    // 新的也播放不了？
+    if (audioElement.value) {
+      audioElement.value.playbackRate = playbackRate.value
+    }
     audioElement.value?.play()
     isPlaying.value = true
     localStorage.setItem("lastPlayedIndex", audioIndex.value.toString())
