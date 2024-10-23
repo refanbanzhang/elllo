@@ -33,7 +33,7 @@ const play = (index: number) => {
     return
   }
 
-  // 情况3：初始化播放或切换歌曲
+  // 情况3：播放指定歌曲
   audio.value.pause()
   currentIndex.value = index
   audio.value.src = items.value[index]
