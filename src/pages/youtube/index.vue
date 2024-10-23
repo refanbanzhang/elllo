@@ -8,48 +8,36 @@ const items = ref<string[]>([
   "https://s3-us-west-1.amazonaws.com/elllo-audio/mixer-001-150/003-MXR-catsdogs.mp3",
 ])
 
-const handlePlayError = (error: any) => {
-  console.error("音频播放失败:", error)
-  // 这里可以添加错误处理逻辑，比如显示错误消息给用户
-}
-
-const playAudio = (index: number) => {
-  audio.value.src = items.value[index]
-  audio.value.play().catch(handlePlayError)
-}
-
-// 监听音频播放结束事件
 audio.value.addEventListener("ended", () => {
-  // 可以在这里添加播放结束后的逻辑，比如自动播放下一首
+  console.log("音频播放结束")
+})
+
+audio.value.addEventListener("error", () => {
+  console.log("音频播放错误")
 })
 
 const play = (index: number) => {
-  // 情况一：
-  // 切换歌曲
-  if (currentIndex.value !== index) {
-    audio.value.pause()
-    playAudio(index)
-    currentIndex.value = index
-    return
-  }
+  const isCurrentAudio = currentIndex.value === index
+  const isPaused = audio.value.paused && audio.value.currentTime > 0
+  const isPlaying = !audio.value.paused && audio.value.currentTime > 0
 
-  // 情况二：
-  // 正在播放时暂停
-  if (audio.value.currentTime > 0 && !audio.value.paused) {
+  // 情况1：暂停正在播放的歌曲
+  if (isCurrentAudio && isPlaying) {
     audio.value.pause()
     return
   }
 
-  // 情况三：
-  // 暂停时播放
-  if (audio.value.currentTime > 0 && audio.value.paused) {
-    audio.value.play().catch(handlePlayError)
+  // 情况2：播放暂停的歌曲
+  if (isCurrentAudio && isPaused) {
+    audio.value.play()
     return
   }
 
-  // 情况四：
-  // 初始化播放
-  playAudio(index)
+  // 情况3：初始化播放或切换歌曲
+  audio.value.pause()
+  currentIndex.value = index
+  audio.value.src = items.value[index]
+  audio.value.play()
 }
 
 </script>

@@ -9,6 +9,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     Elllo: typeof import('./src/components/elllo.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     TButton: typeof import('tdesign-mobile-vue')['Button']
     TSlider: typeof import('tdesign-mobile-vue')['Slider']
   }
