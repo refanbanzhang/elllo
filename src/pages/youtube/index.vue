@@ -1,52 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import useAudioPlayer from "../../composables/use-audio-player"
 
-const audio = ref<HTMLAudioElement>(new Audio())
-const currentIndex = ref<number>()
-const items = ref<string[]>([
+const { play, pause, resume, currentIndex, isPlaying, items } = useAudioPlayer([
   "https://s3-us-west-1.amazonaws.com/elllo-audio/mixer-001-150/004-MXR-cinema.mp3",
-  "https://s3-us-west-1.amazonaws.com/elllo-audio/mixer-001-150/003-MXR-catsdogs.mp3",
+  "https://s3-us-west-1.amazonaws.com/elllo-audio/mixer-001-150/003-MXR-catsdogs.mp3"
 ])
-
-const currentTime = ref<number>(audio.value.currentTime)
-const isPaused = ref<boolean>(audio.value.paused)
-const isPlaying = computed<boolean>(() => !isPaused.value)
-
-audio.value.addEventListener("play", () => {
-  isPaused.value = false
-})
-
-audio.value.addEventListener("pause", () => {
-  isPaused.value = true
-})
-
-audio.value.addEventListener("timeupdate", () => {
-  currentTime.value = audio.value.currentTime
-})
-
-audio.value.addEventListener("ended", () => {
-  console.log("音频播放结束")
-})
-
-audio.value.addEventListener("error", () => {
-  console.log("音频播放错误")
-})
-
-
-const play = (index: number) => {
-  pause()
-  currentIndex.value = index
-  audio.value.src = items.value[index]
-  audio.value.play()
-}
-
-const pause = () => {
-  audio.value.pause()
-}
-
-const resume = () => {
-  audio.value.play()
-}
 </script>
 
 <template>
@@ -64,9 +22,9 @@ const resume = () => {
       </button>
       <button
         @click="resume"
-        v-else-if="currentIndex === index && isPaused"
+        v-else-if="currentIndex === index && !isPlaying"
       >
-        播放
+        继续
       </button>
       <button
         v-else
