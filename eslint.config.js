@@ -15,8 +15,9 @@ export default [
   },
   {
     rules: {
-      quotes: ["error", "double"],
-      semi: ["error", "never"],
-    }
-  }
+      "quotes": ["error", "double"],
+      "semi": ["error", "never"],
+      "vue/multi-word-component-names": ["error", "never"]
+    },
+  },
 ]
