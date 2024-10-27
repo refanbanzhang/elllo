@@ -43,5 +43,60 @@ export const photos = [
     id: 9,
     src: "https://live.staticflickr.com/3400/3289907091_f906387549_b.jpg",
     alt: "A man sleeps slumped on the night bus",
-  }
-]
+  },
+];
+
+export const playlists = [
+  {
+    id: 1,
+    avatar: "https://live-transitions.pages.dev/user-avatar.webp",
+    name: "Annabelle Lucero",
+    date: "March 2023",
+    title: "Saxophone House",
+    num: 9838,
+    duration: "5h 22m",
+    media: "https://live-transitions.pages.dev/sax-player.webp",
+    style: {
+      "--backgroundColor": "black",
+      "--textColor": "white",
+      "--backgroundImage": "none",
+      "--secondaryTextColor": "rgb(195, 195, 195)",
+    },
+    desc: "Most popular Saxophone House playlist on Spotify since 2013 | Updated weekly | Good vibes only | Photo by Atikh Bana",
+  },
+  {
+    id: 2,
+    avatar: "https://live-transitions.pages.dev/user-avatar-2.webp",
+    name: "Sophia Chen",
+    date: "April 2023",
+    title: "Jazz Piano",
+    num: 7245,
+    duration: "4h 15m",
+    media: "https://live-transitions.pages.dev/dancing-woman.mp4",
+    style: {
+      "--backgroundColor": "#ebd9ea",
+      "--textColor": "#8b689c",
+      "--backgroundImage":
+        "url(https://live-transitions.pages.dev/pink-card-bg.png)",
+      "--secondaryTextColor": "#ab91b8",
+    },
+    desc: "The best indie rock vibes — classic and current. Headphones on | Video by Anna Shvets on pexels.com",
+  },
+  {
+    id: 3,
+    avatar: "https://live-transitions.pages.dev/user-avatar-3.webp",
+    name: "Marcus Davis",
+    date: "May 2023",
+    title: "Blues Guitar",
+    num: 6389,
+    duration: "3h 45m",
+    media: "https://live-transitions.pages.dev/guitar-player.webp",
+    style: {
+      "--backgroundColor": "#6d75ff",
+      "--textColor": "white",
+      "--backgroundImage": "none",
+      "--secondaryTextColor": "rgb(225, 225, 225)",
+    },
+    desc: "Unwind to these calm classical guitar pieces. Photo by Te NGuyen on Unsplash",
+  },
+];
