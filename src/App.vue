@@ -1,3 +1,3 @@
 <template>
-  <RouterView class="content" />
+  <RouterView />
 </template>

@@ -2,8 +2,7 @@
 import { ref } from "vue"
 
 const isPopupOpen = ref(false)
-const handlePopupToggle = () => {
-  // @ts-ignore
+const toggle = () => {
   document.startViewTransition(() => {
     isPopupOpen.value = !isPopupOpen.value
   })
@@ -11,27 +10,26 @@ const handlePopupToggle = () => {
 </script>
 
 <template>
-  <div>
-    <button class="btn" @click="handlePopupToggle">open</button>
-    <div class="popup" v-if="isPopupOpen" @click="handlePopupToggle">
-      <div class="popup-content">
-        popup
-      </div>
+  <img v-if="!isPopupOpen" class="img transition-img" src="https://live.staticflickr.com/65535/50187927333_12dc192ab6_b.jpg" alt="" @click="toggle">
+  <div class="popup" v-if="isPopupOpen" @click="toggle">
+    <div class="popup-content transition-img">
+      <img class="popup-img" src="https://live.staticflickr.com/65535/50187927333_12dc192ab6_b.jpg" alt="" @click="toggle">
     </div>
   </div>
 </template>
 
 <style>
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+.transition-img {
+  view-transition-name: transition-img;
 }
 
-/* 两个元素不能使用相同的 view-transition-name */
-/* Unexpected duplicate view-transition-name */
+.img {
+  width: 200px;
+}
 
-.btn {}
+.popup-img {
+  max-width: 100%;
+}
 
 .popup {
   position: fixed;
@@ -41,15 +39,16 @@ const handlePopupToggle = () => {
   align-items: center;
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.5);
+  /* view-transition-name: popup; */
 }
 
 .popup-content {
   width: 100%;
-  height: 400px;
   padding: 20px;
   border-radius: 10px;
   background-color: white;
-  view-transition-name: popup-content;
+  text-align: center;
+  /* view-transition-name: popup-content; */
 }
 
 
@@ -77,11 +76,11 @@ const handlePopupToggle = () => {
   }
 }
 
-::view-transition-old(popup-content) {
-  animation: 1s move-out;
+/* ::view-transition-old(popup-content) {
+  animation: .3s move-out;
 }
 
 ::view-transition-new(popup-content) {
-  animation: 1s move-in;
-}
+  animation: .3s move-in;
+} */
 </style>
