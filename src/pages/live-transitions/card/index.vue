@@ -9,26 +9,40 @@ defineProps<Props>()
 <template>
   <div class="card" :style="{
     ...data.style
-  }"
-    @click="$emit('click')"
-  >
+  }" @click="$emit('click')">
     <div class="bg" />
     <header class="header">
-      <img :src="data.avatar" alt="avatar" />
+      <img :src="data.avatar" alt="avatar" :style="{
+        'view-transition-name': `transition-avatar-${data.id}`,
+      }" />
       <div class="info">
-        <p>{{ data.name }}</p>
-        <p>{{ data.date }}</p>
+        <p>
+          <span :style="{
+            'view-transition-name': `transition-name-${data.id}`,
+          }">{{ data.name }}</span>
+        </p>
+        <p>
+          <span :style="{
+            'view-transition-name': `transition-date-${data.id}`,
+          }">{{ data.date }}</span>
+        </p>
       </div>
-      <button class="btn">
+      <button class="btn" :style="{
+        'view-transition-name': `transition-btn-${data.id}`,
+      }">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
         </svg>
       </button>
     </header>
-    <h2 class="title">
+    <h2 class="title" :style="{
+      'view-transition-name': `transition-title-${data.id}`,
+    }">
       {{ data.title }}
     </h2>
-    <div class="stats">
+    <div class="stats" :style="{
+      'view-transition-name': `transition-stats-${data.id}`,
+    }">
       <div class="stat">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
           <path
@@ -50,13 +64,17 @@ defineProps<Props>()
     <div class="media" :style="{
       '--marginTop': '20px',
     }">
-      <img v-if="data.media.endsWith('.webp')" :src="data.media" alt="media" />
-      <video width="552" height="427" v-else :src="data.media" alt="media" muted autoplay loop playsinline />
+      <img :style="{ 'view-transition-name': `transition-img-${data.id}` }" v-if="data.media.endsWith('.webp')"
+        :src="data.media" alt="media" />
+      <video :style="{ 'view-transition-name': `transition-img-${data.id}` }" width="552" height="427" v-else
+        :src="data.media" alt="media" muted autoplay loop playsinline />
 
       <div class="controls" :style="{
         '--visibility': 'hidden',
       }">
-        <div class="controls-content">
+        <div class="controls-content" :style="{
+          'view-transition-name': `transition-controls-${data.id}`,
+        }">
           <div class="control small-control extra-control">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
               <path fill-rule="evenodd"
