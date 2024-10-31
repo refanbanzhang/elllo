@@ -1,4 +1,4 @@
-import { createWebHashHistory, createRouter } from "vue-router"
+import { createWebHistory, createRouter } from "vue-router"
 
 import elllo from "./pages/elllo/index.vue"
 import youtube from "./pages/youtube/index.vue"
@@ -31,7 +31,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 })
 
