@@ -3,14 +3,7 @@ import { onMounted, ref } from "vue"
 import audios from "./audios.json"
 import useAudioPlayer from "../../composables/use-audio-player"
 
-const { play, pause, resume, playbackRate, currentIndex, isPlaying, items, setPlaybackRate, setCurrentIndex } = useAudioPlayer(audios)
-
-const marksRange = ref({
-  0.5: "0.5",
-  1: "1",
-  1.5: "1.5",
-  2: "2",
-})
+const { play, pause, resume, currentIndex, isPlaying, items, setCurrentIndex } = useAudioPlayer(audios)
 
 const mainElement = ref<HTMLElement | null>(null)
 const restoreScrollPosition = () => {
@@ -22,12 +15,16 @@ const restoreScrollPosition = () => {
 
 const loadLastPlayedIndex = () => {
   const lastPlayedIndex = localStorage.getItem("lastPlayedIndex")
-  const rate = localStorage.getItem("playbackRate")
   if (lastPlayedIndex) {
     setCurrentIndex(parseInt(lastPlayedIndex))
   }
-  if (rate) {
-    setPlaybackRate(parseFloat(rate))
+}
+
+const onPlay = () => {
+  if (isPlaying.value) {
+    pause()
+  } else {
+    resume()
   }
 }
 
@@ -42,20 +39,11 @@ onMounted(() => {
     <main ref="mainElement">
       <ul>
         <li :class="['audio', currentIndex === index ? 'audio--active' : '']" v-for="(url, index) in items"
-          :id="`audio-${index}`" :key="url">
+          :id="`audio-${index}`" :key="url" @click="play(index)">
           <img class="audio__image" src="https://picsum.photos/200/300" alt="">
           <div class="audio__link" :href="url">
             {{ url.split("/").pop()?.split(".")[0] }}
           </div>
-          <t-button v-if="currentIndex === index && isPlaying" size="small" theme="primary" @click="pause">
-            暂停
-          </t-button>
-          <t-button v-else-if="currentIndex === index && !isPlaying" size="small" theme="primary" @click="resume">
-            继续
-          </t-button>
-          <t-button v-else size="small" theme="primary" @click="play(index)">
-            播放
-          </t-button>
         </li>
       </ul>
     </main>
@@ -64,11 +52,18 @@ onMounted(() => {
         <div class="footer__content-inner">
           <img class="footer__img" src="https://picsum.photos/200/300" alt="">
           Lofi Road Trip
-          <div class="play-btn-wrapper">
+          <div class="play-btn-wrapper" @click="onPlay" v-if="!isPlaying">
             <svg class="play-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd"
-                d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"
-                clip-rule="evenodd"></path>
+              <path
+                d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z">
+              </path>
+            </svg>
+          </div>
+          <div class="play-btn-wrapper" @click="onPlay" v-if="isPlaying">
+            <svg class="play-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M5.7 3a.7.7 0 0 0-.7.7v16.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V3.7a.7.7 0 0 0-.7-.7H5.7zm10 0a.7.7 0 0 0-.7.7v16.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V3.7a.7.7 0 0 0-.7-.7h-2.6z">
+              </path>
             </svg>
           </div>
         </div>
