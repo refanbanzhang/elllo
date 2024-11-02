@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
-import audios from "./audios.json"
+import audios from "../../../audios.json"
 import useAudioPlayer from "../../composables/use-audio-player"
 
 const { play, pause, resume, currentIndex, isPlaying, items, setCurrentIndex } = useAudioPlayer(audios)
@@ -32,17 +32,22 @@ onMounted(() => {
   loadLastPlayedIndex()
   restoreScrollPosition()
 })
+
+const getProxiedImageUrl = (url: string) => {
+  // 使用免费的图片代理服务
+  return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`
+}
 </script>
 
 <template>
   <div class="elllo">
     <main ref="mainElement">
       <ul>
-        <li :class="['audio', currentIndex === index ? 'audio--active' : '']" v-for="(url, index) in items"
-          :id="`audio-${index}`" :key="url" @click="play(index)">
-          <img class="audio__image" src="https://picsum.photos/200/300" alt="">
-          <div class="audio__link" :href="url">
-            {{ url.split("/").pop()?.split(".")[0] }}
+        <li :class="['audio', currentIndex === index ? 'audio--active' : '']" v-for="(item, index) in items"
+          :id="`audio-${index}`" :key="item.url" @click="play(index)">
+          <img v-if="item.img" class="audio__image" :src="getProxiedImageUrl(item.img)" alt="">
+          <div class="audio__link" :href="item.url">
+            {{ item.title }}
           </div>
         </li>
       </ul>
@@ -50,8 +55,14 @@ onMounted(() => {
     <footer class="footer">
       <div class="footer__content">
         <div class="footer__content-inner">
-          <img class="footer__img" src="https://picsum.photos/200/300" alt="">
-          Lofi Road Trip
+          <img
+            v-if="items[currentIndex].img" class="footer__img"
+            :src="getProxiedImageUrl(items[currentIndex].img)"
+            alt=""
+          >
+          <div class="footer__title">
+            {{ items[currentIndex].title }}
+          </div>
           <div class="play-btn-wrapper" @click="onPlay" v-if="!isPlaying">
             <svg class="play-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path
@@ -117,6 +128,7 @@ main {
   height: 60px;
   margin-right: 10px;
   border-radius: 3px;
+  object-fit: cover;
 }
 
 .audio__link {
@@ -150,8 +162,16 @@ main {
   }
 
   &__img {
+    margin-right: 10px;
     width: 50px;
     height: 50px;
+    object-fit: cover;
+    border-radius: 3px;
+  }
+
+  &__title {
+    flex: 1;
+    font-weight: bold;
   }
 }
 

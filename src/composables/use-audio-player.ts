@@ -1,9 +1,11 @@
 import { ref, watch } from "vue"
 
-const useAudioPlayer = (data: string[]) => {
+import { ListItem } from "../../extractAudio"
+
+const useAudioPlayer = (data: ListItem[]) => {
   const audio = ref<HTMLAudioElement>(new Audio())
   const currentIndex = ref<number>(0)
-  const items = ref<string[]>(data)
+  const items = ref<ListItem[]>(data)
   const currentTime = ref<number>(audio.value.currentTime)
   const isPlaying = ref<boolean>(false)
   const playbackRate = ref<number>(1)
@@ -19,7 +21,7 @@ const useAudioPlayer = (data: string[]) => {
   const play = (index: number) => {
     pause()
     currentIndex.value = index
-    setAudioSrc(items.value[index])
+    setAudioSrc(items.value[index].url)
     audio.value.playbackRate = playbackRate.value
     audio.value.play()
     localStorage.setItem("lastPlayedIndex", index.toString())
@@ -59,7 +61,7 @@ const useAudioPlayer = (data: string[]) => {
     play(currentIndex.value + 1)
   })
 
-  setAudioSrc(items.value[currentIndex.value])
+  setAudioSrc(items.value[currentIndex.value].url)
 
   // 监听播放速度的调整，然后同步到audioElement.value以及localStorage
   watch(() => playbackRate.value, (newRate) => {
