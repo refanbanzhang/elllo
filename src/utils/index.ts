@@ -48,3 +48,7 @@ export const getAverageColor = (imgEl: HTMLImageElement): Promise<string> => {
     }
   })
 }
+
+// 图片代理服务
+export const getProxiedImageUrl = (url: string) =>
+  `https://images.weserv.nl/?url=${encodeURIComponent(url)}`

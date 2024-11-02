@@ -2,12 +2,14 @@
 import { onMounted, ref } from "vue"
 import audios from "../../../audios.json"
 import useAudioPlayer from "../../composables/use-audio-player"
-
-import { getAverageColor } from "@/utils"
+import { useRouter } from "vue-router"
+import { getAverageColor, getProxiedImageUrl } from "@/utils"
 
 const footerBgColor = ref("rgb(49, 128, 153)")
 
 const { play, pause, resume, currentIndex, isPlaying, items, setCurrentIndex } = useAudioPlayer(audios)
+
+const router = useRouter()
 
 const mainElement = ref<HTMLElement | null>(null)
 const restoreScrollPosition = () => {
@@ -37,14 +39,13 @@ onMounted(() => {
   restoreScrollPosition()
 })
 
-const getProxiedImageUrl = (url: string) => {
-  // 使用免费的图片代理服务
-  return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`
-}
-
 const handleImageLoad = async (event: Event) => {
   const imgEl = event.target as HTMLImageElement
   footerBgColor.value = await getAverageColor(imgEl)
+}
+
+const goToLesson = (index: number) => {
+  router.push(`/elllo/${items.value[index].lessonNo}`)
 }
 </script>
 
@@ -54,7 +55,7 @@ const handleImageLoad = async (event: Event) => {
       <ul>
         <li :class="['audio', currentIndex === index ? 'audio--active' : '']" v-for="(item, index) in items"
           :id="`audio-${index}`" :key="item.url" @click="play(index)">
-          <img v-if="item.img" class="audio__image" :src="getProxiedImageUrl(item.img)" alt="">
+          <img v-if="item.img" class="audio__image" :src="getProxiedImageUrl(item.img)" alt="" @click.stop="goToLesson(index)">
           <div class="audio__link" :href="item.url">
             {{ item.title }}
             <br />
