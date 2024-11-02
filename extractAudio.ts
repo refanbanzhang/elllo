@@ -67,7 +67,7 @@ const extractPages = async (page: Page): Promise<LinkItem[]> => {
   }
 };
 
-const extractAudioLink = async (pageUrl): Promise<ListItem> => {
+const extractAudioLink = async (pageUrl: string): Promise<ListItem> => {
   // 使用新的instance替代axios
   const response = await instance.get(pageUrl);
   const html = response.data;
