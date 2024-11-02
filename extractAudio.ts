@@ -3,106 +3,105 @@ import * as cheerio from "cheerio";
 import fs from "fs";
 
 const HOST = "https://elllo.org";
+const AUDIO_PREFIX = "https://s3-us-west-1.amazonaws.com/elllo-audio/mixer-001-150/";
 
-export interface ListItem {
-  title: string;
+interface List {
   url: string;
-  img?: string;
-  html?: string;
+  audioSelector: string;
+  coverImgSelector: string;
+  lessonNoSelector: ($: cheerio.CheerioAPI) => string[];
 }
 
-interface LinkItem {
+interface Page {
   url: string;
   img: string;
   lessonNo: string;
 }
 
-interface Page {
+interface LinkItem {
+  title: string;
   url: string;
-  selector: string;
-  imgSelector: string;
-  lessonNoSelector: ($: cheerio.CheerioAPI) => string[];
+  html: string;
+}
+
+export interface AudioItem {
+  title: string;
+  url: string;
+  img: string;
+  html: string;
+  lessonNo: string;
 }
 
 const instance = axios.create({
   timeout: 60000,
 });
 
-const lessonNoSelector = ($: cheerio.CheerioAPI) => {
-  const items = $(".mobilelist2 .floatleft + * a").map((_, element) => {
-    const res = $(element).attr("href")?.split("-")[0];
-    return res;
-  }).get();
-  return items;
-};
+const lessonNoSelector = ($: cheerio.CheerioAPI) =>
+  $(".mobilelist2 .floatleft + * a")
+    .map((_, element) => $(element).attr("href")?.split("-")[0])
+    .get();
 
-const lessonNoSelector26 = ($: cheerio.CheerioAPI) => {
-  const items = $(".mobilelist2 .floatleft + a").map((_, element) => {
-    const res = $(element).attr("href")?.split("-")[0];
-    return res;
-  }).get();
-  return items;
-};
+const lessonNoSelector26 = ($: cheerio.CheerioAPI) =>
+  $(".mobilelist2 .floatleft + a")
+    .map((_, element) => $(element).attr("href")?.split("-")[0])
+    .get();
 
-const lessonNoSelector51 = ($: cheerio.CheerioAPI) => {
-  const items = $(".mobilelist .floatleft + * a").map((_, element) => {
-    const res = $(element).attr("href")?.split("-")[0];
-    return res;
-  }).get();
-  return items;
-};
+const lessonNoSelector51 = ($: cheerio.CheerioAPI) =>
+  $(".mobilelist .floatleft + * a")
+    .map((_, element) => $(element).attr("href")?.split("-")[0])
+    .get();
 
 const mainPages = [
   {
     url: "https://elllo.org/english/Mixer001/",
-    selector: ".floatleft + * a",
-    imgSelector: ".floatleft img",
+    audioSelector: ".floatleft + * a",
+    coverImgSelector: ".floatleft img",
     lessonNoSelector,
   },
   {
     url: "https://elllo.org/english/Mixer026/",
-    selector: ".floatleft + a",
-    imgSelector: ".floatleft img",
+    audioSelector: ".floatleft + a",
+    coverImgSelector: ".floatleft img",
     lessonNoSelector: lessonNoSelector26,
   },
   {
     url: "https://elllo.org/english/Mixer051/",
-    selector: ".titlebox a",
-    imgSelector: ".floatleft img",
+    audioSelector: ".titlebox a",
+    coverImgSelector: ".floatleft img",
     lessonNoSelector: lessonNoSelector51,
   },
   {
     url: "https://elllo.org/english/Mixer076/",
-    selector: ".titlebox a",
-    imgSelector: ".floatleft img",
+    audioSelector: ".titlebox a",
+    coverImgSelector: ".floatleft img",
     lessonNoSelector: lessonNoSelector51,
   },
   {
     url: "https://elllo.org/english/Mixer101/",
-    selector: ".titlebox a",
-    imgSelector: ".floatleft img",
+    audioSelector: ".titlebox a",
+    coverImgSelector: ".floatleft img",
     lessonNoSelector: lessonNoSelector51,
   },
   {
     url: "https://elllo.org/english/Mixer126/",
-    selector: ".titlebox a",
-    imgSelector: ".floatleft img",
+    audioSelector: ".titlebox a",
+    coverImgSelector: ".floatleft img",
     lessonNoSelector: lessonNoSelector51,
   },
 ];
 
-const extractPages = async (listPage: Page): Promise<LinkItem[]> => {
+const extractPages = async (listPage: List): Promise<Page[]> => {
   try {
     const response = await instance.get(listPage.url);
     const html = response.data;
     const $ = cheerio.load(html);
 
-    const links: string[] = $(listPage.selector)
+    const links: string[] = $(listPage.audioSelector)
       .map((_, element) => $(element).attr("href"))
       .get()
       .filter(Boolean);
 
-    const imgs: string[] = $(listPage.imgSelector)
+    const imgs: string[] = $(listPage.coverImgSelector)
       .map((_, element) => $(element).attr("src"))
       .get()
       .map((img) => {
@@ -128,8 +127,7 @@ const extractPages = async (listPage: Page): Promise<LinkItem[]> => {
   }
 };
 
-const extractAudioLink = async (pageUrl: string): Promise<ListItem> => {
-  // 使用新的instance替代axios
+const extractAudioLink = async (pageUrl: string): Promise<LinkItem> => {
   const response = await instance.get(pageUrl);
   const html = response.data;
   const $ = cheerio.load(html);
@@ -146,24 +144,21 @@ const extractAudioLink = async (pageUrl: string): Promise<ListItem> => {
 };
 
 const main = async () => {
-  const allPages: LinkItem[] = [];
+  const pages: Page[] = [];
   for (const page of mainPages) {
-    const extractedPages = await extractPages(page);
-    allPages.push(...extractedPages);
+    pages.push(...(await extractPages(page)));
   }
 
-  const prefix =
-    "https://s3-us-west-1.amazonaws.com/elllo-audio/mixer-001-150/";
-  const audios: (ListItem & { lessonNo: string })[] = [];
+  const audios: AudioItem[] = [];
 
-  for (const page of allPages) {
+  for (const page of pages) {
     const audioLink = await extractAudioLink(page.url);
 
     if (audioLink && audioLink.url.includes("../../Audio/AMXR/")) {
       audios.push({
         ...audioLink,
         ...page,
-        url: audioLink.url.replace("../../Audio/AMXR/", prefix),
+        url: audioLink.url.replace("../../Audio/AMXR/", AUDIO_PREFIX),
       });
     } else if (audioLink.url) {
       audios.push({

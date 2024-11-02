@@ -1,11 +1,11 @@
 import { ref, watch } from "vue"
 
-import { ListItem } from "../../extractAudio"
+import { AudioItem } from "../../extractAudio"
 
-const useAudioPlayer = (data: ListItem[]) => {
+const useAudioPlayer = (data: AudioItem[]) => {
   const audio = ref<HTMLAudioElement>(new Audio())
   const currentIndex = ref<number>(0)
-  const items = ref<ListItem[]>(data)
+  const items = ref<AudioItem[]>(data)
   const currentTime = ref<number>(audio.value.currentTime)
   const isPlaying = ref<boolean>(false)
   const playbackRate = ref<number>(1)
