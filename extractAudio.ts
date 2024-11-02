@@ -2,8 +2,8 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import fs from "fs";
 
-const HOST = "https://elllo.org";
-const AUDIO_PREFIX = "https://s3-us-west-1.amazonaws.com/elllo-audio/mixer-001-150/";
+export const HOST = "https://elllo.org";
+export const AUDIO_PREFIX = "https://s3-us-west-1.amazonaws.com/elllo-audio/mixer-001-150/";
 
 interface List {
   url: string;

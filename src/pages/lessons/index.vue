@@ -45,7 +45,9 @@ const handleImageLoad = async (event: Event) => {
 }
 
 const goToLesson = (index: number) => {
-  router.push(`/elllo/${items.value[index].lessonNo}`)
+  document.startViewTransition(() => {
+    router.push(`/elllo/${items.value[index].lessonNo}`)
+  })
 }
 </script>
 
@@ -70,7 +72,9 @@ const goToLesson = (index: number) => {
           <img
             v-if="items[currentIndex].img" class="footer__img"
             :src="getProxiedImageUrl(items[currentIndex].img)"
+            :style="{ 'view-transition-name': `audio-${items[currentIndex].lessonNo}` }"
             alt=""
+            @click.stop="goToLesson(currentIndex)"
             @load="handleImageLoad"
           >
           <div class="footer__title">
