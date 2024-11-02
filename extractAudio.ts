@@ -4,7 +4,7 @@ import fs from 'fs';
 
 const HOST = "https://elllo.org";
 
-interface ListItem {
+export interface ListItem {
   title: string
   url: string
   img?: string
@@ -75,7 +75,7 @@ const extractAudioLink = async (pageUrl): Promise<ListItem> => {
 
   return {
     url: $(".topset > .audio source").attr("src") || "",
-    title: $(".topset .lesson1title h1 strong").text() || $(".topset .lesson1title h2 strong").text(),
+    title: $(".topset .lesson1title h1 strong").text() || $(".topset .lesson1title h2 strong").text() || $(".topset .lesson1title h3 strong").text() || "",
     html: $("#transcript").html() || $(".tabcontents .spacer").html() || ""
   };
 }
