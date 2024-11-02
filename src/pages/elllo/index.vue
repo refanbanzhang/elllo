@@ -3,6 +3,10 @@ import { onMounted, ref } from "vue"
 import audios from "../../../audios.json"
 import useAudioPlayer from "../../composables/use-audio-player"
 
+import { getAverageColor } from "@/utils"
+
+const footerBgColor = ref("rgb(49, 128, 153)")
+
 const { play, pause, resume, currentIndex, isPlaying, items, setCurrentIndex } = useAudioPlayer(audios)
 
 const mainElement = ref<HTMLElement | null>(null)
@@ -37,6 +41,11 @@ const getProxiedImageUrl = (url: string) => {
   // 使用免费的图片代理服务
   return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`
 }
+
+const handleImageLoad = async (event: Event) => {
+  const imgEl = event.target as HTMLImageElement
+  footerBgColor.value = await getAverageColor(imgEl)
+}
 </script>
 
 <template>
@@ -48,17 +57,20 @@ const getProxiedImageUrl = (url: string) => {
           <img v-if="item.img" class="audio__image" :src="getProxiedImageUrl(item.img)" alt="">
           <div class="audio__link" :href="item.url">
             {{ item.title }}
+            <br />
+            {{ item.lessonNo }}
           </div>
         </li>
       </ul>
     </main>
     <footer class="footer">
       <div class="footer__content">
-        <div class="footer__content-inner">
+        <div class="footer__content-inner" :style="{ backgroundColor: footerBgColor }">
           <img
             v-if="items[currentIndex].img" class="footer__img"
             :src="getProxiedImageUrl(items[currentIndex].img)"
             alt=""
+            @load="handleImageLoad"
           >
           <div class="footer__title">
             {{ items[currentIndex].title }}
@@ -152,13 +164,28 @@ main {
   }
 
   &__content-inner {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 80px;
-    border-radius: 3px;
+    border-radius: 6px;
     background-color: rgb(49, 128, 153);
     padding: 10px;
+    transition: background-color .2s ease-in-out;
+
+    &:after {
+      background: rgba(0, 0, 0, .48);
+      border-radius: 6px;
+      bottom: 0;
+      content: "";
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: -1;
+    }
   }
 
   &__img {
@@ -166,11 +193,12 @@ main {
     width: 50px;
     height: 50px;
     object-fit: cover;
-    border-radius: 3px;
+    border-radius: 6px;
   }
 
   &__title {
     flex: 1;
+    color: #fff;
     font-weight: bold;
   }
 }
@@ -179,14 +207,14 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: white;
 }
 
 .play-btn {
-  width: 28px;
-  height: 28px;
+  width: 25px;
+  height: 25px;
 }
 </style>
