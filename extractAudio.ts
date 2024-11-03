@@ -1,9 +1,8 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import fs from "fs";
-
-export const HOST = "https://elllo.org";
-export const AUDIO_PREFIX = "https://s3-us-west-1.amazonaws.com/elllo-audio/mixer-001-150/";
+import type { AudioItem } from "./src/types";
+import { HOST, AUDIO_PREFIX } from "./src/constant";
 
 interface List {
   url: string;
@@ -22,14 +21,6 @@ interface LinkItem {
   title: string;
   url: string;
   html: string;
-}
-
-export interface AudioItem {
-  title: string;
-  url: string;
-  img: string;
-  html: string;
-  lessonNo: string;
 }
 
 const instance = axios.create({

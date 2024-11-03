@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
-import audios from "../../../audios.json"
 import useAudioPlayer from "../../composables/use-audio-player"
 import { useRouter } from "vue-router"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
@@ -8,7 +7,7 @@ import ProgressBar from "@/components/progress-bar/index.vue"
 
 const footerBgColor = ref("rgb(49, 128, 153)")
 
-const { play, pause, resume, currentIndex, currentTime, duration, isPlaying, items, setCurrentIndex } = useAudioPlayer(audios)
+const { play, pause, resume, currentIndex, currentTime, duration, isPlaying, audios, setCurrentIndex } = useAudioPlayer()
 
 const router = useRouter()
 
@@ -47,7 +46,7 @@ const handleImageLoad = async (event: Event) => {
 
 const goToLesson = (index: number) => {
   document.startViewTransition(() => {
-    router.push(`/elllo/${items.value[index].lessonNo}`)
+    router.push(`/elllo/${audios.value[index].lessonNo}`)
   })
 }
 </script>
@@ -56,7 +55,7 @@ const goToLesson = (index: number) => {
   <div class="elllo">
     <main ref="mainElement">
       <ul>
-        <li :class="['audio', currentIndex === index ? 'audio--active' : '']" v-for="(item, index) in items"
+        <li :class="['audio', currentIndex === index ? 'audio--active' : '']" v-for="(item, index) in audios"
           :id="`audio-${index}`" :key="item.url" @click="play(index)">
           <img v-if="item.img" class="audio__image" :src="getProxiedImageUrl(item.img)" alt="" @click.stop="goToLesson(index)">
           <div class="audio__link" :href="item.url">
@@ -71,15 +70,15 @@ const goToLesson = (index: number) => {
       <div class="footer__content">
         <div class="footer__content-inner" :style="{ backgroundColor: footerBgColor }">
           <img
-            v-if="items[currentIndex].img" class="footer__img"
-            :src="getProxiedImageUrl(items[currentIndex].img)"
-            :style="{ 'view-transition-name': `audio-${items[currentIndex].lessonNo}` }"
+            v-if="audios?.[currentIndex]?.img" class="footer__img"
+            :src="getProxiedImageUrl(audios[currentIndex].img)"
+            :style="{ 'view-transition-name': `audio-${audios[currentIndex].lessonNo}` }"
             alt=""
             @click.stop="goToLesson(currentIndex)"
             @load="handleImageLoad"
           >
           <div class="footer__title">
-            {{ items[currentIndex].title }}
+            {{ audios?.[currentIndex]?.title }}
           </div>
           <div class="play-btn-wrapper" @click="onPlay" v-if="!isPlaying">
             <svg class="play-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">

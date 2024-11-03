@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router"
+import { HOST } from "@/constant"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import audios from "../../../audios.json"
-import { HOST } from "../../../extractAudio"
 
 const route = useRoute()
 const router = useRouter()
