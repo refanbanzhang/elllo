@@ -24,9 +24,13 @@ if (audio?.img) {
 }
 
 const handleBack = () => {
-  document.startViewTransition(() => {
+  if ("startViewTransition" in document) {
+    document.startViewTransition(() => {
+      router.push('/')
+    })
+  } else {
     router.push('/')
-  })
+  }
 }
 
 const toggleContent = () => {

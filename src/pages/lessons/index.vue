@@ -45,9 +45,13 @@ const handleImageLoad = async (event: Event) => {
 }
 
 const goToLesson = (index: number) => {
-  document.startViewTransition(() => {
+  if ("startViewTransition" in document) {
+    document.startViewTransition(() => {
+      router.push(`/elllo/${audios.value[index].lessonNo}`)
+    })
+  } else {
     router.push(`/elllo/${audios.value[index].lessonNo}`)
-  })
+  }
 }
 </script>
 
