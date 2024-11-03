@@ -1,5 +1,5 @@
 import audios from "../../audios.json"
-import type { AudioItem } from "../../extractAudio"
+import type { AudioItem } from "@/types"
 
 interface PaginatedResponse {
   items: AudioItem[]

@@ -1,8 +1,8 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import fs from "fs";
-import type { AudioItem } from "./src/types";
-import { HOST, AUDIO_PREFIX } from "./src/constant";
+import type { AudioItem } from "@/types";
+import { HOST, AUDIO_PREFIX } from "@/constant";
 
 interface List {
   url: string;
