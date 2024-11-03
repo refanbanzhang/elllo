@@ -37,7 +37,7 @@ const updateHtmlImgUrl = (html: string) => {
   // 匹配../..，替换为HOST
   const newHtml = html.replaceAll('../..', HOST)
   // 匹配图片地址，代理图片地址
-  return newHtml.replace(/<img([^>]+)src="([^"]+)"/g, (match: string, attrs: string, src: string) => {
+  return newHtml.replace(/<img([^>]+)src="([^"]+)"/g, (_: string, attrs: string, src: string) => {
     return `<img${attrs}src="${getProxiedImageUrl(src)}"`
   })
 }
