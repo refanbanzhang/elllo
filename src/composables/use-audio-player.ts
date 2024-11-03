@@ -9,6 +9,7 @@ const useAudioPlayer = (data: AudioItem[]) => {
   const currentTime = ref<number>(audio.value.currentTime)
   const isPlaying = ref<boolean>(false)
   const playbackRate = ref<number>(1)
+  const duration = ref<number>(0)
 
   const setPlaybackRate = (rate: number) => {
     playbackRate.value = rate
@@ -51,6 +52,10 @@ const useAudioPlayer = (data: AudioItem[]) => {
     currentTime.value = audio.value.currentTime
   })
 
+  audio.value.addEventListener("durationchange", () => {
+    duration.value = audio.value.duration
+  })
+
   audio.value.addEventListener("ended", () => {
     console.log("音频播放结束")
     play(currentIndex.value + 1)
@@ -79,6 +84,8 @@ const useAudioPlayer = (data: AudioItem[]) => {
     playbackRate,
     setPlaybackRate,
     setCurrentIndex,
+    currentTime,
+    duration,
   }
 }
 

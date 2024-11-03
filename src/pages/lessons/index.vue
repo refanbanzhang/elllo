@@ -4,10 +4,11 @@ import audios from "../../../audios.json"
 import useAudioPlayer from "../../composables/use-audio-player"
 import { useRouter } from "vue-router"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
+import ProgressBar from "@/components/progress-bar/index.vue"
 
 const footerBgColor = ref("rgb(49, 128, 153)")
 
-const { play, pause, resume, currentIndex, isPlaying, items, setCurrentIndex } = useAudioPlayer(audios)
+const { play, pause, resume, currentIndex, currentTime, duration, isPlaying, items, setCurrentIndex } = useAudioPlayer(audios)
 
 const router = useRouter()
 
@@ -94,6 +95,9 @@ const goToLesson = (index: number) => {
               </path>
             </svg>
           </div>
+          <div class="progress-bar-wrapper">
+            <ProgressBar :model-value="currentTime / duration * 100" />
+          </div>
         </div>
       </div>
     </footer>
@@ -175,14 +179,14 @@ main {
     align-items: center;
     justify-content: space-between;
     height: 80px;
-    border-radius: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
     background-color: rgb(49, 128, 153);
     padding: 10px;
     transition: background-color .2s ease-in-out;
 
     &:after {
       background: rgba(0, 0, 0, .48);
-      border-radius: 6px;
       bottom: 0;
       content: "";
       left: 0;
@@ -221,5 +225,12 @@ main {
 .play-btn {
   width: 25px;
   height: 25px;
+}
+
+.progress-bar-wrapper {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 </style>
