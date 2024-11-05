@@ -11,11 +11,14 @@ const { play, pause, resume, currentIndex, currentTime, duration, isPlaying, aud
 
 const router = useRouter()
 
-const mainElement = ref<HTMLElement | null>(null)
 const restoreScrollPosition = () => {
   const audioElement = document.getElementById(`audio-${currentIndex.value}`)
-  if (audioElement && mainElement.value) {
-    mainElement.value.scrollTop = audioElement.offsetTop - mainElement.value.offsetTop - 15
+  const paddingTop = 15
+  if (audioElement) {
+    window.scrollTo({
+      top: audioElement.offsetTop - paddingTop - window.innerHeight / 2,
+      behavior: "smooth"
+    })
   }
 }
 
@@ -57,7 +60,7 @@ const goToLesson = (index: number) => {
 
 <template>
   <div class="elllo">
-    <main ref="mainElement">
+    <main>
       <ul>
         <li :class="['audio', currentIndex === index ? 'audio--active' : '']" v-for="(item, index) in audios"
           :id="`audio-${index}`" :key="item.url" @click="play(index)">
