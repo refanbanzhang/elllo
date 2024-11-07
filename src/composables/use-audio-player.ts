@@ -3,15 +3,15 @@ import { ref, watch } from "vue"
 import data from "../../audios.json"
 import type { AudioItem } from "@/types"
 
-const useAudioPlayer = () => {
-  const audio = ref<HTMLAudioElement>(new Audio())
-  const currentIndex = ref<number>(0)
-  const audios = ref<AudioItem[]>(data)
-  const currentTime = ref<number>(audio.value.currentTime)
-  const isPlaying = ref<boolean>(false)
-  const playbackRate = ref<number>(1)
-  const duration = ref<number>(0)
+const audio = ref<HTMLAudioElement>(new Audio())
+const currentIndex = ref<number>(0)
+const audios = ref<AudioItem[]>(data)
+const currentTime = ref<number>(audio.value.currentTime)
+const isPlaying = ref<boolean>(false)
+const playbackRate = ref<number>(1)
+const duration = ref<number>(0)
 
+const useAudioPlayer = () => {
   const setPlaybackRate = (rate: number) => {
     playbackRate.value = rate
   }
