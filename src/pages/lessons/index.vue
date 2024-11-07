@@ -213,6 +213,7 @@ main {
 
   &__title {
     flex: 1;
+    margin-right: 5px;
     color: #fff;
     font-weight: bold;
   }
