@@ -15,6 +15,7 @@
     "axios": "^1.7.7",
     "cheerio": "^1.0.0",
     "tdesign-mobile-vue": "^1.4.3",
+    "vite-svg-loader": "^5.1.0",
     "vue": "^3.5.10",
     "vue-router": "^4.4.5"
   },

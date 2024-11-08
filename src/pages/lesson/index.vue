@@ -3,14 +3,21 @@ import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router"
 import { HOST } from "@/constant"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
-import audios from "../../../audios.json"
+import useAudioPlayer from "@/composables/use-audio-player"
+
+import IconPrev from "@/assets/prev.svg"
+import IconNext from "@/assets/next.svg"
+import IconPlay from "@/assets/play.svg"
+import IconPause from "@/assets/pause.svg"
 
 const route = useRoute()
 const router = useRouter()
-
-const audio = audios.find((item) => item.lessonNo === route.params.id)
+const { play, currentIndex, audios, setCurrentIndex, isPlaying, pause, resume } = useAudioPlayer()
+const audio = audios.value.find((item) => item.lessonNo === route.params.id)
 const bgColor = ref("#f7f7f8")
 const visibleContent = ref(false)
+
+// TODO: 当前视频的currentIndex是多少呢？
 
 const handleImageLoad = async (event: Event) => {
   const imgEl = event.target as HTMLImageElement
@@ -45,6 +52,20 @@ const updateHtmlImgUrl = (html: string) => {
     return `<img${attrs}src="${getProxiedImageUrl(src)}"`
   })
 }
+
+const onPlay = () => {
+  console.log(route.params.id)
+  // 读取目标音频标识
+  // 暂停正在播放的音频
+  // 将目标音频标识更新到currentLesson
+  // 播放当前音频
+
+  if (isPlaying.value) {
+    pause()
+  } else {
+    resume()
+  }
+}
 </script>
 
 <template>
@@ -68,15 +89,16 @@ const updateHtmlImgUrl = (html: string) => {
       <div v-if="audio?.html && visibleContent" class="content" v-html="updateHtmlImgUrl(audio?.html)" @click="toggleContent" />
     </main>
     <footer>
-      <svg viewBox="0 0 24 24" class="prev"><path d="M6.3 3a.7.7 0 0 1 .7.7v6.805l11.95-6.899a.7.7 0 0 1 1.05.606v15.576a.7.7 0 0 1-1.05.606L7 13.495V20.3a.7.7 0 0 1-.7.7H4.7a.7.7 0 0 1-.7-.7V3.7a.7.7 0 0 1 .7-.7h1.6z"></path></svg>
-      <div class="play-btn-wrapper">
-        <svg class="play-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path
-            d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z">
-          </path>
-        </svg>
+      <IconPrev class="prev" />
+      <!-- 如果当前详情是正在播放的那个视频，则同步按钮状态 -->
+      <!-- 否则，同步按钮状态 -->
+      <div class="play-btn-wrapper" @click="onPlay" v-if="!isPlaying">
+        <IconPlay class="play-btn" />
       </div>
-      <svg  viewBox="0 0 24 24" class="next"><path d="M17.7 3a.7.7 0 0 0-.7.7v6.805L5.05 3.606A.7.7 0 0 0 4 4.212v15.576a.7.7 0 0 0 1.05.606L17 13.495V20.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V3.7a.7.7 0 0 0-.7-.7h-1.6z"></path></svg>
+      <div class="play-btn-wrapper" @click="onPlay" v-if="isPlaying">
+        <IconPause class="play-btn pause-btn" />
+      </div>
+      <IconNext class="next" />
     </footer>
   </div>
 </template>
