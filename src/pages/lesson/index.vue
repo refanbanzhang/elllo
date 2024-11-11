@@ -12,12 +12,10 @@ import IconPause from "@/assets/pause.svg"
 
 const route = useRoute()
 const router = useRouter()
-const { play, currentIndex, audios, setCurrentIndex, isPlaying, pause, resume } = useAudioPlayer()
+const { audios, isPlaying, pause, resume, play, currentLessonNo } = useAudioPlayer()
 const audio = audios.value.find((item) => item.lessonNo === route.params.id)
 const bgColor = ref("#f7f7f8")
 const visibleContent = ref(false)
-
-// TODO: 当前视频的currentIndex是多少呢？
 
 const handleImageLoad = async (event: Event) => {
   const imgEl = event.target as HTMLImageElement
@@ -54,17 +52,17 @@ const updateHtmlImgUrl = (html: string) => {
 }
 
 const onPlay = () => {
-  console.log(route.params.id)
-  // 读取目标音频标识
-  // 暂停正在播放的音频
-  // 将目标音频标识更新到currentLesson
-  // 播放当前音频
-
-  if (isPlaying.value) {
-    pause()
-  } else {
-    resume()
+  if (typeof route.params.id === "string") {
+    play(route.params.id)
   }
+}
+
+const onResume = () => {
+  resume()
+}
+
+const onPause = () => {
+  pause()
 }
 </script>
 
@@ -90,13 +88,14 @@ const onPlay = () => {
     </main>
     <footer>
       <IconPrev class="prev" />
-      <!-- 如果当前详情是正在播放的那个视频，则同步按钮状态 -->
-      <!-- 否则，同步按钮状态 -->
-      <div class="play-btn-wrapper" @click="onPlay" v-if="!isPlaying">
+      <div class="play-btn-wrapper" @click="onPlay" v-if="currentLessonNo !== audio?.lessonNo">
         <IconPlay class="play-btn" />
       </div>
-      <div class="play-btn-wrapper" @click="onPlay" v-if="isPlaying">
+      <div class="play-btn-wrapper" @click="onPause" v-if="currentLessonNo === audio?.lessonNo && isPlaying">
         <IconPause class="play-btn pause-btn" />
+      </div>
+      <div class="play-btn-wrapper" @click="onResume" v-if="currentLessonNo === audio?.lessonNo && !isPlaying">
+        <IconPlay class="play-btn" />
       </div>
       <IconNext class="next" />
     </footer>

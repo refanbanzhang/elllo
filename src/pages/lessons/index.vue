@@ -3,13 +3,12 @@ import { onMounted } from "vue"
 import { useRouter } from "vue-router"
 import { getProxiedImageUrl } from "@/utils"
 import useAudioPlayer from "@/composables/use-audio-player"
-import PlayerBar from "@/components/player-bar/index.vue"
 
 const router = useRouter()
-const { play, currentIndex, audios, setCurrentIndex } = useAudioPlayer()
+const { play, currentLessonNo, setCurrentLessonNo, audios } = useAudioPlayer()
 
 const restoreScrollPosition = () => {
-  const audioElement = document.getElementById(`audio-${currentIndex.value}`)
+  const audioElement = document.getElementById(`audio-${currentLessonNo.value}`)
   const paddingTop = 15
   if (audioElement) {
     window.scrollTo({
@@ -19,15 +18,15 @@ const restoreScrollPosition = () => {
   }
 }
 
-const loadLastPlayedIndex = () => {
-  const lastPlayedIndex = localStorage.getItem("lastPlayedIndex")
-  if (lastPlayedIndex) {
-    setCurrentIndex(parseInt(lastPlayedIndex))
+const loadLastPlayedLessonNo = () => {
+  const lastPlayedLessonNo = localStorage.getItem("lastPlayedLessonNo")
+  if (lastPlayedLessonNo) {
+    setCurrentLessonNo(lastPlayedLessonNo)
   }
 }
 
 onMounted(() => {
-  loadLastPlayedIndex()
+  loadLastPlayedLessonNo()
   restoreScrollPosition()
 })
 
@@ -46,8 +45,8 @@ const onGoToLesson = (index: number) => {
   <div class="elllo">
     <main>
       <ul>
-        <li :class="['audio', currentIndex === index ? 'audio--active' : '']" v-for="(item, index) in audios"
-          :id="`audio-${index}`" :key="item.url" @click="play(index)">
+        <li :class="['audio', currentLessonNo === item.lessonNo ? 'audio--active' : '']" v-for="(item, index) in audios"
+          :id="`audio-${item.lessonNo}`" :key="item.url" @click="play(item.lessonNo)">
           <img v-if="item.img" class="audio__image" :src="getProxiedImageUrl(item.img)" alt="" @click.stop="onGoToLesson(index)">
           <div class="audio__link" :href="item.url">
             {{ item.title }}

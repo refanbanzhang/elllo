@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import ProgressBar from "@/components/progress-bar/index.vue"
 import useAudioPlayer from "@/composables/use-audio-player"
 
 const router = useRouter()
-const { audios, currentIndex, currentTime, duration, isPlaying, pause, resume } = useAudioPlayer()
+const { audios, currentLessonNo, currentTime, duration, isPlaying, pause, resume } = useAudioPlayer()
 
 const footerBgColor = ref("rgb(49, 128, 153)")
+
+const currentLesson = computed(() => audios.value.find((item) => item.lessonNo === currentLessonNo.value))
 
 const onImageLoad = async (event: Event) => {
   const imgEl = event.target as HTMLImageElement
@@ -23,13 +25,13 @@ const onPlay = () => {
   }
 }
 
-const goToLesson = (index: number) => {
+const goToLesson = (lessonNo: string) => {
   if ("startViewTransition" in document) {
     document.startViewTransition(() => {
-      router.push(`/elllo/${audios.value[index].lessonNo}`)
+      router.push(`/elllo/${lessonNo}`)
     })
   } else {
-    router.push(`/elllo/${audios.value[index].lessonNo}`)
+    router.push(`/elllo/${lessonNo}`)
   }
 }
 </script>
@@ -39,15 +41,15 @@ const goToLesson = (index: number) => {
     <div class="footer__content">
       <div class="footer__content-inner" :style="{ backgroundColor: footerBgColor }">
         <img
-          v-if="audios?.[currentIndex]?.img" class="footer__img"
-          :src="getProxiedImageUrl(audios[currentIndex].img)"
-          :style="{ 'view-transition-name': `audio-${audios[currentIndex].lessonNo}` }"
+          v-if="currentLesson?.img" class="footer__img"
+          :src="getProxiedImageUrl(currentLesson.img)"
+          :style="{ 'view-transition-name': `audio-${currentLesson.lessonNo}` }"
           alt=""
-          @click.stop="goToLesson(currentIndex)"
+          @click.stop="goToLesson(currentLesson.lessonNo)"
           @load="onImageLoad"
         >
         <div class="footer__title">
-          {{ audios?.[currentIndex]?.title }}
+          {{ currentLesson?.title }}
         </div>
         <div class="play-btn-wrapper" @click="onPlay" v-if="!isPlaying">
           <svg class="play-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
