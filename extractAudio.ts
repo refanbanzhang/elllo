@@ -1,8 +1,8 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import fs from "fs";
-import type { AudioItem } from "@/types";
-import { HOST, AUDIO_PREFIX } from "@/constant";
+import type { AudioItem } from "./src/types";
+import { HOST, AUDIO_PREFIX } from "./src/constant";
 
 interface List {
   url: string;
@@ -141,24 +141,25 @@ const main = async () => {
   }
 
   const audios: AudioItem[] = [];
-
   for (const page of pages) {
     const audioLink = await extractAudioLink(page.url);
 
-    if (audioLink && audioLink.url.includes("../../Audio/AMXR/")) {
-      audios.push({
-        ...audioLink,
-        ...page,
-        url: audioLink.url.replace("../../Audio/AMXR/", AUDIO_PREFIX),
-      });
-    } else if (audioLink.url) {
-      audios.push({
-        ...audioLink,
-        ...page,
-        url: audioLink.url,
-      });
+    if (!audioLink.url) {
+      continue;
     }
+
+    // 如果找到替换目标，则替换，否则保持原样
+    const url = audioLink.url.replace("../../Audio/AMXR/", AUDIO_PREFIX);
+
+    audios.push({
+      title: audioLink.title,
+      url,
+      html: audioLink.html,
+      img: page.img,
+      lessonNo: page.lessonNo,
+    });
   }
+
   fs.writeFileSync("audios.json", JSON.stringify(audios, null, 2));
   console.log("音频链接已保存到 audios.json 文件中");
 };
