@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router"
-import { HOST } from "@/constant"
-import { getAverageColor, getProxiedImageUrl } from "@/utils"
-import useAudioPlayer from "@/composables/use-audio-player"
-
 import IconPrev from "@/assets/prev.svg"
 import IconNext from "@/assets/next.svg"
 import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
+import IconArrow from "@/assets/arrow.svg"
+import { HOST } from "@/constant"
+import { getAverageColor, getProxiedImageUrl } from "@/utils"
+import useAudioPlayer from "@/composables/use-audio-player"
 
 const route = useRoute()
 const router = useRouter()
@@ -69,9 +69,7 @@ const onPause = () => {
 <template>
   <div class="page" :style="{ backgroundColor: bgColor }">
     <header>
-      <svg viewBox="0 0 24 24" class="icon" @click="handleBack">
-        <path d="M2.793 8.043a1 1 0 0 1 1.414 0L12 15.836l7.793-7.793a1 1 0 1 1 1.414 1.414L12 18.664 2.793 9.457a1 1 0 0 1 0-1.414z"></path>
-      </svg>
+      <IconArrow class="icon" @click="handleBack" />
       <h1 class="title">
         {{ audio?.title }}
       </h1>

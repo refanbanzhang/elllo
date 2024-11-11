@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router"
+import IconPlay from "@/assets/play.svg"
+import IconPause from "@/assets/pause.svg"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import ProgressBar from "@/components/progress-bar/index.vue"
 import useAudioPlayer from "@/composables/use-audio-player"
@@ -9,7 +11,6 @@ const router = useRouter()
 const { audios, currentLessonNo, currentTime, duration, isPlaying, pause, resume } = useAudioPlayer()
 
 const footerBgColor = ref("rgb(49, 128, 153)")
-
 const currentLesson = computed(() => audios.value.find((item) => item.lessonNo === currentLessonNo.value))
 
 const onImageLoad = async (event: Event) => {
@@ -51,20 +52,12 @@ const goToLesson = (lessonNo: string) => {
         <div class="footer__title">
           {{ currentLesson?.title }}
         </div>
-        <div class="play-btn-wrapper" @click="onPlay" v-if="!isPlaying">
-          <svg class="play-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path
-              d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z">
-            </path>
-          </svg>
-        </div>
-        <div class="play-btn-wrapper" @click="onPlay" v-if="isPlaying">
-          <svg class="play-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path
-              d="M5.7 3a.7.7 0 0 0-.7.7v16.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V3.7a.7.7 0 0 0-.7-.7H5.7zm10 0a.7.7 0 0 0-.7.7v16.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V3.7a.7.7 0 0 0-.7-.7h-2.6z">
-            </path>
-          </svg>
-        </div>
+        <button class="btn" @click="onPlay" v-if="!isPlaying">
+          <IconPlay class="icon" />
+        </button>
+        <button class="btn" @click="onPlay" v-if="isPlaying">
+          <IconPause class="icon" />
+        </button>
         <div class="progress-bar-wrapper">
           <ProgressBar :model-value="currentTime / duration * 100" />
         </div>
@@ -123,7 +116,14 @@ const goToLesson = (lessonNo: string) => {
   }
 }
 
-.play-btn-wrapper {
+.btn {
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+  outline: none;
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -133,7 +133,7 @@ const goToLesson = (lessonNo: string) => {
   background: white;
 }
 
-.play-btn {
+.icon {
   width: 25px;
   height: 25px;
 }
