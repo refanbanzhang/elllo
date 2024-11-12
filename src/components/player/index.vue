@@ -18,14 +18,6 @@ const onImageLoad = async (event: Event) => {
   footerBgColor.value = await getAverageColor(imgEl)
 }
 
-const onPlay = () => {
-  if (isPlaying.value) {
-    pause()
-  } else {
-    resume()
-  }
-}
-
 const goToLesson = (lessonNo: string) => {
   if ("startViewTransition" in document) {
     document.startViewTransition(() => {
@@ -47,8 +39,8 @@ const goToLesson = (lessonNo: string) => {
         <img
           v-if="currentLesson?.img"
           class="player__img"
-          :src="getProxiedImageUrl(currentLesson.img)"
           :style="{ 'view-transition-name': `audio-${currentLesson.lessonNo}` }"
+          :src="getProxiedImageUrl(currentLesson.img)"
           :alt="currentLesson?.title"
           @click.stop="goToLesson(currentLesson.lessonNo)"
           @load="onImageLoad"
@@ -59,14 +51,14 @@ const goToLesson = (lessonNo: string) => {
         <button
           v-if="!isPlaying"
           class="btn"
-          @click="onPlay"
+          @click="resume"
         >
           <IconPlay class="icon" />
         </button>
         <button
           v-if="isPlaying"
           class="btn"
-          @click="onPlay"
+          @click="pause"
         >
           <IconPause class="icon" />
         </button>
