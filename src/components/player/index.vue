@@ -38,24 +38,36 @@ const goToLesson = (lessonNo: string) => {
 </script>
 
 <template>
-  <footer class="footer">
-    <div class="footer__content">
-      <div class="footer__content-inner" :style="{ backgroundColor: footerBgColor }">
+  <div class="player">
+    <div class="player__content">
+      <div
+        class="player__content-inner"
+        :style="{ backgroundColor: footerBgColor }"
+      >
         <img
-          v-if="currentLesson?.img" class="footer__img"
+          v-if="currentLesson?.img"
+          class="player__img"
           :src="getProxiedImageUrl(currentLesson.img)"
           :style="{ 'view-transition-name': `audio-${currentLesson.lessonNo}` }"
-          alt=""
+          :alt="currentLesson?.title"
           @click.stop="goToLesson(currentLesson.lessonNo)"
           @load="onImageLoad"
         >
-        <div class="footer__title">
+        <div class="player__title">
           {{ currentLesson?.title }}
         </div>
-        <button class="btn" @click="onPlay" v-if="!isPlaying">
+        <button
+          v-if="!isPlaying"
+          class="btn"
+          @click="onPlay"
+        >
           <IconPlay class="icon" />
         </button>
-        <button class="btn" @click="onPlay" v-if="isPlaying">
+        <button
+          v-if="isPlaying"
+          class="btn"
+          @click="onPlay"
+        >
           <IconPause class="icon" />
         </button>
         <div class="progress-bar-wrapper">
@@ -63,11 +75,11 @@ const goToLesson = (lessonNo: string) => {
         </div>
       </div>
     </div>
-  </footer>
+  </div>
 </template>
 
 <style lang="less" scoped>
-.footer {
+.player {
   position: sticky;
   bottom: 0;
 
@@ -116,14 +128,12 @@ const goToLesson = (lessonNo: string) => {
   }
 }
 
-.btn {
-  border: none;
-  padding: 0;
-  margin: 0;
-  background: none;
-  cursor: pointer;
-  outline: none;
+.icon {
+  width: 25px;
+  height: 25px;
+}
 
+.btn {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -131,11 +141,6 @@ const goToLesson = (lessonNo: string) => {
   height: 50px;
   border-radius: 50%;
   background: white;
-}
-
-.icon {
-  width: 25px;
-  height: 25px;
 }
 
 .progress-bar-wrapper {

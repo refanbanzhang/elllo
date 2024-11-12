@@ -1,11 +1,9 @@
 <script setup lang="ts">
-
 interface Props {
   modelValue: number
 }
 
 defineProps<Props>()
-
 </script>
 
 <template>
@@ -19,7 +17,7 @@ defineProps<Props>()
   </div>
 </template>
 
-<style scoped>
+<style lang="less" scoped>
 .progress-bar {
   width: 100%;
   height: 4px;

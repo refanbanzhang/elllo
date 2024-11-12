@@ -67,35 +67,60 @@ const onPause = () => {
 </script>
 
 <template>
-  <div class="page" :style="{ backgroundColor: bgColor }">
-    <header>
-      <IconArrow class="icon" @click="handleBack" />
+  <div
+    class="page"
+    :style="{ backgroundColor: bgColor }"
+  >
+    <header class="header">
+      <IconArrow
+        class="icon"
+        @click="handleBack"
+      />
       <h1 class="title">
         {{ audio?.title }}
       </h1>
     </header>
     <main>
       <div
-        v-if="audio?.img && !visibleContent" class="cover"
-        @click="toggleContent"
+        v-if="audio?.img && !visibleContent"
+        class="cover"
         :style="{
           backgroundImage: `url(${getProxiedImageUrl(audio.img)})`,
           'view-transition-name': `audio-${audio?.lessonNo}`
-        }" />
-      <div v-if="audio?.html && visibleContent" class="content" v-html="updateHtmlImgUrl(audio?.html)" @click="toggleContent" />
+        }"
+        @click="toggleContent"
+      />
+      <div
+        v-if="audio?.html && visibleContent"
+        class="content"
+        v-html="updateHtmlImgUrl(audio?.html)"
+        @click="toggleContent"
+      />
     </main>
-    <footer>
-      <IconPrev class="prev" />
-      <div class="play-btn-wrapper" @click="onPlay" v-if="currentLessonNo !== audio?.lessonNo">
-        <IconPlay class="play-btn" />
-      </div>
-      <div class="play-btn-wrapper" @click="onPause" v-if="currentLessonNo === audio?.lessonNo && isPlaying">
-        <IconPause class="play-btn pause-btn" />
-      </div>
-      <div class="play-btn-wrapper" @click="onResume" v-if="currentLessonNo === audio?.lessonNo && !isPlaying">
-        <IconPlay class="play-btn" />
-      </div>
-      <IconNext class="next" />
+    <footer class="footer">
+      <IconPrev class="icon-prev" />
+      <button
+        v-if="currentLessonNo !== audio?.lessonNo"
+        class="btn"
+        @click="onPlay"
+      >
+        <IconPlay class="icon" />
+      </button>
+      <button
+        v-if="currentLessonNo === audio?.lessonNo && isPlaying"
+        class="btn"
+        @click="onPause"
+      >
+        <IconPause class="icon" />
+      </button>
+      <button
+        v-if="currentLessonNo === audio?.lessonNo && !isPlaying"
+        class="btn"
+        @click="onResume"
+      >
+        <IconPlay class="icon" />
+      </button>
+      <IconNext class="icon-next" />
     </footer>
   </div>
 </template>
@@ -110,17 +135,11 @@ const onPause = () => {
   background-image: linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6) 80%);
 }
 
-header {
+.header {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 15px;
-}
-
-.icon {
-  width: 24px;
-  height: 24px;
-  fill: currentColor;
 }
 
 .title {
@@ -160,14 +179,27 @@ main {
   }
 }
 
-footer {
+.footer {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px 0;
 }
 
-.play-btn-wrapper {
+.icon {
+  width: 25px;
+  height: 25px;
+  fill: currentColor;
+}
+
+.icon-prev,
+.icon-next {
+  width: 32px;
+  height: 32px;
+  fill: currentColor;
+}
+
+.btn {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -176,19 +208,5 @@ footer {
   height: 56px;
   border-radius: 50%;
   background: white;
-}
-
-.play-btn {
-  width: 25px;
-  height: 25px;
-  color: #000;
-}
-
-.prev,
-.next {
-  width: 32px;
-  height: 32px;
-  color: #fff;
-  fill: currentColor;
 }
 </style>
