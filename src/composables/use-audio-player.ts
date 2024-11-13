@@ -3,6 +3,8 @@ import { ref, watch } from "vue"
 import data from "../../audios.json"
 import type { AudioItem } from "@/types"
 
+const getCurrentLesson = () => audios.value.find((item) => item.lessonNo === currentLessonNo.value)
+
 const getNextLessonNo = (currentLessonNo: string): string => {
   const currentIndex = audios.value.findIndex((item) => item.lessonNo === currentLessonNo)
   const nextIndex = currentIndex + 1
@@ -66,7 +68,6 @@ audio.value.addEventListener("durationchange", () => {
 
 audio.value.addEventListener("ended", () => {
   console.log("音频播放结束")
-  // 现在要去掉currentIndex，改为currentLessonNo，如何获取下一个lessonNo？
   play(getNextLessonNo(currentLessonNo.value || ""))
 })
 
@@ -75,13 +76,12 @@ audio.value.addEventListener("error", () => {
   play(getNextLessonNo(currentLessonNo.value || ""))
 })
 
-// 监听播放速度的调整，然后同步到audioElement.value以及localStorage
 watch(() => playbackRate.value, (newRate) => {
   audio.value.playbackRate = newRate
   localStorage.setItem("playbackRate", newRate.toString())
 })
 
-setAudioSrc(audios.value.find((item) => item.lessonNo === currentLessonNo.value)?.url || "")
+setAudioSrc(getCurrentLesson()?.url || "")
 
 const useAudioPlayer = () => {
   return {
