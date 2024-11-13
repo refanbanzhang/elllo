@@ -129,8 +129,8 @@ const onPause = () => {
 .page {
   display: flex;
   flex-direction: column;
+  height: 100%;
   padding: 15px;
-  height: 100vh;
   color: #fff;
   background-image: linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6) 80%);
 }
