@@ -9,8 +9,8 @@ export interface Landmark extends BaseItem { }
 
 export interface Topic extends BaseItem { }
 
-const MAX_TOPIC_TOTAL = 100
-const MAX_LANDMARK_TOTAL = 1
+const MAX_TOPIC_TOTAL = 100 
+const MAX_LANDMARK_TOTAL = 100
 
 // 模拟分页接口返回数据
 const getMockLandmarkData = (page: number, size: number, maxTotal = MAX_LANDMARK_TOTAL) => {
@@ -69,7 +69,6 @@ const api = {
 interface MergeConfig<T, U> {
   primaryList: T[]
   secondaryList: U[]
-  bothEnded?: boolean
   secondaryItemsPerPrimary: number
 }
 

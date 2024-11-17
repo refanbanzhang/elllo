@@ -32,6 +32,10 @@ const getPageSizes = ({
 }
 
 const getLandmarkList = async (page: number, pageSize: number) => {
+  if (isLandmarkEnd.value) {
+    return
+  }
+
   try {
     const data = await api.getLandmarkList(page, pageSize)
 
@@ -45,6 +49,10 @@ const getLandmarkList = async (page: number, pageSize: number) => {
 }
 
 const getTopicList = async (page: number, pageSize: number) => {
+  if (isTopicEnd.value) {
+    return
+  }
+
   try {
     const data = await api.getTopicList(page, pageSize)
 
@@ -74,11 +82,9 @@ const nextPage = async (page: number) => {
   mixedList.value = mergeLists({
     primaryList: topicList.value,
     secondaryList: landmarkList.value,
-    bothEnded: !hasNextPage.value,
     secondaryItemsPerPrimary
   })
 }
-
 
 const loadMore = async () => {
   currentPage.value++
