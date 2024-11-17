@@ -5,12 +5,12 @@ interface BaseItem {
   name: string;
 }
 
-export interface Landmark extends BaseItem {}
+export interface Landmark extends BaseItem { }
 
-export interface Topic extends BaseItem {}
+export interface Topic extends BaseItem { }
 
-const MAX_LANDMARK_TOTAL = 11
-const MAX_TOPIC_TOTAL = 15
+const MAX_TOPIC_TOTAL = 100
+const MAX_LANDMARK_TOTAL = 1
 
 // 模拟分页接口返回数据
 const getMockLandmarkData = (page: number, size: number, maxTotal = MAX_LANDMARK_TOTAL) => {
@@ -66,35 +66,36 @@ const api = {
     mockRequest(getMockTopicData(page, size), 10)
 }
 
-// 合并专题和地标列表
-export const mergeLists = (topics: Topic[], landmarks: Landmark[], itemsPerTopic = 3) => {
-  const mergedList: (Landmark | Topic)[] = []
+interface MergeConfig<T, U> {
+  primaryList: T[]
+  secondaryList: U[]
+  bothEnded?: boolean
+  secondaryItemsPerPrimary: number
+}
 
-  // 记录当前处理到的索引位置
-  let currentLandmarkIndex = 0
-  let currentTopicIndex = 0
+export const mergeLists = <T, U>({
+  primaryList,
+  secondaryList,
+  secondaryItemsPerPrimary,
+}: MergeConfig<T, U>) => {
+  const mergedList: (T | U)[] = []
 
-  // 一直到专题和地标数据都插入完毕后，才会结束循环
-  // 默认情况下，请求的地标和专题数据是相匹配的，比如1个专题对应3个地标,2个专题对应6个地标
-  // 1. 专题大于地标
-  // 2. 专题小于地标
-  // 2.1 专题匹配地标1:3 2:6
-  // 2.2 专题不匹配地标1:2 2:3
-  // 3. 专题等于地标
+  let primaryIndex = 0
+  let secondaryIndex = 0
 
-  while (currentTopicIndex < topics.length || currentLandmarkIndex < landmarks.length) {
-    // 还有专题数据时，插入1个专题
-    if (currentTopicIndex < topics.length) {
-      mergedList.push(topics[currentTopicIndex])
-      currentTopicIndex++
+  const hasMorePrimary = () => primaryIndex < primaryList.length
+  const hasMoreSecondary = () => secondaryIndex < secondaryList.length
+
+  while (hasMorePrimary() || hasMoreSecondary()) {
+    if (hasMorePrimary()) {
+      mergedList.push(primaryList[primaryIndex])
+      primaryIndex++
     }
 
-    // 遍历3次，遍历时，有可能地标数据不足3条
-    for (let i = 0; i < itemsPerTopic; i++) {
-      // 还有地标数据时，插入1个地标
-      if (currentLandmarkIndex < landmarks.length) {
-        mergedList.push(landmarks[currentLandmarkIndex])
-        currentLandmarkIndex++
+    for (let i = 0; i < secondaryItemsPerPrimary; i++) {
+      if (hasMoreSecondary()) {
+        mergedList.push(secondaryList[secondaryIndex])
+        secondaryIndex++
       }
     }
   }

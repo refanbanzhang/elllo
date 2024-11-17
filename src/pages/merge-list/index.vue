@@ -11,16 +11,32 @@ const currentPage = ref(1)
 const isLandmarkEnd = ref(false)
 const isTopicEnd = ref(false)
 
-const TOTAL = 4 * 2
-const PER_PAGE_LANDMARK = TOTAL - (TOTAL / 4)
-const PER_PAGE_TOPIC = TOTAL / 4
+const getPageSizes = ({
+  topicSize,
+  landmarkSize,
+  groupSize
+}: {
+  topicSize: number,
+  landmarkSize: number,
+  groupSize: number
+}) => {
+  const oneGroupSize = topicSize + landmarkSize
+  const totalSize = groupSize * oneGroupSize
+  const landmarkPageSize = totalSize - groupSize
 
-const getLandmarkList = async (page: number) => {
+  return {
+    topicPageSize: groupSize,
+    landmarkPageSize,
+    secondaryItemsPerPrimary: landmarkSize
+  }
+}
+
+const getLandmarkList = async (page: number, pageSize: number) => {
   try {
-    const data = await api.getLandmarkList(page, PER_PAGE_LANDMARK)
+    const data = await api.getLandmarkList(page, pageSize)
 
     landmarkList.value.push(...data)
-    if (data.length < PER_PAGE_LANDMARK) {
+    if (data.length < pageSize) {
       isLandmarkEnd.value = true
     }
   } catch (error) {
@@ -28,12 +44,12 @@ const getLandmarkList = async (page: number) => {
   }
 }
 
-const getTopicList = async (page: number) => {
+const getTopicList = async (page: number, pageSize: number) => {
   try {
-    const data = await api.getTopicList(page, PER_PAGE_TOPIC)
+    const data = await api.getTopicList(page, pageSize)
 
     topicList.value.push(...data)
-    if (data.length < PER_PAGE_TOPIC) {
+    if (data.length < pageSize) {
       isTopicEnd.value = true
     }
   } catch (error) {
@@ -41,16 +57,28 @@ const getTopicList = async (page: number) => {
   }
 }
 
+const hasNextPage = computed(() => !isLandmarkEnd.value || !isTopicEnd.value)
+
+const { topicPageSize, landmarkPageSize, secondaryItemsPerPrimary } = getPageSizes({
+  topicSize: 1,
+  landmarkSize: 3,
+  groupSize: 3,
+})
+
 const nextPage = async (page: number) => {
   await Promise.all([
-    getLandmarkList(page),
-    getTopicList(page)
+    getLandmarkList(page, landmarkPageSize),
+    getTopicList(page, topicPageSize)
   ])
 
-  mixedList.value = mergeLists(topicList.value, landmarkList.value)
+  mixedList.value = mergeLists({
+    primaryList: topicList.value,
+    secondaryList: landmarkList.value,
+    bothEnded: !hasNextPage.value,
+    secondaryItemsPerPrimary
+  })
 }
 
-const hasNextPage = computed(() => !isLandmarkEnd.value || !isTopicEnd.value)
 
 const loadMore = async () => {
   currentPage.value++
