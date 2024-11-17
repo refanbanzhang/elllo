@@ -7,6 +7,7 @@ import photos from "./pages/photos/index.vue"
 import photo from "./pages/photo/index.vue"
 import liveTransitions from "./pages/live-transitions/index.vue"
 import liveTransition from "./pages/live-transition/index.vue"
+import MergeList from "./pages/merge-list/index.vue"
 
 const routes = [
   { path: "/", component: lessons },
@@ -27,6 +28,10 @@ const routes = [
   {
     path: "/live-transitions/:id",
     component: liveTransition,
+  },
+  {
+    path: "/merge-list",
+    component: MergeList,
   },
 ]
 

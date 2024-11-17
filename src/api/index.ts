@@ -1,3 +1,12 @@
+// 封装通用的mock请求工具函数
+export const mockRequest = <T>(data: T, delay = 300): Promise<T> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(data);
+    }, delay);
+  });
+};
+
 export const photos = [
   {
     id: 1,
