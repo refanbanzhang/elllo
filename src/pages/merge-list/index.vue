@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import api, { Landmark, Topic, mergeLists } from './api'
 
 const landmarkList = ref<Landmark[]>([])
@@ -53,11 +53,12 @@ const nextPage = async (page: number) => {
 const hasNextPage = computed(() => !isLandmarkEnd.value || !isTopicEnd.value)
 
 const loadMore = async () => {
-  await nextPage(currentPage.value)
   currentPage.value++
 }
 
-loadMore()
+watch(() => currentPage.value, async (value) => {
+  await nextPage(value)
+}, { immediate: true })
 </script>
 
 <template>

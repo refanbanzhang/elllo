@@ -1,14 +1,13 @@
 import { mockRequest } from '@/api'
 
-export interface Landmark {
+interface BaseItem {
   id: string;
   name: string;
 }
 
-export interface Topic {
-  id: string;
-  name: string;
-}
+export interface Landmark extends BaseItem {}
+
+export interface Topic extends BaseItem {}
 
 const MAX_LANDMARK_TOTAL = 11
 const MAX_TOPIC_TOTAL = 15
@@ -67,31 +66,40 @@ const api = {
     mockRequest(getMockTopicData(page, size), 10)
 }
 
-const ITEMS_PER_TOPIC = 3
-export const mergeLists = (topics: Topic[], landmarks: Landmark[]) => {
-  const tempList: (Landmark | Topic)[] = []
+// 合并专题和地标列表
+export const mergeLists = (topics: Topic[], landmarks: Landmark[], itemsPerTopic = 3) => {
+  const mergedList: (Landmark | Topic)[] = []
 
   // 记录当前处理到的索引位置
   let currentLandmarkIndex = 0
   let currentTopicIndex = 0
 
+  // 一直到专题和地标数据都插入完毕后，才会结束循环
+  // 默认情况下，请求的地标和专题数据是相匹配的，比如1个专题对应3个地标,2个专题对应6个地标
+  // 1. 专题大于地标
+  // 2. 专题小于地标
+  // 2.1 专题匹配地标1:3 2:6
+  // 2.2 专题不匹配地标1:2 2:3
+  // 3. 专题等于地标
+
   while (currentTopicIndex < topics.length || currentLandmarkIndex < landmarks.length) {
-    // 插入1个专题
+    // 还有专题数据时，插入1个专题
     if (currentTopicIndex < topics.length) {
-      tempList.push(topics[currentTopicIndex])
+      mergedList.push(topics[currentTopicIndex])
       currentTopicIndex++
     }
 
-    // 插入3个地标
-    for (let i = 0; i < ITEMS_PER_TOPIC; i++) {
+    // 遍历3次，遍历时，有可能地标数据不足3条
+    for (let i = 0; i < itemsPerTopic; i++) {
+      // 还有地标数据时，插入1个地标
       if (currentLandmarkIndex < landmarks.length) {
-        tempList.push(landmarks[currentLandmarkIndex])
+        mergedList.push(landmarks[currentLandmarkIndex])
         currentLandmarkIndex++
       }
     }
   }
 
-  return tempList
+  return mergedList
 }
 
 export default api
