@@ -70,33 +70,55 @@ interface MergeConfig<T, U> {
   primaryList: T[]
   secondaryList: U[]
   secondaryItemsPerPrimary: number
+  noMoreLandmark: boolean
 }
 
-export const mergeLists = <T, U>({
+/**
+ * 合并两个列表，按照指定比例交错插入
+ * @param {object} params - 合并参数
+ * @param {any[]} params.primaryList - 主列表(专题)
+ * @param {any[]} params.secondaryList - 次列表(地标)
+ * @param {number} params.secondaryItemsPerPrimary - 每个主列表项对应的次列表项数量
+ * @returns {any[]} 合并后的列表
+ */
+export const mergeLists = ({
   primaryList,
   secondaryList,
   secondaryItemsPerPrimary,
-}: MergeConfig<T, U>) => {
-  const mergedList: (T | U)[] = []
+  noMoreLandmark,
+}: MergeConfig<Topic, Landmark>) => {
+  const mergedList = []
 
   let primaryIndex = 0
   let secondaryIndex = 0
+  let secondaryCount = 0
 
   const hasMorePrimary = () => primaryIndex < primaryList.length
   const hasMoreSecondary = () => secondaryIndex < secondaryList.length
 
-  while (hasMorePrimary() || hasMoreSecondary()) {
-    if (hasMorePrimary()) {
+  // 首先插入第一个专题
+  if (hasMorePrimary()) {
+    mergedList.push(primaryList[primaryIndex])
+    primaryIndex++
+  }
+
+  // 优先遍历地标列表
+  while (hasMoreSecondary()) {
+    mergedList.push(secondaryList[secondaryIndex])
+    secondaryIndex++
+    secondaryCount++
+
+    // 每当累计了指定数量的地标后，插入一个专题
+    if (secondaryCount === secondaryItemsPerPrimary && hasMorePrimary()) {
       mergedList.push(primaryList[primaryIndex])
       primaryIndex++
+      secondaryCount = 0
     }
+  }
 
-    for (let i = 0; i < secondaryItemsPerPrimary; i++) {
-      if (hasMoreSecondary()) {
-        mergedList.push(secondaryList[secondaryIndex])
-        secondaryIndex++
-      }
-    }
+  // 如果地标遍历完了且标记为没有更多地标，则插入剩余的所有专题
+  if (noMoreLandmark) {
+    mergedList.push(...primaryList.slice(primaryIndex))
   }
 
   return mergedList
