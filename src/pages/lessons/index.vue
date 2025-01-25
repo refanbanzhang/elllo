@@ -2,11 +2,11 @@
 import { onMounted } from "vue"
 import { useRouter } from "vue-router"
 import { getProxiedImageUrl } from "@/utils"
-import useAudioPlayer from "@/composables/use-audio-player"
+import audioPlayer from "@/composables/use-audio-player"
 import Player from "@/components/player/index.vue"
 
 const router = useRouter()
-const { play, currentLessonNo, setCurrentLessonNo, audios } = useAudioPlayer()
+const { audios, play, currentLessonNo, setCurrentLessonNo, loadNextPage } = audioPlayer
 
 const restoreScrollPosition = () => {
   const audioElement = document.getElementById(`audio-${currentLessonNo.value}`)
@@ -40,6 +40,21 @@ const onGoToLesson = (index: number) => {
     router.push(`/elllo/${audios.value[index].lessonNo}`)
   }
 }
+
+const onScroll = () => {
+  const scrollPosition = window.scrollY
+  const scrollHeight = document.documentElement.scrollHeight
+  const clientHeight = document.documentElement.clientHeight
+  const isBottom = scrollHeight - scrollPosition - clientHeight < 1
+  if (isBottom) {
+    loadNextPage()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("scroll", onScroll)
+})
+
 </script>
 
 <template>

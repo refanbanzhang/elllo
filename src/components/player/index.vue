@@ -5,11 +5,10 @@ import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import ProgressBar from "@/components/progress-bar/index.vue"
-import useAudioPlayer from "@/composables/use-audio-player"
+import audioPlayer from "@/composables/use-audio-player"
 
 const router = useRouter()
-const { audios, currentLessonNo, currentTime, duration, isPlaying, pause, resume } = useAudioPlayer()
-
+const { audios, currentLessonNo, currentTime, duration, isPlaying, pause, resume } = audioPlayer
 const footerBgColor = ref("rgb(49, 128, 153)")
 const currentLesson = computed(() => audios.value.find((item) => item.lessonNo === currentLessonNo.value))
 

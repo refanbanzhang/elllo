@@ -8,11 +8,11 @@ import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow.svg"
 import { HOST } from "@/constant"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
-import useAudioPlayer from "@/composables/use-audio-player"
+import audioPlayer from "@/composables/use-audio-player"
 
 const route = useRoute()
 const router = useRouter()
-const { audios, isPlaying, pause, resume, play, currentLessonNo } = useAudioPlayer()
+const { audios, isPlaying, pause, resume, play, currentLessonNo } = audioPlayer
 const audio = audios.value.find((item) => item.lessonNo === route.params.id)
 const bgColor = ref("#f7f7f8")
 const visibleContent = ref(false)
