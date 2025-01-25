@@ -14,8 +14,8 @@ const createAudioPlayer = () => {
   const isPlaying = ref<boolean>(false)
   const duration = ref<number>(0)
 
-  const getNextLessonNo = (currentLessonNo: string): string => {
-    const currentIndex = audios.value.findIndex((item) => item.lessonNo === currentLessonNo)
+  const getNextLessonNo = (lessonNo: string): string => {
+    const currentIndex = audios.value.findIndex((item) => item.lessonNo === lessonNo)
     const nextIndex = currentIndex + 1
     return nextIndex < audios.value.length
       ? audios.value[nextIndex].lessonNo
@@ -26,17 +26,21 @@ const createAudioPlayer = () => {
     currentLessonNo.value = lessonNo
   }
 
-  const setActiveSrc = (lessonNo: string) => {
+  const setAudioSrc = (lessonNo: string) => {
     const matchAudio = audios.value.find((item) => item.lessonNo === lessonNo)
     if (matchAudio) {
       audio.value.src = matchAudio.url
-      return;
+      currentLessonNo.value = lessonNo
+      localStorage.setItem("lastPlayedLessonNo", lessonNo)
+      return
     }
 
     if (audios.value.length > 0) {
       audio.value.src = audios.value[0].url
       return
     }
+
+    throw new Error("没有找到音频")
   }
 
   const pause = () => {
@@ -48,11 +52,13 @@ const createAudioPlayer = () => {
   }
 
   const play = (lessonNo: string) => {
-    pause()
-    currentLessonNo.value = lessonNo
-    setActiveSrc(lessonNo)
-    audio.value.play()
-    localStorage.setItem("lastPlayedLessonNo", lessonNo)
+    try {
+      pause()
+      setAudioSrc(lessonNo)
+      audio.value.play()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   audio.value.addEventListener("play", () => {
@@ -106,7 +112,7 @@ const createAudioPlayer = () => {
     await loadNextPage()
 
     // 设置当前播放的音频
-    setActiveSrc(currentLessonNo.value || "")
+    setAudioSrc(currentLessonNo.value || "")
   }
 
   init()
