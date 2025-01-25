@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Loading: typeof import('./src/components/loading/index.vue')['default']
     Player: typeof import('./src/components/player/index.vue')['default']
     ProgressBar: typeof import('./src/components/progress-bar/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

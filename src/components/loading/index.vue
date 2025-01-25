@@ -1,0 +1,44 @@
+<script setup lang="ts">
+</script>
+
+<template>
+  <div class="loading">
+    <div class="loading__mask">
+      <div class="loading__content">
+        <div class="loading__text">
+          loading...
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="less" scoped>
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+
+  &__mask {
+    background: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+  }
+
+  &__content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+    background: #fff;
+  }
+}
+</style>

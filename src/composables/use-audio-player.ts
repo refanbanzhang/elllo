@@ -1,6 +1,7 @@
 import { ref } from "vue"
 import { getAudios } from "@/api/audio"
 import type { AudioItem } from "@/types"
+import { showLoading, hideLoading } from "@/components/loading"
 
 const createAudioPlayer = () => {
   const currentPage = ref<number>(0)
@@ -22,10 +23,9 @@ const createAudioPlayer = () => {
       : audios.value[0].lessonNo
   }
 
-  const setCurrentLessonNo = (lessonNo: string) => {
-    currentLessonNo.value = lessonNo
-  }
-
+  // 设置音频播放内容
+  // 设置当前音频编号
+  // 缓存当前播放的音频编号
   const setAudioSrc = (lessonNo: string) => {
     const matchAudio = audios.value.find((item) => item.lessonNo === lessonNo)
     if (matchAudio) {
@@ -61,32 +61,6 @@ const createAudioPlayer = () => {
     }
   }
 
-  audio.value.addEventListener("play", () => {
-    isPlaying.value = true
-  })
-
-  audio.value.addEventListener("pause", () => {
-    isPlaying.value = false
-  })
-
-  audio.value.addEventListener("timeupdate", () => {
-    currentTime.value = audio.value.currentTime
-  })
-
-  audio.value.addEventListener("durationchange", () => {
-    duration.value = audio.value.duration
-  })
-
-  audio.value.addEventListener("ended", () => {
-    console.log("音频播放结束")
-    play(getNextLessonNo(currentLessonNo.value || ""))
-  })
-
-  audio.value.addEventListener("error", () => {
-    console.log("音频播放错误")
-    play(getNextLessonNo(currentLessonNo.value || ""))
-  })
-
   const loadNextPage = async () => {
     if (!hasMore.value) {
       alert("没有更多数据了")
@@ -97,6 +71,8 @@ const createAudioPlayer = () => {
       return
     }
 
+    showLoading()
+
     isLoading.value = true
     const nextPage = currentPage.value + 1
 
@@ -105,14 +81,48 @@ const createAudioPlayer = () => {
     hasMore.value = (nextPage * pageSize.value) < res.total
     currentPage.value = nextPage
     isLoading.value = false
+
+    hideLoading()
+  }
+
+  const initEvents = () => {
+    audio.value.addEventListener("play", () => {
+      isPlaying.value = true
+    })
+
+    audio.value.addEventListener("pause", () => {
+      isPlaying.value = false
+    })
+
+    audio.value.addEventListener("timeupdate", () => {
+      currentTime.value = audio.value.currentTime
+    })
+
+    audio.value.addEventListener("durationchange", () => {
+      duration.value = audio.value.duration
+    })
+
+    audio.value.addEventListener("ended", () => {
+      console.log("音频播放结束")
+      play(getNextLessonNo(currentLessonNo.value || ""))
+    })
+
+    audio.value.addEventListener("error", () => {
+      console.log("音频播放错误")
+      play(getNextLessonNo(currentLessonNo.value || ""))
+    })
   }
 
   const init = async () => {
+    initEvents()
+
     // 初始化获取数据
     await loadNextPage()
 
-    // 设置当前播放的音频
-    setAudioSrc(currentLessonNo.value || "")
+    const lastPlayedLessonNo = localStorage.getItem("lastPlayedLessonNo")
+    if (lastPlayedLessonNo) {
+      setAudioSrc(lastPlayedLessonNo)
+    }
   }
 
   init()
@@ -126,7 +136,6 @@ const createAudioPlayer = () => {
     pause,
     resume,
     play,
-    setCurrentLessonNo,
     loadNextPage,
   }
 }

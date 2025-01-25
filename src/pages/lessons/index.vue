@@ -6,7 +6,7 @@ import audioPlayer from "@/composables/use-audio-player"
 import Player from "@/components/player/index.vue"
 
 const router = useRouter()
-const { audios, play, currentLessonNo, setCurrentLessonNo, loadNextPage } = audioPlayer
+const { audios, play, currentLessonNo, loadNextPage } = audioPlayer
 
 const restoreLastScrollPosition = () => {
   const audioElement = document.getElementById(`audio-${currentLessonNo.value}`)
@@ -16,13 +16,6 @@ const restoreLastScrollPosition = () => {
       top: audioElement.offsetTop - paddingTop - window.innerHeight / 2,
       behavior: "instant"
     })
-  }
-}
-
-const restoreLastLesson = () => {
-  const lastPlayedLessonNo = localStorage.getItem("lastPlayedLessonNo")
-  if (lastPlayedLessonNo) {
-    setCurrentLessonNo(lastPlayedLessonNo)
   }
 }
 
@@ -47,8 +40,6 @@ const onScroll = () => {
 }
 
 onMounted(() => {
-  restoreLastLesson()
-
   // 需要等 audios 加载完成，否则获取不到目标元素
   restoreLastScrollPosition()
 })
