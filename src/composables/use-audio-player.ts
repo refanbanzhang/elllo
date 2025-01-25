@@ -1,4 +1,4 @@
-import { ref, watch } from "vue"
+import { ref } from "vue"
 import { getAudios } from "@/api/audio"
 import type { AudioItem } from "@/types"
 
@@ -12,7 +12,6 @@ const createAudioPlayer = () => {
   const audios = ref<AudioItem[]>([])
   const currentTime = ref<number>(audio.value.currentTime)
   const isPlaying = ref<boolean>(false)
-  const playbackRate = ref<number>(1)
   const duration = ref<number>(0)
 
   const getNextLessonNo = (currentLessonNo: string): string => {
@@ -27,15 +26,16 @@ const createAudioPlayer = () => {
     currentLessonNo.value = lessonNo
   }
 
-  const setPlaybackRate = (rate: number) => {
-    playbackRate.value = rate
-  }
-
   const setActiveSrc = (lessonNo: string) => {
-    // 设置当前播放的音频
     const matchAudio = audios.value.find((item) => item.lessonNo === lessonNo)
     if (matchAudio) {
       audio.value.src = matchAudio.url
+      return;
+    }
+
+    if (audios.value.length > 0) {
+      audio.value.src = audios.value[0].url
+      return
     }
   }
 
@@ -51,7 +51,6 @@ const createAudioPlayer = () => {
     pause()
     currentLessonNo.value = lessonNo
     setActiveSrc(lessonNo)
-    audio.value.playbackRate = playbackRate.value
     audio.value.play()
     localStorage.setItem("lastPlayedLessonNo", lessonNo)
   }
@@ -80,11 +79,6 @@ const createAudioPlayer = () => {
   audio.value.addEventListener("error", () => {
     console.log("音频播放错误")
     play(getNextLessonNo(currentLessonNo.value || ""))
-  })
-
-  watch(() => playbackRate.value, (newRate) => {
-    audio.value.playbackRate = newRate
-    localStorage.setItem("playbackRate", newRate.toString())
   })
 
   const loadNextPage = async () => {
@@ -127,7 +121,6 @@ const createAudioPlayer = () => {
     resume,
     play,
     setCurrentLessonNo,
-    setPlaybackRate,
     loadNextPage,
   }
 }
