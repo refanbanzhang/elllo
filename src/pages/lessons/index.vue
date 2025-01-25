@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from "vue"
+import { onMounted, onUnmounted } from "vue"
 import { useRouter } from "vue-router"
 import { getProxiedImageUrl } from "@/utils"
 import audioPlayer from "@/composables/use-audio-player"
@@ -55,6 +55,10 @@ onMounted(() => {
 
 onMounted(() => {
   window.addEventListener("scroll", onScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener("scroll", onScroll)
 })
 </script>
 
