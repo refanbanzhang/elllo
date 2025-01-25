@@ -8,7 +8,7 @@ import Player from "@/components/player/index.vue"
 const router = useRouter()
 const { audios, play, currentLessonNo, setCurrentLessonNo, loadNextPage } = audioPlayer
 
-const restoreScrollPosition = () => {
+const restoreLastScrollPosition = () => {
   const audioElement = document.getElementById(`audio-${currentLessonNo.value}`)
   const paddingTop = 15
   if (audioElement) {
@@ -19,19 +19,14 @@ const restoreScrollPosition = () => {
   }
 }
 
-const loadLastPlayedLessonNo = () => {
+const restoreLastLesson = () => {
   const lastPlayedLessonNo = localStorage.getItem("lastPlayedLessonNo")
   if (lastPlayedLessonNo) {
     setCurrentLessonNo(lastPlayedLessonNo)
   }
 }
 
-onMounted(() => {
-  loadLastPlayedLessonNo()
-  restoreScrollPosition()
-})
-
-const onGoToLesson = (index: number) => {
+const onNavigate = (index: number) => {
   if ("startViewTransition" in document) {
     document.startViewTransition(() => {
       router.push(`/elllo/${audios.value[index].lessonNo}`)
@@ -52,9 +47,15 @@ const onScroll = () => {
 }
 
 onMounted(() => {
-  window.addEventListener("scroll", onScroll)
+  restoreLastLesson()
+
+  // 需要等 audios 加载完成，否则获取不到目标元素
+  restoreLastScrollPosition()
 })
 
+onMounted(() => {
+  window.addEventListener("scroll", onScroll)
+})
 </script>
 
 <template>
@@ -72,7 +73,7 @@ onMounted(() => {
           class="audio__image"
           :src="getProxiedImageUrl(item.img)"
           alt=""
-          @click.stop="onGoToLesson(index)"
+          @click.stop="onNavigate(index)"
         >
         <div
           class="audio__link"
