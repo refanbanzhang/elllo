@@ -12,7 +12,7 @@ import audioPlayer from "@/composables/use-audio-player"
 
 const route = useRoute()
 const router = useRouter()
-const { audios, isPlaying, pause, resume, play, currentLessonNo } = audioPlayer
+const { audios, isPlaying, pause, resume, play, activeLesson } = audioPlayer
 const audio = audios.value.find((item) => item.lessonNo === route.params.id)
 const bgColor = ref("#f7f7f8")
 const visibleContent = ref(false)
@@ -52,8 +52,8 @@ const updateHtmlImgUrl = (html: string) => {
 }
 
 const onPlay = () => {
-  if (typeof route.params.id === "string") {
-    play(route.params.id)
+  if (activeLesson.value) {
+    play(activeLesson.value)
   }
 }
 
@@ -100,21 +100,21 @@ const onPause = () => {
     <footer class="footer">
       <IconPrev class="icon-prev" />
       <button
-        v-if="currentLessonNo !== audio?.lessonNo"
+        v-if="activeLesson?.lessonNo !== audio?.lessonNo"
         class="btn"
         @click="onPlay"
       >
         <IconPlay class="icon" />
       </button>
       <button
-        v-if="currentLessonNo === audio?.lessonNo && isPlaying"
+        v-if="activeLesson?.lessonNo === audio?.lessonNo && isPlaying"
         class="btn"
         @click="onPause"
       >
         <IconPause class="icon" />
       </button>
       <button
-        v-if="currentLessonNo === audio?.lessonNo && !isPlaying"
+        v-if="activeLesson?.lessonNo === audio?.lessonNo && !isPlaying"
         class="btn"
         @click="onResume"
       >

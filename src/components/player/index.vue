@@ -1,30 +1,23 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router"
+import { ref } from "vue"
 import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import ProgressBar from "@/components/progress-bar/index.vue"
 import audioPlayer from "@/composables/use-audio-player"
+import useTransitionNavigate from "@/utils/transitionNavigate"
 
-const router = useRouter()
-const { audios, currentLessonNo, currentTime, duration, isPlaying, pause, resume } = audioPlayer
+const { transitionNavigate } = useTransitionNavigate()
 const footerBgColor = ref("rgb(49, 128, 153)")
-const currentLesson = computed(() => audios.value.find((item) => item.lessonNo === currentLessonNo.value))
+const { activeLesson, currentTime, duration, isPlaying, pause, resume } = audioPlayer
 
 const onImageLoad = async (event: Event) => {
   const imgEl = event.target as HTMLImageElement
   footerBgColor.value = await getAverageColor(imgEl)
 }
 
-const goToLesson = (lessonNo: string) => {
-  if ("startViewTransition" in document) {
-    document.startViewTransition(() => {
-      router.push(`/elllo/${lessonNo}`)
-    })
-  } else {
-    router.push(`/elllo/${lessonNo}`)
-  }
+const onNavigate = (lessonNo: string) => {
+  transitionNavigate(lessonNo)
 }
 </script>
 
@@ -36,16 +29,16 @@ const goToLesson = (lessonNo: string) => {
         :style="{ backgroundColor: footerBgColor }"
       >
         <img
-          v-if="currentLesson?.img"
+          v-if="activeLesson?.img"
           class="player__img"
-          :style="{ 'view-transition-name': `audio-${currentLesson.lessonNo}` }"
-          :src="getProxiedImageUrl(currentLesson.img)"
-          :alt="currentLesson?.title"
-          @click.stop="goToLesson(currentLesson.lessonNo)"
+          :style="{ 'view-transition-name': `audio-${activeLesson.lessonNo}` }"
+          :src="getProxiedImageUrl(activeLesson.img)"
+          :alt="activeLesson?.title"
+          @click.stop="onNavigate(activeLesson.lessonNo)"
           @load="onImageLoad"
         >
         <div class="player__title">
-          {{ currentLesson?.title }}
+          {{ activeLesson?.title }}
         </div>
         <button
           v-if="!isPlaying"

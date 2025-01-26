@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from "vue"
-import { useRouter } from "vue-router"
 import { getProxiedImageUrl } from "@/utils"
 import audioPlayer from "@/composables/use-audio-player"
 import Player from "@/components/player/index.vue"
+import useTransitionNavigate from "@/utils/transitionNavigate"
+import useAudios from "@/composables/use-audios"
+const { play, activeLesson } = audioPlayer
 
-const router = useRouter()
-const { audios, play, currentLessonNo, loadNextPage } = audioPlayer
+const { audios, loadNextPage } = useAudios()
+const { transitionNavigate } = useTransitionNavigate()
 
-const onNavigate = (index: number) => {
-  if ("startViewTransition" in document) {
-    document.startViewTransition(() => {
-      router.push(`/elllo/${audios.value[index].lessonNo}`)
-    })
-  } else {
-    router.push(`/elllo/${audios.value[index].lessonNo}`)
-  }
+const onNavigate = (lessonNo: string) => {
+  transitionNavigate(lessonNo)
 }
 
 const onScroll = () => {
@@ -27,6 +23,10 @@ const onScroll = () => {
     loadNextPage()
   }
 }
+
+onMounted(() => {
+  loadNextPage()
+})
 
 onMounted(() => {
   window.addEventListener("scroll", onScroll)
@@ -41,18 +41,18 @@ onUnmounted(() => {
   <div class="page">
     <ul>
       <li
-        :class="['audio', currentLessonNo === item.lessonNo ? 'audio--active' : '']"
-        v-for="(item, index) in audios"
+        :class="['audio', activeLesson?.lessonNo === item.lessonNo ? 'audio--active' : '']"
+        v-for="(item) in audios"
         :id="`audio-${item.lessonNo}`"
         :key="item.url"
-        @click="play(item.lessonNo)"
+        @click="play(item)"
       >
         <img
           v-if="item.img"
           class="audio__image"
           :src="getProxiedImageUrl(item.img)"
           alt=""
-          @click.stop="onNavigate(index)"
+          @click.stop="onNavigate(item.lessonNo)"
         >
         <div
           class="audio__link"
