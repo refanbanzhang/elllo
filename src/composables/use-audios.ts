@@ -1,6 +1,6 @@
 import { ref } from "vue"
-import type { AudioItem } from "@/types"
-import { getAudios } from "@/api/audio"
+import type { Lesson } from "@/types"
+import { getLessons } from "@/api/audio"
 import { showLoading, hideLoading, showToast } from "@/components/loading"
 
 const useAudios = () => {
@@ -8,7 +8,7 @@ const useAudios = () => {
   const pageSize = ref<number>(20)
   const isLoading = ref<boolean>(false)
   const hasMore = ref<boolean>(true)
-  const audios = ref<AudioItem[]>([])
+  const lessons = ref<Lesson[]>([])
 
   const loadNextPage = async () => {
     if (!hasMore.value) {
@@ -25,8 +25,8 @@ const useAudios = () => {
     isLoading.value = true
     const nextPage = currentPage.value + 1
 
-    const res = await getAudios({ page: nextPage, pageSize: pageSize.value })
-    audios.value = [...audios.value, ...res.items]
+    const res = await getLessons({ page: nextPage, pageSize: pageSize.value })
+    lessons.value = [...lessons.value, ...res.items]
     hasMore.value = (nextPage * pageSize.value) < res.total
     currentPage.value = nextPage
     isLoading.value = false
@@ -34,10 +34,12 @@ const useAudios = () => {
     hideLoading()
   }
 
+  loadNextPage()
+
   return {
-    audios,
+    lessons,
     loadNextPage
   }
 }
 
-export default useAudios
+export default useAudios()

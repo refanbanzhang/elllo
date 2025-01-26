@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router"
 import IconPrev from "@/assets/prev.svg"
 import IconNext from "@/assets/next.svg"
@@ -8,34 +8,30 @@ import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow.svg"
 import { HOST } from "@/constant"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
-import audioPlayer from "@/composables/use-audio-player"
+import player from "@/composables/use-player"
+import { getLessonByNo } from "@/api/audio"
+import type { Lesson } from "@/types"
 
 const route = useRoute()
 const router = useRouter()
-const { audios, isPlaying, pause, resume, play, activeLesson } = audioPlayer
-const audio = audios.value.find((item) => item.lessonNo === route.params.id)
+const { playingLesson, isPlaying, isPaused, pause, resume, play } = player
 const bgColor = ref("#f7f7f8")
 const visibleContent = ref(false)
+const data = ref<Lesson | null>(null)
 
 const handleImageLoad = async (event: Event) => {
   const imgEl = event.target as HTMLImageElement
   bgColor.value = await getAverageColor(imgEl)
 }
 
-if (audio?.img) {
+if (data.value?.img) {
   const img = new Image()
-  img.src = getProxiedImageUrl(audio.img)
+  img.src = getProxiedImageUrl(data.value?.img)
   img.addEventListener("load", handleImageLoad)
 }
 
 const handleBack = () => {
-  if ("startViewTransition" in document) {
-    document.startViewTransition(() => {
-      router.push('/')
-    })
-  } else {
-    router.push('/')
-  }
+  router.back()
 }
 
 const toggleContent = () => {
@@ -51,23 +47,17 @@ const updateHtmlImgUrl = (html: string) => {
   })
 }
 
-const onPlay = () => {
-  if (activeLesson.value) {
-    play(activeLesson.value)
+onMounted(async () => {
+  const lessonNo = route.params.lessonNo as string
+  if (lessonNo) {
+    data.value = await getLessonByNo(lessonNo)
   }
-}
-
-const onResume = () => {
-  resume()
-}
-
-const onPause = () => {
-  pause()
-}
+})
 </script>
 
 <template>
   <div
+    v-if="data"
     class="page"
     :style="{ backgroundColor: bgColor }"
   >
@@ -77,46 +67,46 @@ const onPause = () => {
         @click="handleBack"
       />
       <h1 class="title">
-        {{ audio?.title }}
+        {{ data.title }}
       </h1>
     </header>
     <main>
       <div
-        v-if="audio?.img && !visibleContent"
+        v-if="data.img && !visibleContent"
         class="cover"
         :style="{
-          backgroundImage: `url(${getProxiedImageUrl(audio.img)})`,
-          'view-transition-name': `audio-${audio?.lessonNo}`
+          backgroundImage: `url(${getProxiedImageUrl(data.img)})`,
+          'view-transition-name': `audio-${data.lessonNo}`
         }"
         @click="toggleContent"
       />
       <div
-        v-if="audio?.html && visibleContent"
+        v-if="data.html && visibleContent"
         class="content"
-        v-html="updateHtmlImgUrl(audio?.html)"
+        v-html="updateHtmlImgUrl(data.html)"
         @click="toggleContent"
       />
     </main>
     <footer class="footer">
       <IconPrev class="icon-prev" />
       <button
-        v-if="activeLesson?.lessonNo !== audio?.lessonNo"
+        v-if="data.lessonNo !== playingLesson?.lessonNo"
         class="btn"
-        @click="onPlay"
+        @click="play(data)"
       >
         <IconPlay class="icon" />
       </button>
       <button
-        v-if="activeLesson?.lessonNo === audio?.lessonNo && isPlaying"
+        v-if="playingLesson && data.lessonNo === playingLesson.lessonNo && isPlaying"
         class="btn"
-        @click="onPause"
+        @click="pause"
       >
         <IconPause class="icon" />
       </button>
       <button
-        v-if="activeLesson?.lessonNo === audio?.lessonNo && !isPlaying"
+        v-if="playingLesson && data.lessonNo === playingLesson.lessonNo && isPaused"
         class="btn"
-        @click="onResume"
+        @click="resume"
       >
         <IconPlay class="icon" />
       </button>

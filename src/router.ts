@@ -11,7 +11,7 @@ import MergeList from "./pages/merge-list/index.vue"
 
 const routes = [
   { path: "/", component: lessons },
-  { path: "/elllo/:id", component: lesson },
+  { path: "/elllo/:lessonNo", component: lesson },
   { path: "/test", component: test },
   {
     path: "/photos",
@@ -38,6 +38,13 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
 })
 
 export default router

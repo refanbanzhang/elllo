@@ -1,5 +1,5 @@
 import audios from "../../audios.json"
-import type { Query, PaginatedResponse, AudioItem } from "@/types"
+import type { Query, PaginatedLessons, Lesson } from "@/types"
 
 const mockPromise = (data: any): Promise<any> => {
   return new Promise((resolve) => {
@@ -9,7 +9,7 @@ const mockPromise = (data: any): Promise<any> => {
   })
 }
 
-export const getAudios = (query: Query): Promise<PaginatedResponse> => {
+export const getLessons = (query: Query): Promise<PaginatedLessons> => {
   const page = query.page || 1
   const pageSize = query.pageSize || 20
 
@@ -27,11 +27,11 @@ export const getAudios = (query: Query): Promise<PaginatedResponse> => {
   })
 }
 
-export const getAudio = (lessonNo: string): Promise<AudioItem> => {
+export const getLessonByNo = (lessonNo: string): Promise<Lesson> => {
   return mockPromise(audios.find((audio) => audio.lessonNo === lessonNo))
 }
 
-export const getNextAudio = (lessonNo?: string): Promise<AudioItem | null> => {
+export const getNextLesson = (lessonNo?: string): Promise<Lesson | null> => {
   if (!lessonNo) {
     return mockPromise(audios[0])
   }

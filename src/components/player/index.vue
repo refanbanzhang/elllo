@@ -3,13 +3,13 @@ import { ref } from "vue"
 import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
-import ProgressBar from "@/components/progress-bar/index.vue"
-import audioPlayer from "@/composables/use-audio-player"
 import useTransitionNavigate from "@/utils/transitionNavigate"
+import player from "@/composables/use-player"
+import ProgressBar from "@/components/progress-bar/index.vue"
 
 const { transitionNavigate } = useTransitionNavigate()
+const { playingLesson, play, pause, resume, currentTime, duration, isPlaying, isPaused, isInitial } = player
 const footerBgColor = ref("rgb(49, 128, 153)")
-const { activeLesson, currentTime, duration, isPlaying, pause, resume } = audioPlayer
 
 const onImageLoad = async (event: Event) => {
   const imgEl = event.target as HTMLImageElement
@@ -29,21 +29,21 @@ const onNavigate = (lessonNo: string) => {
         :style="{ backgroundColor: footerBgColor }"
       >
         <img
-          v-if="activeLesson?.img"
+          v-if="playingLesson?.img"
           class="player__img"
-          :style="{ 'view-transition-name': `audio-${activeLesson.lessonNo}` }"
-          :src="getProxiedImageUrl(activeLesson.img)"
-          :alt="activeLesson?.title"
-          @click.stop="onNavigate(activeLesson.lessonNo)"
+          :style="{ 'view-transition-name': `audio-${playingLesson.lessonNo}` }"
+          :src="getProxiedImageUrl(playingLesson.img)"
+          :alt="playingLesson?.title"
+          @click.stop="onNavigate(playingLesson.lessonNo)"
           @load="onImageLoad"
         >
         <div class="player__title">
-          {{ activeLesson?.title }}
+          {{ playingLesson?.title }}
         </div>
         <button
-          v-if="!isPlaying"
+          v-if="isInitial && playingLesson"
           class="btn"
-          @click="resume"
+          @click="play(playingLesson)"
         >
           <IconPlay class="icon" />
         </button>
@@ -53,6 +53,13 @@ const onNavigate = (lessonNo: string) => {
           @click="pause"
         >
           <IconPause class="icon" />
+        </button>
+        <button
+          v-if="isPaused"
+          class="btn"
+          @click="resume"
+        >
+          <IconPlay class="icon" />
         </button>
         <div class="progress-bar-wrapper">
           <ProgressBar :model-value="currentTime / duration * 100" />

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from "vue"
 import { getProxiedImageUrl } from "@/utils"
-import audioPlayer from "@/composables/use-audio-player"
-import Player from "@/components/player/index.vue"
 import useTransitionNavigate from "@/utils/transitionNavigate"
-import useAudios from "@/composables/use-audios"
-const { play, activeLesson } = audioPlayer
+import player from "@/composables/use-player"
+import audios from "@/composables/use-audios"
+import Player from "@/components/player/index.vue"
 
-const { audios, loadNextPage } = useAudios()
+const { playingLesson, play } = player
+const { lessons, loadNextPage } = audios
 const { transitionNavigate } = useTransitionNavigate()
 
 const onNavigate = (lessonNo: string) => {
@@ -19,14 +19,11 @@ const onScroll = () => {
   const scrollHeight = document.documentElement.scrollHeight
   const clientHeight = document.documentElement.clientHeight
   const isBottom = scrollHeight - scrollPosition - clientHeight < 1
+
   if (isBottom) {
     loadNextPage()
   }
 }
-
-onMounted(() => {
-  loadNextPage()
-})
 
 onMounted(() => {
   window.addEventListener("scroll", onScroll)
@@ -40,31 +37,19 @@ onUnmounted(() => {
 <template>
   <div class="page">
     <ul>
-      <li
-        :class="['audio', activeLesson?.lessonNo === item.lessonNo ? 'audio--active' : '']"
-        v-for="(item) in audios"
-        :id="`audio-${item.lessonNo}`"
-        :key="item.url"
-        @click="play(item)"
-      >
-        <img
-          v-if="item.img"
-          class="audio__image"
-          :src="getProxiedImageUrl(item.img)"
-          alt=""
-          @click.stop="onNavigate(item.lessonNo)"
-        >
-        <div
-          class="audio__link"
-          :href="item.url"
-        >
-          {{ item.title }}
+      <li v-for="(lesson) in lessons" :key="lesson.url"
+        :class="['audio', playingLesson?.lessonNo === lesson.lessonNo ? 'audio--active' : '']"
+        :id="`audio-${lesson.lessonNo}`" @click="play(lesson)">
+        <img v-if="lesson.img" class="audio__image" :src="getProxiedImageUrl(lesson.img)" alt=""
+          @click.stop="onNavigate(lesson.lessonNo)">
+        <div class="audio__link" :href="lesson.url">
+          {{ lesson.title }}
           <br />
-          {{ item.lessonNo }}
+          {{ lesson.lessonNo }}
         </div>
       </li>
     </ul>
-    <Player />
+    <Player v-if="playingLesson" />
   </div>
 </template>
 
@@ -109,5 +94,4 @@ ul {
     color: #1ed760;
   }
 }
-
 </style>

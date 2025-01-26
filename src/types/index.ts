@@ -1,4 +1,4 @@
-export interface AudioItem {
+export interface Lesson {
   title: string
   url: string
   img: string
@@ -11,8 +11,8 @@ export interface Query {
   pageSize?: number
 }
 
-export interface PaginatedResponse {
-  items: AudioItem[]
+export interface PaginatedLessons {
+  items: Lesson[]
   page: number
   pageSize: number
   total: number
