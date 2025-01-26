@@ -10,6 +10,7 @@ import { getAverageColor, getProxiedImageUrl, updateHtmlImgUrl } from "@/utils"
 import usePlayer from "@/composables/use-player"
 import { getLessonByNo } from "@/api/audio"
 import type { Lesson } from "@/types"
+import { showLoading, hideLoading } from "@/components/loading"
 
 const route = useRoute()
 const router = useRouter()
@@ -29,7 +30,9 @@ const toggleContent = () => {
 onMounted(async () => {
   const lessonNo = route.params.lessonNo as string
   if (lessonNo) {
+    showLoading()
     data.value = await getLessonByNo(lessonNo)
+    hideLoading()
 
     if (data.value?.img) {
       const img = new Image()

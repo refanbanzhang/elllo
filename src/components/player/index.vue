@@ -80,26 +80,22 @@ const onNavigate = (lessonNo: string) => {
 
   &__content-inner {
     position: relative;
-    z-index: 1;
+    z-index: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 80px;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
-    background-color: rgb(49, 128, 153);
     padding: 10px;
     transition: background-color .2s ease-in-out;
 
     &:after {
-      background: rgba(0, 0, 0, .48);
-      bottom: 0;
       content: "";
-      left: 0;
       position: absolute;
-      right: 0;
-      top: 0;
+      inset: 0;
       z-index: -1;
+      background: rgba(0, 0, 0, .48);
     }
   }
 
