@@ -2,12 +2,12 @@
 import { onMounted, onUnmounted } from "vue"
 import { getProxiedImageUrl } from "@/utils"
 import useTransitionNavigate from "@/utils/transitionNavigate"
-import player from "@/composables/use-player"
-import audios from "@/composables/use-audios"
+import usePlayer from "@/composables/use-player"
+import useLessons from "@/composables/use-lessons"
 import Player from "@/components/player/index.vue"
 
-const { playingLesson, play } = player
-const { lessons, loadNextPage } = audios
+const { playingLesson, play } = usePlayer
+const { lessons, loadNextPage } = useLessons
 const { transitionNavigate } = useTransitionNavigate()
 
 const onNavigate = (lessonNo: string) => {

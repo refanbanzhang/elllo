@@ -6,29 +6,17 @@ import IconNext from "@/assets/next.svg"
 import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow.svg"
-import { HOST } from "@/constant"
-import { getAverageColor, getProxiedImageUrl } from "@/utils"
-import player from "@/composables/use-player"
+import { getAverageColor, getProxiedImageUrl, updateHtmlImgUrl } from "@/utils"
+import usePlayer from "@/composables/use-player"
 import { getLessonByNo } from "@/api/audio"
 import type { Lesson } from "@/types"
 
 const route = useRoute()
 const router = useRouter()
-const { playingLesson, isPlaying, isPaused, pause, resume, play } = player
+const { playingLesson, isPlaying, isPaused, pause, resume, play } = usePlayer
 const bgColor = ref("#f7f7f8")
 const visibleContent = ref(false)
 const data = ref<Lesson | null>(null)
-
-const handleImageLoad = async (event: Event) => {
-  const imgEl = event.target as HTMLImageElement
-  bgColor.value = await getAverageColor(imgEl)
-}
-
-if (data.value?.img) {
-  const img = new Image()
-  img.src = getProxiedImageUrl(data.value?.img)
-  img.addEventListener("load", handleImageLoad)
-}
 
 const handleBack = () => {
   router.back()
@@ -38,19 +26,18 @@ const toggleContent = () => {
   visibleContent.value = !visibleContent.value
 }
 
-const updateHtmlImgUrl = (html: string) => {
-  // 匹配../..，替换为HOST
-  const newHtml = html.replaceAll('../..', HOST)
-  // 匹配图片地址，代理图片地址
-  return newHtml.replace(/<img([^>]+)src="([^"]+)"/g, (_: string, attrs: string, src: string) => {
-    return `<img${attrs}src="${getProxiedImageUrl(src)}"`
-  })
-}
-
 onMounted(async () => {
   const lessonNo = route.params.lessonNo as string
   if (lessonNo) {
     data.value = await getLessonByNo(lessonNo)
+
+    if (data.value?.img) {
+      const img = new Image()
+      img.src = getProxiedImageUrl(data.value?.img)
+      img.addEventListener("load", async (event: Event) => {
+        bgColor.value = await getAverageColor(event.target as HTMLImageElement)
+      })
+    }
   }
 })
 </script>

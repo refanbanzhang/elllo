@@ -1,3 +1,5 @@
+import { HOST } from "@/constant"
+
 export const getAverageColor = (imgEl: HTMLImageElement): Promise<string> => {
   return new Promise((resolve) => {
     // 设置跨域属性
@@ -52,3 +54,13 @@ export const getAverageColor = (imgEl: HTMLImageElement): Promise<string> => {
 // 图片代理服务
 export const getProxiedImageUrl = (url: string) =>
   `https://images.weserv.nl/?url=${encodeURIComponent(url)}`
+
+
+export const updateHtmlImgUrl = (html: string) => {
+  // 匹配../..，替换为HOST
+  const newHtml = html.replaceAll('../..', HOST)
+  // 匹配图片地址，代理图片地址
+  return newHtml.replace(/<img([^>]+)src="([^"]+)"/g, (_: string, attrs: string, src: string) => {
+    return `<img${attrs}src="${getProxiedImageUrl(src)}"`
+  })
+}

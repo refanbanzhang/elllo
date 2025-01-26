@@ -6,7 +6,6 @@ const usePlayer = () => {
   const currentTime = ref<number>(audio.value.currentTime)
   const isPlaying = ref<boolean>(false)
   const duration = ref<number>(0)
-
   const playingLesson = ref<Lesson | null>(null)
 
   const pause = () => {
@@ -18,15 +17,9 @@ const usePlayer = () => {
   }
 
   const play = (lesson: Lesson) => {
-    setPlayingLesson(lesson)
-
-    pause()
+    playingLesson.value = lesson
     audio.value.src = lesson.url
     audio.value.play()
-  }
-
-  const setPlayingLesson = (lesson: Lesson) => {
-    playingLesson.value = lesson
   }
 
   const initEvents = () => {
@@ -67,8 +60,6 @@ const usePlayer = () => {
 
   return {
     playingLesson,
-    setPlayingLesson,
-
     currentTime,
     duration,
     isInitial,

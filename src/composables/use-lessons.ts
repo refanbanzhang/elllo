@@ -3,7 +3,7 @@ import type { Lesson } from "@/types"
 import { getLessons } from "@/api/audio"
 import { showLoading, hideLoading, showToast } from "@/components/loading"
 
-const useAudios = () => {
+const useLessons = () => {
   const currentPage = ref<number>(0)
   const pageSize = ref<number>(20)
   const isLoading = ref<boolean>(false)
@@ -42,4 +42,4 @@ const useAudios = () => {
   }
 }
 
-export default useAudios()
+export default useLessons()
