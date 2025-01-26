@@ -1,7 +1,7 @@
 import { ref } from "vue"
 import { getAudios } from "@/api/audio"
 import type { AudioItem } from "@/types"
-import { showLoading, hideLoading } from "@/components/loading"
+import { showLoading, hideLoading, showToast } from "@/components/loading"
 
 const createAudioPlayer = () => {
   const currentPage = ref<number>(0)
@@ -63,7 +63,7 @@ const createAudioPlayer = () => {
 
   const loadNextPage = async () => {
     if (!hasMore.value) {
-      alert("没有更多数据了")
+      showToast("没有更多数据了")
       return
     }
 

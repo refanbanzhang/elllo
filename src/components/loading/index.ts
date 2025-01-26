@@ -1,22 +1,38 @@
 import { createApp } from "vue"
-import Loading from "./index.vue"
+import Overlay from "./index.vue"
 
-const loadingInstances: HTMLElement[] = []
+const overlayInstances: HTMLElement[] = []
 
-const showLoading = () => {
+const showLoading = (options: { text?: string } = {}) => {
   const container = document.createElement("div")
   container.classList.add("loading")
-  const loadingApp = createApp(Loading)
+  const loadingApp = createApp(Overlay, options)
   loadingApp.mount(container)
   document.body.appendChild(container)
-  loadingInstances.push(container)
+  overlayInstances.push(container)
 }
 
 const hideLoading = () => {
-  const lastLoading = loadingInstances.pop()
+  const lastLoading = overlayInstances.pop()
   if (lastLoading) {
     lastLoading.remove()
   }
 }
 
-export { showLoading, hideLoading }
+const showToast = (text: string, options: { duration: number } = { duration: 2000 }) => {
+  const container = document.createElement("div")
+  container.classList.add("toast")
+  const toastApp = createApp(Overlay, { text })
+  toastApp.mount(container)
+  document.body.appendChild(container)
+  overlayInstances.push(container)
+
+  setTimeout(() => {
+    const lastToast = overlayInstances.pop()
+    if (lastToast) {
+      lastToast.remove()
+    }
+  }, options.duration)
+}
+
+export { showLoading, hideLoading, showToast }

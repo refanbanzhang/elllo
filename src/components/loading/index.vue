@@ -1,4 +1,7 @@
 <script setup lang="ts">
+defineProps<{
+  text?: string
+}>()
 </script>
 
 <template>
@@ -6,7 +9,7 @@
     <div class="loading__mask">
       <div class="loading__content">
         <div class="loading__text">
-          loading...
+          {{ text || "loading..." }}
         </div>
       </div>
     </div>
