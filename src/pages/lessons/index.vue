@@ -8,17 +8,6 @@ import Player from "@/components/player/index.vue"
 const router = useRouter()
 const { audios, play, currentLessonNo, loadNextPage } = audioPlayer
 
-const restoreLastScrollPosition = () => {
-  const audioElement = document.getElementById(`audio-${currentLessonNo.value}`)
-  const paddingTop = 15
-  if (audioElement) {
-    window.scrollTo({
-      top: audioElement.offsetTop - paddingTop - window.innerHeight / 2,
-      behavior: "instant"
-    })
-  }
-}
-
 const onNavigate = (index: number) => {
   if ("startViewTransition" in document) {
     document.startViewTransition(() => {
@@ -38,11 +27,6 @@ const onScroll = () => {
     loadNextPage()
   }
 }
-
-onMounted(() => {
-  // 需要等 audios 加载完成，否则获取不到目标元素
-  restoreLastScrollPosition()
-})
 
 onMounted(() => {
   window.addEventListener("scroll", onScroll)
