@@ -19,14 +19,10 @@ defineProps<{
 <style lang="less" scoped>
 .loading {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
+  inset: 0;
 
   &__mask {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, .7);
     width: 100%;
     height: 100%;
   }
