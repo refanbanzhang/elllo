@@ -47,10 +47,8 @@ const usePlayer = () => {
 
   const playNext = async () => {
     const nextLessonNo = await getNextLessonNo(playingLesson.value?.lessonNo)
-    if (nextLessonNo) {
-      const nextLesson = await getLessonByNo(nextLessonNo)
-      play(nextLesson)
-    }
+    const nextLesson = await getLessonByNo(nextLessonNo)
+    play(nextLesson)
   }
 
   const initEvents = () => {
