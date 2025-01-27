@@ -1,4 +1,4 @@
-import { ref, computed } from "vue"
+import { ref, watch } from "vue"
 import { Lesson } from "@/types"
 
 const usePlayer = () => {
@@ -70,18 +70,31 @@ const usePlayer = () => {
     })
   }
 
-  const isPaused = computed(() => {
-    return !isPlaying.value
+  const STORAGE_KEY = "playingLesson"
+
+  const initPlayingLesson = () => {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      const lesson = JSON.parse(stored) as Lesson
+      playingLesson.value = lesson
+      audio.value.src = lesson.url
+    }
+  }
+
+  watch(playingLesson, (newLesson) => {
+    if (newLesson) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newLesson))
+    }
   })
 
   initEvents()
+  initPlayingLesson()
 
   return {
     playingLesson,
     currentTime,
     duration,
     isPlaying,
-    isPaused,
     play,
     pause,
   }
