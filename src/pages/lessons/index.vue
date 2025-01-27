@@ -42,12 +42,13 @@ onUnmounted(() => {
         @navigate="transitionNavigate(lesson.lessonNo)"
       />
     </div>
-    <Player v-if="playingLesson" />
+    <Player v-if="lessons.length > 0 && playingLesson" />
   </div>
 </template>
 
 <style lang='less' scoped>
 .page {
+  min-height: 100vh;
   background: #000;
 }
 
