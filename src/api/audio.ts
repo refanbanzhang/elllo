@@ -70,7 +70,7 @@ export const getNextLessonNo = (lessonNo?: string): Promise<string> => {
   const nextIndex = index + 1
 
   if (nextIndex >= audios.length) {
-    return mockPromise(audios[audios.length - 1].lessonNo)
+    return mockPromise(audios[0].lessonNo)
   }
 
   return mockPromise(audios[nextIndex].lessonNo)
