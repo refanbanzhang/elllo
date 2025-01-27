@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import type { Lesson } from "@/types"
 import { getProxiedImageUrl } from "@/utils"
+import usePlayer from "@/composables/use-player"
+import IconPlay from "@/assets/play.svg"
+import IconPause from "@/assets/pause.svg"
 
 defineProps<{
   data: Lesson
 }>()
 
 defineEmits(["play", "navigate"])
+
+const { isPlaying, playingLesson } = usePlayer;
 </script>
 
 <template>
@@ -25,6 +30,10 @@ defineEmits(["play", "navigate"])
       {{ data.title }}
       <br />
       {{ data.lessonNo }}
+    </div>
+    <div>
+      <IconPause v-if="isPlaying && playingLesson?.lessonNo === data.lessonNo" class="icon audio__pause" />
+      <IconPlay v-else class="icon" />
     </div>
   </div>
 </template>
@@ -56,5 +65,15 @@ defineEmits(["play", "navigate"])
     margin-right: 10px;
     color: #fff;
   }
+}
+
+.icon {
+  color: #fff;
+  width: 20px;
+  height: 20px;
+}
+
+.audio__pause {
+  color: #1ed760;
 }
 </style>
