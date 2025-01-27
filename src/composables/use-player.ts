@@ -12,26 +12,35 @@ const usePlayer = () => {
     audio.value.pause()
   }
 
+  // 1 没有传入，播放
+  // 2 传入了，并且和播放器上的是同一个，播放
+  // 3 传入了，并且和播放器上的不是同一个，更新播放器，播放
   const play = (lesson?: Lesson) => {
     pause()
 
-    // 播放当前
+    // 如果没有传入 lesson 且没有正在播放的课程，直接返回
+    if (!lesson && !playingLesson.value) {
+      return
+    }
+
+    // 没有传入，播放当前
     if (!lesson && playingLesson.value) {
       audio.value.play()
       return
     }
 
-    // 播放目标和当前是同一个lesson，则直接播放
+    // 传入 lesson 且和当前播放的 lesson 相同，播放
     if (lesson && playingLesson.value?.lessonNo === lesson.lessonNo) {
       audio.value.play()
       return
     }
 
-    // 播放目标
-    if (lesson) {
+    // 传入 lesson 且和当前播放的 lesson 不同，更新播放器，播放
+    if (lesson && playingLesson.value?.lessonNo !== lesson.lessonNo) {
       playingLesson.value = lesson
       audio.value.src = lesson.url
       audio.value.play()
+      return
     }
   }
 
