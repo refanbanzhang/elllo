@@ -6,10 +6,10 @@ const useTransitionNavigate = () => {
   const transitionNavigate = (lessonNo: string) => {
     if ("startViewTransition" in document) {
       document.startViewTransition(() => {
-        router.push(`/elllo/${lessonNo}`)
+        router.push(`/lesson/${lessonNo}`)
       })
     } else {
-      router.push(`/elllo/${lessonNo}`)
+      router.push(`/lesson/${lessonNo}`)
     }
   }
 

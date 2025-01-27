@@ -1,11 +1,11 @@
 import audios from "../../audios.json"
 import type { Query, PaginatedLessons, Lesson } from "@/types"
 
-const mockPromise = (data: any): Promise<any> => {
+const mockPromise = (data: any, delay = 300): Promise<any> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(data)
-    }, 1000)
+    }, delay)
   })
 }
 
@@ -46,3 +46,32 @@ export const getNextLesson = (lessonNo?: string): Promise<Lesson | null> => {
   return mockPromise(audios[nextIndex])
 }
 
+export const getPrevLessonNo = (lessonNo?: string): Promise<string> => {
+  if (!lessonNo) {
+    return mockPromise(audios[0].lessonNo)
+  }
+
+  const index = audios.findIndex((audio) => audio.lessonNo === lessonNo)
+  const prevIndex = index - 1
+
+  if (prevIndex < 0) {
+    return mockPromise(audios[audios.length - 1].lessonNo)
+  }
+
+  return mockPromise(audios[prevIndex].lessonNo)
+}
+
+export const getNextLessonNo = (lessonNo?: string): Promise<string> => {
+  if (!lessonNo) {
+    return mockPromise(audios[0].lessonNo)
+  }
+
+  const index = audios.findIndex((audio) => audio.lessonNo === lessonNo)
+  const nextIndex = index + 1
+
+  if (nextIndex >= audios.length) {
+    return mockPromise(audios[audios.length - 1].lessonNo)
+  }
+
+  return mockPromise(audios[nextIndex].lessonNo)
+}

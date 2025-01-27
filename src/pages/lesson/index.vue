@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import IconPrev from "@/assets/prev.svg"
 import IconNext from "@/assets/next.svg"
@@ -8,7 +8,7 @@ import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow.svg"
 import { getAverageColor, getProxiedImageUrl, updateHtmlImgUrl } from "@/utils"
 import usePlayer from "@/composables/use-player"
-import { getLessonByNo } from "@/api/audio"
+import { getLessonByNo, getPrevLessonNo, getNextLessonNo } from "@/api/audio"
 import type { Lesson } from "@/types"
 import { showLoading, hideLoading } from "@/components/loading"
 
@@ -19,7 +19,21 @@ const bgColor = ref("#f7f7f8")
 const visibleContent = ref(false)
 const data = ref<Lesson | null>(null)
 
-const handleBack = () => {
+const onPrev = async () => {
+  showLoading()
+  const prevLessonNo = await getPrevLessonNo(data.value?.lessonNo)
+  router.push(`/lesson/${prevLessonNo}`)
+  hideLoading()
+}
+
+const onNext = async () => {
+  showLoading()
+  const nextLessonNo = await getNextLessonNo(data.value?.lessonNo)
+  router.push(`/lesson/${nextLessonNo}`)
+  hideLoading()
+}
+
+const onBack = () => {
   router.back()
 }
 
@@ -27,7 +41,7 @@ const toggleContent = () => {
   visibleContent.value = !visibleContent.value
 }
 
-onMounted(async () => {
+const loadLesson = async () => {
   const lessonNo = route.params.lessonNo as string
   if (lessonNo) {
     showLoading()
@@ -42,7 +56,10 @@ onMounted(async () => {
       })
     }
   }
-})
+}
+
+watch(() => route.params.lessonNo, loadLesson, { immediate: true })
+
 </script>
 
 <template>
@@ -54,7 +71,7 @@ onMounted(async () => {
     <header class="header">
       <IconArrow
         class="icon"
-        @click="handleBack"
+        @click="onBack"
       />
       <h1 class="title">
         {{ data.title }}
@@ -78,7 +95,7 @@ onMounted(async () => {
       />
     </main>
     <footer class="footer">
-      <IconPrev class="icon-prev" />
+      <IconPrev class="icon-prev" @click="onPrev()" />
       <button
         v-if="isPlaying && playingLesson?.lessonNo === data.lessonNo"
         class="btn"
@@ -93,7 +110,7 @@ onMounted(async () => {
       >
         <IconPlay class="icon" />
       </button>
-      <IconNext class="icon-next" />
+      <IconNext class="icon-next" @click="onNext()" />
     </footer>
   </div>
 </template>
