@@ -14,7 +14,7 @@ import { showLoading, hideLoading } from "@/components/loading"
 
 const route = useRoute()
 const router = useRouter()
-const { playingLesson, isPlaying, isPaused, pause, resume, play } = usePlayer
+const { playingLesson, isPlaying, pause, play } = usePlayer
 const bgColor = ref("#f7f7f8")
 const visibleContent = ref(false)
 const data = ref<Lesson | null>(null)
@@ -80,23 +80,16 @@ onMounted(async () => {
     <footer class="footer">
       <IconPrev class="icon-prev" />
       <button
-        v-if="data.lessonNo !== playingLesson?.lessonNo"
+        v-if="isPlaying && playingLesson?.lessonNo === data.lessonNo"
         class="btn"
-        @click="play(data)"
-      >
-        <IconPlay class="icon" />
-      </button>
-      <button
-        v-if="playingLesson && data.lessonNo === playingLesson.lessonNo && isPlaying"
-        class="btn"
-        @click="pause"
+        @click="pause()"
       >
         <IconPause class="icon" />
       </button>
       <button
-        v-if="playingLesson && data.lessonNo === playingLesson.lessonNo && isPaused"
+        v-else
         class="btn"
-        @click="resume"
+        @click="play(data)"
       >
         <IconPlay class="icon" />
       </button>

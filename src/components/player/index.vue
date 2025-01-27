@@ -6,9 +6,15 @@ import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import useTransitionNavigate from "@/utils/transitionNavigate"
 import player from "@/composables/use-player"
 import ProgressBar from "@/components/progress-bar/index.vue"
+import type { Lesson } from "@/types"
+
+defineProps<{
+  lesson?: Lesson
+}>()
 
 const { transitionNavigate } = useTransitionNavigate()
-const { playingLesson, play, pause, resume, currentTime, duration, isPlaying, isPaused, isInitial } = player
+const { playingLesson, play, pause, currentTime, duration, isPlaying } = player
+
 const footerBgColor = ref("rgb(49, 128, 153)")
 
 const onImageLoad = async (event: Event) => {
@@ -22,7 +28,7 @@ const onNavigate = (lessonNo: string) => {
 </script>
 
 <template>
-  <div class="player">
+  <div class="player" v-if="playingLesson">
     <div class="player__content">
       <div
         class="player__content-inner"
@@ -36,28 +42,21 @@ const onNavigate = (lessonNo: string) => {
           :alt="playingLesson?.title"
           @click.stop="onNavigate(playingLesson.lessonNo)"
           @load="onImageLoad"
-        >
+        />
         <div class="player__title">
           {{ playingLesson?.title }}
         </div>
         <button
-          v-if="isInitial && playingLesson"
-          class="btn"
-          @click="play(playingLesson)"
-        >
-          <IconPlay class="icon" />
-        </button>
-        <button
           v-if="isPlaying"
           class="btn"
-          @click="pause"
+          @click="pause()"
         >
           <IconPause class="icon" />
         </button>
         <button
-          v-if="isPaused"
+          v-else
           class="btn"
-          @click="resume"
+          @click="play()"
         >
           <IconPlay class="icon" />
         </button>

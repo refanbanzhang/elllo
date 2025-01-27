@@ -5,10 +5,15 @@ import useTransitionNavigate from "@/utils/transitionNavigate"
 import usePlayer from "@/composables/use-player"
 import useLessons from "@/composables/use-lessons"
 import Player from "@/components/player/index.vue"
+import type { Lesson } from "@/types"
 
 const { playingLesson, play } = usePlayer
 const { lessons, loadNextPage } = useLessons
 const { transitionNavigate } = useTransitionNavigate()
+
+const onPlay = (lesson: Lesson) => {
+  play(lesson)
+}
 
 const onNavigate = (lessonNo: string) => {
   transitionNavigate(lessonNo)
@@ -38,8 +43,8 @@ onUnmounted(() => {
   <div class="page">
     <ul>
       <li v-for="(lesson) in lessons" :key="lesson.url"
-        :class="['audio', playingLesson?.lessonNo === lesson.lessonNo ? 'audio--active' : '']"
-        :id="`audio-${lesson.lessonNo}`" @click="play(lesson)">
+        class="audio"
+        :id="`audio-${lesson.lessonNo}`" @click="onPlay(lesson)">
         <img v-if="lesson.img" class="audio__image" :src="getProxiedImageUrl(lesson.img)" alt=""
           @click.stop="onNavigate(lesson.lessonNo)">
         <div class="audio__link" :href="lesson.url">

@@ -12,14 +12,27 @@ const usePlayer = () => {
     audio.value.pause()
   }
 
-  const resume = () => {
-    audio.value.play()
-  }
+  const play = (lesson?: Lesson) => {
+    pause()
 
-  const play = (lesson: Lesson) => {
-    playingLesson.value = lesson
-    audio.value.src = lesson.url
-    audio.value.play()
+    // 播放当前
+    if (!lesson && playingLesson.value) {
+      audio.value.play()
+      return
+    }
+
+    // 播放目标和当前是同一个lesson，则直接播放
+    if (lesson && playingLesson.value?.lessonNo === lesson.lessonNo) {
+      audio.value.play()
+      return
+    }
+
+    // 播放目标
+    if (lesson) {
+      playingLesson.value = lesson
+      audio.value.src = lesson.url
+      audio.value.play()
+    }
   }
 
   const initEvents = () => {
@@ -49,11 +62,7 @@ const usePlayer = () => {
   }
 
   const isPaused = computed(() => {
-    return !isPlaying.value && currentTime.value > 0
-  })
-
-  const isInitial = computed(() => {
-    return !isPlaying.value && currentTime.value === 0
+    return !isPlaying.value
   })
 
   initEvents()
@@ -62,12 +71,10 @@ const usePlayer = () => {
     playingLesson,
     currentTime,
     duration,
-    isInitial,
     isPlaying,
     isPaused,
     play,
     pause,
-    resume,
   }
 }
 
