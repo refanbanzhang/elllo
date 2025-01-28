@@ -48,14 +48,12 @@ const onNavigate = (lessonNo: string) => {
         </div>
         <button
           v-if="isPlaying"
-          class="btn"
           @click="pause()"
         >
           <IconPause class="icon" />
         </button>
         <button
           v-else
-          class="btn"
           @click="play()"
         >
           <IconPlay class="icon" />
@@ -70,11 +68,8 @@ const onNavigate = (lessonNo: string) => {
 
 <style lang="less" scoped>
 .player {
-  position: sticky;
-  bottom: 0;
-
   &__content {
-    padding: 15px;
+    padding: 10px;
   }
 
   &__content-inner {
@@ -83,7 +78,6 @@ const onNavigate = (lessonNo: string) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 80px;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     padding: 10px;
@@ -100,8 +94,8 @@ const onNavigate = (lessonNo: string) => {
 
   &__img {
     margin-right: 10px;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     object-fit: cover;
     border-radius: 6px;
   }
@@ -117,16 +111,7 @@ const onNavigate = (lessonNo: string) => {
 .icon {
   width: 25px;
   height: 25px;
-}
-
-.btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: white;
+  color: #fff;
 }
 
 .progress-bar-wrapper {

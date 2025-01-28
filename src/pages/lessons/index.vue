@@ -4,6 +4,7 @@ import useTransitionNavigate from "@/utils/transitionNavigate"
 import usePlayer from "@/composables/use-player"
 import useLessons from "@/composables/use-lessons"
 import Player from "@/components/player/index.vue"
+import Tabs from "@/components/tabs/index.vue"
 import ListItem from "./list-item/index.vue"
 
 const { playingLesson, play } = usePlayer
@@ -42,7 +43,12 @@ onUnmounted(() => {
         @navigate="transitionNavigate(lesson.lessonNo)"
       />
     </div>
-    <Player v-if="lessons.length > 0 && playingLesson" />
+    <div v-if="lessons.length > 0 && playingLesson"  class="player-wrapper">
+      <Player />
+    </div>
+    <div class="tabs-wrapper">
+      <Tabs />
+    </div>
   </div>
 </template>
 
@@ -59,5 +65,17 @@ onUnmounted(() => {
 
 .active :deep(.audio__content){
   color: #1ed760;
+}
+
+.player-wrapper {
+  position: sticky;
+  bottom: 60px;
+}
+
+.tabs-wrapper {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 </style>
