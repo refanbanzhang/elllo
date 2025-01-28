@@ -1,15 +1,29 @@
 <script setup lang="ts">
+import { computed } from "vue"
+
 type ButtonType = "primary" | "secondary" | "success" | "warning" | "danger"
 type ButtonSize = "small" | "medium" | "large"
 
-defineProps<{
+const props = withDefaults(defineProps<{
   type?: ButtonType
   size?: ButtonSize
-}>()
+  loading?: boolean
+  disabled?: boolean
+}>(), {
+  type: "primary",
+  size: "medium",
+  loading: false,
+  disabled: false
+})
+
+const buttonClass = computed(() => {
+  return [props.type, props.size, { loading: props.loading, disabled: props.disabled }]
+})
 </script>
 
 <template>
-  <button class="button">
+  <button class="button" :class="buttonClass">
+    {{ loading ? "loading" : "" }}
     <slot></slot>
   </button>
 </template>
@@ -20,5 +34,54 @@ defineProps<{
   border: 1px solid #ccc;
   padding: 5px 10px;
   border-radius: 5px;
+}
+
+.loading {
+  cursor: not-allowed;
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.primary {
+  background: #007bff;
+  color: #fff;
+}
+
+.secondary {
+  background: #6c757d;
+  color: #fff;
+}
+
+.success {
+  background: #28a745;
+  color: #fff;
+}
+
+.warning {
+  background: #ffc107;
+  color: #fff;
+}
+
+.danger {
+  background: #dc3545;
+  color: #fff;
+}
+
+.small {
+  padding: 3px 6px;
+  font-size: 12px;
+}
+
+.medium {
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+.large {
+  padding: 10px 20px;
+  font-size: 16px;
 }
 </style>

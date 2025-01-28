@@ -15,6 +15,18 @@ import Button from "@/components/button/index.vue"
     <Button type="primary" size="small">按钮</Button>
     <Button type="secondary" size="medium">按钮</Button>
     <Button type="success" size="large">按钮</Button>
+    <br>
+    loading:
+    <Button type="primary" loading>按钮</Button>
+    <br>
+    icon:
+    <Button type="primary">
+      icon
+      按钮
+    </Button>
+    <br>
+    disabled:
+    <Button type="primary" disabled>按钮</Button>
   </div>
 </template>
 
