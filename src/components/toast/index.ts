@@ -2,7 +2,8 @@ import { Component, createApp } from "vue"
 import Spinner from "@/components/spinner/index.vue"
 import Toast from "./index.vue"
 
-const toastInstances: HTMLElement[] = []
+let instance: HTMLElement | null = null
+let timer: ReturnType<typeof setTimeout> | null = null
 
 type ToastOptions = {
   text?: string
@@ -15,9 +16,14 @@ const defaultOptions: ToastOptions = {
 }
 
 const hideToast = () => {
-  const lastToast = toastInstances.pop()
-  if (lastToast) {
-    lastToast.remove()
+  if (instance) {
+    instance.remove()
+    instance = null
+  }
+
+  if (timer) {
+    clearTimeout(timer)
+    timer = null
   }
 }
 
@@ -27,10 +33,10 @@ const showToast = (options: ToastOptions) => {
   const container = document.createElement("div")
   createApp(Toast, rest).mount(container)
   document.body.appendChild(container)
-  toastInstances.push(container)
+  instance = container
 
   if (duration) {
-    setTimeout(hideToast, duration)
+    timer = setTimeout(hideToast, duration)
   }
 }
 
@@ -46,3 +52,4 @@ const hideLoading = () => {
 }
 
 export { showToast, hideToast, showLoading, hideLoading }
+export type { ToastOptions }
