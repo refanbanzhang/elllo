@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Untitled Sans';
+  src: url('./assets/untitled-sans-regular-v2.woff2') format('woff2');
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -9,7 +14,7 @@ html, body, #app {
 }
 
 html {
-  font-family: system-ui, sans-serif;
+  font-family: 'Untitled Sans', system-ui, sans-serif;
   background-color: #f6f6f6;
 }
 
