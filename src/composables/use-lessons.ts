@@ -1,7 +1,7 @@
 import { ref } from "vue"
 import type { Lesson } from "@/types"
 import { getLessons } from "@/api/audio"
-import { showLoading, hideLoading, showToast } from "@/components/loading"
+import { showLoading, showToast, hideLoading } from "@/components/toast"
 
 const useLessons = () => {
   const currentPage = ref<number>(0)
@@ -12,7 +12,9 @@ const useLessons = () => {
 
   const loadNextPage = async () => {
     if (!hasMore.value) {
-      showToast("没有更多数据了")
+      showToast({
+        text: "没有更多数据了"
+      })
       return
     }
 

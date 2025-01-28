@@ -10,7 +10,7 @@ import { getAverageColor, getProxiedImageUrl, updateHtmlImgUrl } from "@/utils"
 import usePlayer from "@/composables/use-player"
 import { getLessonByNo, getPrevLessonNo, getNextLessonNo } from "@/api/audio"
 import type { Lesson } from "@/types"
-import { showLoading, hideLoading } from "@/components/loading"
+import { showLoading, hideLoading } from "@/components/toast"
 
 const route = useRoute()
 const router = useRouter()
