@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Button: typeof import('./src/components/button/index.vue')['default']
     Copy: typeof import('./src/components/loading - Copy/index.vue')['default']
     Loading: typeof import('./src/components/loading/index.vue')['default']
     Player: typeof import('./src/components/player/index.vue')['default']
