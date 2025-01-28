@@ -27,20 +27,13 @@ const buttonClass = computed(() => [
 </script>
 
 <template>
-  <button class="button" :class="buttonClass">
+  <button :class="buttonClass">
     <Spinner v-if="loading" />
     <slot></slot>
   </button>
 </template>
 
 <style lang="less" scoped>
-.button {
-  background: #fff;
-  border: 1px solid #ccc;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
 .loading,
 .disabled {
   cursor: not-allowed;
