@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
+import Spinner from "@/components/spinner/index.vue"
 
 type ButtonType = "primary" | "secondary" | "success" | "warning" | "danger"
 type ButtonSize = "small" | "medium" | "large"
@@ -16,14 +17,18 @@ const props = withDefaults(defineProps<{
   disabled: false
 })
 
-const buttonClass = computed(() => {
-  return [props.type, props.size, { loading: props.loading, disabled: props.disabled }]
-})
+const buttonClass = computed(() => [
+  props.type,
+  props.size,
+  {
+    loading: props.loading,
+    disabled: props.disabled
+  }])
 </script>
 
 <template>
   <button class="button" :class="buttonClass">
-    {{ loading ? "loading" : "" }}
+    <Spinner v-if="loading" />
     <slot></slot>
   </button>
 </template>
@@ -36,10 +41,7 @@ const buttonClass = computed(() => {
   border-radius: 5px;
 }
 
-.loading {
-  cursor: not-allowed;
-}
-
+.loading,
 .disabled {
   cursor: not-allowed;
   opacity: 0.5;
