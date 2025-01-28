@@ -28,7 +28,7 @@ const buttonClass = computed(() => [
 
 <template>
   <button :class="buttonClass">
-    <Spinner v-if="loading" />
+    <Spinner class="icon" v-if="loading" />
     <slot></slot>
   </button>
 </template>
@@ -38,6 +38,10 @@ const buttonClass = computed(() => [
 .disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.icon {
+  margin-right: 5px;
 }
 
 .primary {
