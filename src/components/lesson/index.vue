@@ -11,6 +11,7 @@ import { getLessonByNo } from "@/api/audio"
 import ProgressBar from "@/components/progress-bar/index.vue"
 import useCurrentLesson from "@/composables/use-current-lesson"
 import { showLoading, hideLoading } from "@/components/toast"
+import { useRouter } from "vue-router"
 
 const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60)
@@ -20,6 +21,7 @@ const formatTime = (seconds: number) => {
 
 const emit = defineEmits(["close", "update"])
 
+const router = useRouter()
 const { playingLesson, isPlaying, currentTime, duration, play, pause, playPrev, playNext } = usePlayer
 const { lesson, setLesson } = useCurrentLesson
 
@@ -46,6 +48,7 @@ const onClose = () => {
 }
 
 const onNavigateTo = () => {
+  router.push(`/lesson/${lesson.value?.lessonNo}`)
 }
 
 const loadLesson = async (lessonNo: string) => {

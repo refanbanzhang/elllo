@@ -30,6 +30,10 @@ const hideToast = () => {
 const showToast = (options: ToastOptions) => {
   const { duration, ...rest } = { ...defaultOptions, ...options }
 
+  if (instance) {
+    hideToast()
+  }
+
   const container = document.createElement("div")
   createApp(Toast, rest).mount(container)
   document.body.appendChild(container)
