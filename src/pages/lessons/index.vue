@@ -8,6 +8,7 @@ import ListItem from "./list-item/index.vue"
 import Lesson from "@/components/lesson/index.vue"
 import type { Lesson as LessonType } from "@/types"
 import usePageLocker from "@/composables/use-page-locker"
+import popup from "@/components/popup/index.vue"
 
 const { playingLesson, play } = usePlayer
 const { lessons, loadNextPage } = useLessons
@@ -64,17 +65,16 @@ onUnmounted(() => {
     <div class="tabs-wrapper">
       <Tabs />
     </div>
-    <div
-      v-if="visible"
-      class="popup"
-      @click="visible = false"
+    <popup
+      :visible="visible"
+      @close="onClose"
     >
       <Lesson
         v-if="currentLesson"
         :data="currentLesson"
         @close="onClose"
       />
-    </div>
+    </popup>
   </div>
 </template>
 
