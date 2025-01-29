@@ -11,19 +11,18 @@ defineProps<{
 
 defineEmits(["play", "open"])
 
-const { isPlaying, playingLesson } = usePlayer;
+const { playingLesson, isPlaying } = usePlayer;
 </script>
 
 <template>
   <div
     class="audio"
-    @click="$emit('play')"
+    @click.stop="$emit('open')"
   >
     <img
       v-if="data.img"
       class="audio__image"
       :src="getProxiedImageUrl(data.img)"
-      @click.stop="$emit('open')"
       alt=""
     >
     <div class="audio__content">
@@ -31,7 +30,7 @@ const { isPlaying, playingLesson } = usePlayer;
       <br />
       {{ data.lessonNo }}
     </div>
-    <div>
+    <div @click.stop="$emit('play')">
       <IconPause v-if="isPlaying && playingLesson?.lessonNo === data.lessonNo" class="icon audio__pause" />
       <IconPlay v-else class="icon" />
     </div>

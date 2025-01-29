@@ -18,7 +18,11 @@ const onImageLoad = async (event: Event) => {
 </script>
 
 <template>
-  <div class="player" v-if="playingLesson">
+  <div
+    v-if="playingLesson"
+    class="player"
+    @click.stop="emit('open', playingLesson)"
+  >
     <div class="player__content">
       <div
         class="player__content-inner"
@@ -30,7 +34,6 @@ const onImageLoad = async (event: Event) => {
           :style="{ 'view-transition-name': `audio-${playingLesson.lessonNo}` }"
           :src="getProxiedImageUrl(playingLesson.img)"
           :alt="playingLesson?.title"
-          @click.stop="emit('open', playingLesson)"
           @load="onImageLoad"
         />
         <div class="player__title">
@@ -38,13 +41,13 @@ const onImageLoad = async (event: Event) => {
         </div>
         <button
           v-if="isPlaying"
-          @click="pause()"
+          @click.stop="pause()"
         >
           <IconPause class="icon" />
         </button>
         <button
           v-else
-          @click="play()"
+          @click.stop="play()"
         >
           <IconPlay class="icon" />
         </button>
