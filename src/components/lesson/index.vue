@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
+import { ref, watch, onMounted, onUnmounted } from "vue"
 import IconPrev from "@/assets/prev.svg"
 import IconNext from "@/assets/next.svg"
 import IconPlay from "@/assets/play.svg"
@@ -60,6 +60,36 @@ watch(() => props.data.lessonNo, (newVal, oldVal) => {
   }
 }, { immediate: true })
 
+
+const onKeydown = (event: KeyboardEvent) => {
+  if (event.key === "Escape") {
+    emit("close")
+  }
+
+  if (event.key === "ArrowLeft") {
+    playPrev()
+  }
+
+  if (event.key === "ArrowRight") {
+    playNext()
+  }
+
+  if (event.key === " ") {
+    if (isPlaying.value) {
+      pause()
+    } else {
+      play()
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("keydown", onKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", onKeydown)
+})
 </script>
 
 <template>
