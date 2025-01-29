@@ -75,6 +75,8 @@ const onKeydown = (event: KeyboardEvent) => {
   }
 
   if (event.key === " ") {
+    event.preventDefault()
+
     if (isPlaying.value) {
       pause()
     } else {

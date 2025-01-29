@@ -10,7 +10,7 @@ import type { Lesson as LessonType } from "@/types"
 import usePageLocker from "@/composables/use-page-locker"
 import popup from "@/components/popup/index.vue"
 
-const { playingLesson, play } = usePlayer
+const { playingLesson, play, pause, isPlaying } = usePlayer
 const { lessons, loadNextPage } = useLessons
 const visible = ref(false)
 const currentLesson = ref<LessonType | null>(null)
@@ -44,6 +44,26 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("scroll", onScroll)
+})
+
+const onKeydown = (event: KeyboardEvent) => {
+  if (event.key === " ") {
+    event.preventDefault()
+
+    if (isPlaying.value) {
+      pause()
+    } else {
+      play()
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("keydown", onKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", onKeydown)
 })
 </script>
 
