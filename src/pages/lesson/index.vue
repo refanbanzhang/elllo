@@ -5,6 +5,7 @@ import type { Lesson } from "@/types"
 import { getLessonByNo } from "@/api/audio"
 import { updateHtmlImgUrl, getProxiedImageUrl } from "@/utils"
 import { showLoading, hideLoading } from "@/components/toast"
+import Player from "@/components/player/index.vue"
 
 const route = useRoute()
 const lessonNo = route.params.lessonNo as string
@@ -24,18 +25,16 @@ onMounted(async () => {
       backgroundImage: `url(${getProxiedImageUrl(lesson?.img || '')})`,
     }" />
     <div class="info">
-      lesson: {{ lesson?.title }}
-      lessonNo: {{ lessonNo }}
+      {{ lesson?.title }} - {{ lessonNo }}
     </div>
     <div class="content" v-html="updateHtmlImgUrl(lesson?.html || '')" />
+    <div class="player-wrapper">
+      <Player />
+    </div>
   </div>
 </template>
 
 <style lang='less' scoped>
-.page {
-  padding: 15px;
-}
-
 .cover {
   margin-bottom: 20px;
   width: 100%;
@@ -47,10 +46,12 @@ onMounted(async () => {
 }
 
 .info {
+  padding: 0 15px;
   margin-bottom: 15px;
 }
 
 .content {
+  padding: 15px;
   :deep(p) {
     margin-bottom: 15px;
   }
@@ -60,5 +61,12 @@ onMounted(async () => {
   display: block;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.player-wrapper {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 </style>
