@@ -9,20 +9,17 @@ import Lesson from "@/components/lesson/index.vue"
 import type { Lesson as LessonType } from "@/types"
 import usePageLocker from "@/composables/use-page-locker"
 import popup from "@/components/popup/index.vue"
+import useCurrentLesson from "@/composables/use-current-lesson"
 
 const { playingLesson, isPlaying, play, pause } = usePlayer
 const { lessons, loadNextPage } = useLessons
+const { setLesson } = useCurrentLesson
 const { lockPage, unlockPage } = usePageLocker()
 
 const visible = ref(false)
-const currentLesson = ref<LessonType | null>(null)
-
-const onUpdateLesson = (lesson: LessonType) => {
-  currentLesson.value = lesson
-}
 
 const onOpenPopup = (lesson: LessonType) => {
-  currentLesson.value = lesson
+  setLesson(lesson)
   visible.value = true
   lockPage()
 }
@@ -95,9 +92,6 @@ onUnmounted(() => {
       @close="onClose"
     >
       <Lesson
-        v-if="currentLesson"
-        :data="currentLesson"
-        @update="onUpdateLesson"
         @close="onClose"
       />
     </popup>

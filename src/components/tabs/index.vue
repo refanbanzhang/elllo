@@ -47,6 +47,11 @@ const items = ref([
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    color: rgb(179, 179, 179);
+    font-size: 12px;
+  }
+
+  &__item--active {
     color: #fff;
   }
 

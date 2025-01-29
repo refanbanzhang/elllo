@@ -36,8 +36,13 @@ const onImageLoad = async (event: Event) => {
           :alt="playingLesson?.title"
           @load="onImageLoad"
         />
-        <div class="player__title">
-          {{ playingLesson?.title }}
+        <div class="player__info">
+          <div class="player__title">
+            {{ playingLesson?.title }}
+          </div>
+          <div class="player__lesson-no">
+            {{ playingLesson?.lessonNo }}
+          </div>
         </div>
         <button
           v-if="isPlaying"
@@ -93,11 +98,20 @@ const onImageLoad = async (event: Event) => {
     border-radius: 6px;
   }
 
-  &__title {
+  &__info {
     flex: 1;
     margin-right: 5px;
+    font-size: 12px;
+  }
+
+  &__title {
     color: #fff;
     font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  &__lesson-no {
+    color: #ccc;
   }
 }
 

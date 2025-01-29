@@ -5,51 +5,58 @@ import IconNext from "@/assets/next.svg"
 import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow.svg"
-import { getAverageColor, getProxiedImageUrl, updateHtmlImgUrl } from "@/utils"
+import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import usePlayer from "@/composables/use-player"
 import { getLessonByNo } from "@/api/audio"
-import type { Lesson } from "@/types"
+import ProgressBar from "@/components/progress-bar/index.vue"
+import useCurrentLesson from "@/composables/use-current-lesson"
 import { showLoading, hideLoading } from "@/components/toast"
 
-const props = defineProps<{
-  data: Lesson
-}>()
+const formatTime = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = Math.floor(seconds % 60)
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`
+}
 
 const emit = defineEmits(["close", "update"])
 
-const { playingLesson, isPlaying, play, pause, playPrev, playNext } = usePlayer
+const { playingLesson, isPlaying, currentTime, duration, play, pause, playPrev, playNext } = usePlayer
+const { lesson, setLesson } = useCurrentLesson
 
 const bgColor = ref("#f7f7f8")
-const visibleContent = ref(false)
-const data = ref<Lesson | null>(null)
 
 const onPrev = async () => {
   await playPrev()
-  emit("update", playingLesson.value)
+
+  if (playingLesson.value) {
+    setLesson(playingLesson.value)
+  }
 }
 
 const onNext = async () => {
   await playNext()
-  emit("update", playingLesson.value)
+
+  if (playingLesson.value) {
+    setLesson(playingLesson.value)
+  }
 }
 
 const onClose = () => {
   emit("close")
 }
 
-const toggleContent = () => {
-  visibleContent.value = !visibleContent.value
+const onNavigateTo = () => {
 }
 
 const loadLesson = async (lessonNo: string) => {
   if (lessonNo) {
     showLoading()
-    data.value = await getLessonByNo(lessonNo)
+    lesson.value = await getLessonByNo(lessonNo)
     hideLoading()
 
-    if (data.value?.img) {
+    if (lesson.value?.img) {
       const img = new Image()
-      img.src = getProxiedImageUrl(data.value?.img)
+      img.src = getProxiedImageUrl(lesson.value?.img)
       img.addEventListener("load", async (event: Event) => {
         bgColor.value = await getAverageColor(event.target as HTMLImageElement)
       })
@@ -57,12 +64,11 @@ const loadLesson = async (lessonNo: string) => {
   }
 }
 
-watch(() => props.data.lessonNo, (newVal, oldVal) => {
-  if (newVal !== oldVal) {
+watch(() => lesson.value?.lessonNo, (newVal, oldVal) => {
+  if (newVal && newVal !== oldVal) {
     loadLesson(newVal)
   }
 }, { immediate: true })
-
 
 const onKeydown = (event: KeyboardEvent) => {
   if (event.key === "Escape") {
@@ -99,7 +105,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    v-if="data"
+    v-if="lesson"
     class="lesson"
     :style="{ backgroundColor: bgColor }"
     @click.stop
@@ -110,30 +116,48 @@ onUnmounted(() => {
         @click="onClose"
       />
       <h1 class="title">
-        {{ data.title }}
+        {{ lesson.title }}
       </h1>
     </header>
     <main>
       <div
-        v-if="data.img && !visibleContent"
+        v-if="lesson.img"
         class="cover"
         :style="{
-          backgroundImage: `url(${getProxiedImageUrl(data.img)})`,
-          'view-transition-name': `audio-${data.lessonNo}`
+          backgroundImage: `url(${getProxiedImageUrl(lesson.img)})`,
+          'view-transition-name': `audio-${lesson.lessonNo}`
         }"
-        @click="toggleContent"
       />
-      <div
-        v-if="data.html && visibleContent"
+      <div class="info">
+        <div class="info__lesson-no">
+          {{ lesson.lessonNo }}
+        </div>
+        <div
+          class="info__title"
+          @click="onNavigateTo"
+        >
+          {{ lesson.title }}
+        </div>
+        <div
+          v-if="playingLesson?.lessonNo === lesson.lessonNo"
+          class="info__progress"
+        >
+          <ProgressBar :model-value="currentTime / duration * 100" />
+          <div class="info__time">
+            <span>{{ formatTime(currentTime) }}</span>
+            <span>{{ formatTime(duration) }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- <div
         class="content"
-        v-html="updateHtmlImgUrl(data.html)"
-        @click="toggleContent"
-      />
+        v-html="updateHtmlImgUrl(lesson.html)"
+      /> -->
     </main>
     <footer class="footer">
       <IconPrev class="icon-prev" @click="onPrev()" />
       <button
-        v-if="isPlaying && playingLesson?.lessonNo === data.lessonNo"
+        v-if="isPlaying && playingLesson?.lessonNo === lesson.lessonNo"
         class="btn"
         @click="pause()"
       >
@@ -142,7 +166,7 @@ onUnmounted(() => {
       <button
         v-else
         class="btn"
-        @click="play(data)"
+        @click="play(lesson)"
       >
         <IconPlay class="icon" />
       </button>
@@ -235,5 +259,18 @@ main {
   height: 56px;
   border-radius: 50%;
   background: white;
+}
+
+.info__title {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.info__time {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  color: rgb(179, 179, 179);
+  font-size: 12px;
 }
 </style>
