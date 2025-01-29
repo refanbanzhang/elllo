@@ -3,27 +3,17 @@ import { ref } from "vue"
 import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
-import useTransitionNavigate from "@/utils/transitionNavigate"
 import player from "@/composables/use-player"
 import ProgressBar from "@/components/progress-bar/index.vue"
-import type { Lesson } from "@/types"
 
-defineProps<{
-  lesson?: Lesson
-}>()
+const emit = defineEmits(["open"])
 
-const { transitionNavigate } = useTransitionNavigate()
 const { playingLesson, play, pause, currentTime, duration, isPlaying } = player
-
 const footerBgColor = ref("rgb(49, 128, 153)")
 
 const onImageLoad = async (event: Event) => {
   const imgEl = event.target as HTMLImageElement
   footerBgColor.value = await getAverageColor(imgEl)
-}
-
-const onNavigate = (lessonNo: string) => {
-  transitionNavigate(lessonNo)
 }
 </script>
 
@@ -40,7 +30,7 @@ const onNavigate = (lessonNo: string) => {
           :style="{ 'view-transition-name': `audio-${playingLesson.lessonNo}` }"
           :src="getProxiedImageUrl(playingLesson.img)"
           :alt="playingLesson?.title"
-          @click.stop="onNavigate(playingLesson.lessonNo)"
+          @click.stop="emit('open', playingLesson)"
           @load="onImageLoad"
         />
         <div class="player__title">

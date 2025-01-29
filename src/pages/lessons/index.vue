@@ -84,7 +84,7 @@ onUnmounted(() => {
       />
     </div>
     <div v-if="lessons.length > 0 && playingLesson"  class="player-wrapper">
-      <Player />
+      <Player @open="onOpenPopup(playingLesson)" />
     </div>
     <div class="tabs-wrapper">
       <Tabs />
