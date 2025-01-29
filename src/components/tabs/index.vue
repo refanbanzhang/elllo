@@ -39,7 +39,7 @@ const items = ref([
   justify-content: space-between;
   align-items: center;
   height: @height;
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 80%);
 
   &__item {
     flex: 1;
