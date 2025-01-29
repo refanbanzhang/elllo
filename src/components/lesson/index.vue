@@ -15,7 +15,7 @@ const props = defineProps<{
   data: Lesson
 }>()
 
-const emit = defineEmits(["close"])
+const emit = defineEmits(["close", "update"])
 
 const { playingLesson, isPlaying, pause, play, playNext, playPrev } = usePlayer
 const bgColor = ref("#f7f7f8")
@@ -23,11 +23,13 @@ const visibleContent = ref(false)
 const data = ref<Lesson | null>(null)
 
 const onPrev = async () => {
-  playPrev()
+  await playPrev()
+  emit("update", playingLesson.value)
 }
 
 const onNext = async () => {
-  playNext()
+  await playNext()
+  emit("update", playingLesson.value)
 }
 
 const onClose = () => {
@@ -67,11 +69,11 @@ const onKeydown = (event: KeyboardEvent) => {
   }
 
   if (event.key === "ArrowLeft") {
-    playPrev()
+    onPrev()
   }
 
   if (event.key === "ArrowRight") {
-    playNext()
+    onNext()
   }
 
   if (event.key === " ") {

@@ -9,7 +9,7 @@ defineProps<{
   data: Lesson
 }>()
 
-defineEmits(["play", "navigate"])
+defineEmits(["play", "open"])
 
 const { isPlaying, playingLesson } = usePlayer;
 </script>
@@ -23,7 +23,7 @@ const { isPlaying, playingLesson } = usePlayer;
       v-if="data.img"
       class="audio__image"
       :src="getProxiedImageUrl(data.img)"
-      @click.stop="$emit('navigate')"
+      @click.stop="$emit('open')"
       alt=""
     >
     <div class="audio__content">

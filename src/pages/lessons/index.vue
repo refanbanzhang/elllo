@@ -16,7 +16,11 @@ const visible = ref(false)
 const currentLesson = ref<LessonType | null>(null)
 const { lockPage, unlockPage } = usePageLocker()
 
-const onNavigate = (lesson: LessonType) => {
+const onUpdateLesson = (lesson: LessonType) => {
+  currentLesson.value = lesson
+}
+
+const onOpenPopup = (lesson: LessonType) => {
   currentLesson.value = lesson
   visible.value = true
   lockPage()
@@ -76,7 +80,7 @@ onUnmounted(() => {
         :data="lesson"
         :class="lesson.lessonNo === playingLesson?.lessonNo ? 'active' : ''"
         @play="play(lesson)"
-        @navigate="onNavigate(lesson)"
+        @open="onOpenPopup(lesson)"
       />
     </div>
     <div v-if="lessons.length > 0 && playingLesson"  class="player-wrapper">
@@ -92,6 +96,7 @@ onUnmounted(() => {
       <Lesson
         v-if="currentLesson"
         :data="currentLesson"
+        @update="onUpdateLesson"
         @close="onClose"
       />
     </popup>
