@@ -17,6 +17,10 @@ const { lockPage, unlockPage } = usePageLocker()
 const visible = ref(false)
 const currentLesson = ref<LessonType | null>(null)
 
+const onUpdateLesson = (lesson: LessonType) => {
+  currentLesson.value = lesson
+}
+
 const onOpenPopup = (lesson: LessonType) => {
   currentLesson.value = lesson
   visible.value = true
@@ -93,6 +97,7 @@ onUnmounted(() => {
       <Lesson
         v-if="currentLesson"
         :data="currentLesson"
+        @update="onUpdateLesson"
         @close="onClose"
       />
     </popup>
