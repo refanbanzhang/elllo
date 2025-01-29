@@ -17,7 +17,8 @@ const props = defineProps<{
 
 const emit = defineEmits(["close", "update"])
 
-const { playingLesson, isPlaying, pause, play, playNext, playPrev } = usePlayer
+const { playingLesson, isPlaying, play, pause, playPrev, playNext } = usePlayer
+
 const bgColor = ref("#f7f7f8")
 const visibleContent = ref(false)
 const data = ref<Lesson | null>(null)

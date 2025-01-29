@@ -8,7 +8,7 @@ import ProgressBar from "@/components/progress-bar/index.vue"
 
 const emit = defineEmits(["open"])
 
-const { playingLesson, play, pause, currentTime, duration, isPlaying } = player
+const { playingLesson, isPlaying, currentTime, duration, play, pause } = player
 const footerBgColor = ref("rgb(49, 128, 153)")
 
 const onImageLoad = async (event: Event) => {

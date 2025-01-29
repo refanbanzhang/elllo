@@ -107,9 +107,9 @@ const usePlayer = () => {
 
   return {
     playingLesson,
+    isPlaying,
     currentTime,
     duration,
-    isPlaying,
     play,
     pause,
     playPrev,
