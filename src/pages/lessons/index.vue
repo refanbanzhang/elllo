@@ -1,15 +1,30 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from "vue"
-import useTransitionNavigate from "@/utils/transitionNavigate"
+import { ref, onMounted, onUnmounted } from "vue"
 import usePlayer from "@/composables/use-player"
 import useLessons from "@/composables/use-lessons"
 import Player from "@/components/player/index.vue"
 import Tabs from "@/components/tabs/index.vue"
 import ListItem from "./list-item/index.vue"
+import Lesson from "@/components/lesson/index.vue"
+import type { Lesson as LessonType } from "@/types"
+import usePageLocker from "@/composables/use-page-locker"
 
 const { playingLesson, play } = usePlayer
 const { lessons, loadNextPage } = useLessons
-const { transitionNavigate } = useTransitionNavigate()
+const visible = ref(false)
+const currentLesson = ref<LessonType | null>(null)
+const { lockPage, unlockPage } = usePageLocker()
+
+const onNavigate = (lesson: LessonType) => {
+  currentLesson.value = lesson
+  visible.value = true
+  lockPage()
+}
+
+const onClose = () => {
+  visible.value = false
+  unlockPage()
+}
 
 const onScroll = () => {
   const scrollPosition = window.scrollY
@@ -40,7 +55,7 @@ onUnmounted(() => {
         :data="lesson"
         :class="lesson.lessonNo === playingLesson?.lessonNo ? 'active' : ''"
         @play="play(lesson)"
-        @navigate="transitionNavigate(lesson.lessonNo)"
+        @navigate="onNavigate(lesson)"
       />
     </div>
     <div v-if="lessons.length > 0 && playingLesson"  class="player-wrapper">
@@ -48,6 +63,17 @@ onUnmounted(() => {
     </div>
     <div class="tabs-wrapper">
       <Tabs />
+    </div>
+    <div
+      v-if="visible"
+      class="popup"
+      @click="visible = false"
+    >
+      <Lesson
+        v-if="currentLesson"
+        :data="currentLesson"
+        @close="onClose"
+      />
     </div>
   </div>
 </template>
@@ -77,5 +103,15 @@ onUnmounted(() => {
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
 }
 </style>

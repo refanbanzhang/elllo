@@ -31,6 +31,21 @@ export const getLessonByNo = (lessonNo: string): Promise<Lesson> => {
   return mockPromise(audios.find((audio) => audio.lessonNo === lessonNo))
 }
 
+export const getPrevLesson = (lessonNo?: string): Promise<Lesson | null> => {
+  if (!lessonNo) {
+    return mockPromise(audios[0])
+  }
+
+  const index = audios.findIndex((audio) => audio.lessonNo === lessonNo)
+  const prevIndex = index - 1
+
+  if (prevIndex < 0) {
+    return mockPromise(audios[audios.length - 1])
+  }
+
+  return mockPromise(audios[prevIndex])
+}
+
 export const getNextLesson = (lessonNo?: string): Promise<Lesson | null> => {
   if (!lessonNo) {
     return mockPromise(audios[0])
@@ -44,34 +59,4 @@ export const getNextLesson = (lessonNo?: string): Promise<Lesson | null> => {
   }
 
   return mockPromise(audios[nextIndex])
-}
-
-export const getPrevLessonNo = (lessonNo?: string): Promise<string> => {
-  if (!lessonNo) {
-    return mockPromise(audios[0].lessonNo)
-  }
-
-  const index = audios.findIndex((audio) => audio.lessonNo === lessonNo)
-  const prevIndex = index - 1
-
-  if (prevIndex < 0) {
-    return mockPromise(audios[audios.length - 1].lessonNo)
-  }
-
-  return mockPromise(audios[prevIndex].lessonNo)
-}
-
-export const getNextLessonNo = (lessonNo?: string): Promise<string> => {
-  if (!lessonNo) {
-    return mockPromise(audios[0].lessonNo)
-  }
-
-  const index = audios.findIndex((audio) => audio.lessonNo === lessonNo)
-  const nextIndex = index + 1
-
-  if (nextIndex >= audios.length) {
-    return mockPromise(audios[0].lessonNo)
-  }
-
-  return mockPromise(audios[nextIndex].lessonNo)
 }

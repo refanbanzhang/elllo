@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
-import { useRoute, useRouter } from "vue-router"
 import IconPrev from "@/assets/prev.svg"
 import IconNext from "@/assets/next.svg"
 import IconPlay from "@/assets/play.svg"
@@ -8,41 +7,38 @@ import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow.svg"
 import { getAverageColor, getProxiedImageUrl, updateHtmlImgUrl } from "@/utils"
 import usePlayer from "@/composables/use-player"
-import { getLessonByNo, getPrevLessonNo, getNextLessonNo } from "@/api/audio"
+import { getLessonByNo } from "@/api/audio"
 import type { Lesson } from "@/types"
 import { showLoading, hideLoading } from "@/components/toast"
 
-const route = useRoute()
-const router = useRouter()
-const { playingLesson, isPlaying, pause, play } = usePlayer
+const props = defineProps<{
+  data: Lesson
+}>()
+
+const emit = defineEmits(["close"])
+
+const { playingLesson, isPlaying, pause, play, playNext, playPrev } = usePlayer
 const bgColor = ref("#f7f7f8")
 const visibleContent = ref(false)
 const data = ref<Lesson | null>(null)
 
 const onPrev = async () => {
-  showLoading()
-  const prevLessonNo = await getPrevLessonNo(data.value?.lessonNo)
-  router.push(`/lesson/${prevLessonNo}`)
-  hideLoading()
+  playPrev()
 }
 
 const onNext = async () => {
-  showLoading()
-  const nextLessonNo = await getNextLessonNo(data.value?.lessonNo)
-  router.push(`/lesson/${nextLessonNo}`)
-  hideLoading()
+  playNext()
 }
 
-const onBack = () => {
-  router.back()
+const onClose = () => {
+  emit("close")
 }
 
 const toggleContent = () => {
   visibleContent.value = !visibleContent.value
 }
 
-const loadLesson = async () => {
-  const lessonNo = route.params.lessonNo as string
+const loadLesson = async (lessonNo: string) => {
   if (lessonNo) {
     showLoading()
     data.value = await getLessonByNo(lessonNo)
@@ -58,20 +54,25 @@ const loadLesson = async () => {
   }
 }
 
-watch(() => route.params.lessonNo, loadLesson, { immediate: true })
+watch(() => props.data.lessonNo, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    loadLesson(newVal)
+  }
+}, { immediate: true })
 
 </script>
 
 <template>
   <div
     v-if="data"
-    class="page"
+    class="lesson"
     :style="{ backgroundColor: bgColor }"
+    @click.stop
   >
     <header class="header">
       <IconArrow
         class="icon"
-        @click="onBack"
+        @click="onClose"
       />
       <h1 class="title">
         {{ data.title }}
@@ -116,13 +117,14 @@ watch(() => route.params.lessonNo, loadLesson, { immediate: true })
 </template>
 
 <style lang="less" scoped>
-.page {
+.lesson {
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: 15px;
   color: #fff;
   background-image: linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6) 80%);
+  isolation: isolate;
 }
 
 .header {

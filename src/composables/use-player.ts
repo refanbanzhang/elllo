@@ -1,6 +1,6 @@
 import { ref, watch } from "vue"
 import type { Lesson } from "@/types"
-import { getLessonByNo, getNextLessonNo } from "@/api/audio"
+import { getNextLesson, getPrevLesson } from "@/api/audio"
 
 const usePlayer = () => {
   const audio = ref<HTMLAudioElement>(new Audio())
@@ -45,10 +45,18 @@ const usePlayer = () => {
     }
   }
 
+  const playPrev = async () => {
+    const lesson = await getPrevLesson(playingLesson.value?.lessonNo)
+    if (lesson) {
+      play(lesson)
+    }
+  }
+
   const playNext = async () => {
-    const nextLessonNo = await getNextLessonNo(playingLesson.value?.lessonNo)
-    const nextLesson = await getLessonByNo(nextLessonNo)
-    play(nextLesson)
+    const lesson = await getNextLesson(playingLesson.value?.lessonNo)
+    if (lesson) {
+      play(lesson)
+    }
   }
 
   const initEvents = () => {
@@ -104,6 +112,8 @@ const usePlayer = () => {
     isPlaying,
     play,
     pause,
+    playPrev,
+    playNext,
   }
 }
 
