@@ -39,10 +39,7 @@ defineProps<ToastOptions>()
     color: #fff;
     font-size: 12px;
     background: rgba(0, 0, 0, .7);
-  }
-
-  &__text {
-    margin-top: 10px;
+    gap: 10px 0;
   }
 }
 </style>
