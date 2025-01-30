@@ -1,32 +1,18 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue"
+import { ref,onMounted, onUnmounted } from "vue"
 import usePlayer from "@/composables/use-player"
 import useLessons from "@/composables/use-lessons"
 import Player from "@/components/player/index.vue"
 import Tabs from "@/components/tabs/index.vue"
 import ListItem from "./list-item/index.vue"
-import Lesson from "@/components/lesson/index.vue"
 import type { Lesson as LessonType } from "@/types"
-import usePageLocker from "@/composables/use-page-locker"
-import popup from "@/components/popup/index.vue"
-import useCurrentLesson from "@/composables/use-current-lesson"
 
 const { playingLesson, isPlaying, play, pause } = usePlayer
 const { lessons, loadNextPage } = useLessons
-const { setLesson } = useCurrentLesson
-const { lockPage, unlockPage } = usePageLocker()
+const player = ref<InstanceType<typeof Player> | null>(null)
 
-const visible = ref(false)
-
-const onOpenPopup = (lesson: LessonType) => {
-  setLesson(lesson)
-  visible.value = true
-  lockPage()
-}
-
-const onClose = () => {
-  visible.value = false
-  unlockPage()
+const open = (lesson: LessonType) => {
+  player.value?.open(lesson)
 }
 
 const onScroll = () => {
@@ -39,14 +25,6 @@ const onScroll = () => {
     loadNextPage()
   }
 }
-
-onMounted(() => {
-  window.addEventListener("scroll", onScroll)
-})
-
-onUnmounted(() => {
-  window.removeEventListener("scroll", onScroll)
-})
 
 const onKeydown = (event: KeyboardEvent) => {
   if (event.key === " ") {
@@ -61,10 +39,12 @@ const onKeydown = (event: KeyboardEvent) => {
 }
 
 onMounted(() => {
+  window.addEventListener("scroll", onScroll)
   window.addEventListener("keydown", onKeydown)
 })
 
 onUnmounted(() => {
+  window.removeEventListener("scroll", onScroll)
   window.removeEventListener("keydown", onKeydown)
 })
 </script>
@@ -73,28 +53,23 @@ onUnmounted(() => {
   <div class="page">
     <div class="list">
       <ListItem
+        :class="lesson.lessonNo === playingLesson?.lessonNo ? 'active' : ''"
         v-for="(lesson) in lessons"
         :key="lesson.url"
         :data="lesson"
-        :class="lesson.lessonNo === playingLesson?.lessonNo ? 'active' : ''"
+        @open="open(lesson)"
         @play="play(lesson)"
-        @open="onOpenPopup(lesson)"
       />
     </div>
-    <div v-if="lessons.length > 0 && playingLesson"  class="player-wrapper">
-      <Player @open="onOpenPopup(playingLesson)" />
+    <div
+      class="player-wrapper"
+      v-if="lessons.length > 0 && playingLesson"
+    >
+      <Player ref="player" />
     </div>
     <div class="tabs-wrapper">
       <Tabs />
     </div>
-    <popup
-      :visible="visible"
-      @close="onClose"
-    >
-      <Lesson
-        @close="onClose"
-      />
-    </popup>
   </div>
 </template>
 
@@ -116,6 +91,7 @@ onUnmounted(() => {
 .player-wrapper {
   position: sticky;
   bottom: 60px;
+  z-index: 1;
 }
 
 .tabs-wrapper {
@@ -123,15 +99,5 @@ onUnmounted(() => {
   bottom: 0;
   left: 0;
   right: 0;
-}
-
-.popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
 }
 </style>

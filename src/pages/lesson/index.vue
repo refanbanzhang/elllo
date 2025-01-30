@@ -6,10 +6,13 @@ import { getLessonByNo } from "@/api/audio"
 import { updateHtmlImgUrl, getProxiedImageUrl } from "@/utils"
 import { showLoading, hideLoading } from "@/components/toast"
 import Player from "@/components/player/index.vue"
+import PlayerIcon from "@/assets/play.svg"
+import usePlayer from "@/composables/use-player"
 
 const route = useRoute()
 const lessonNo = route.params.lessonNo as string
 
+const { play } = usePlayer
 const lesson = ref<Lesson | null>(null)
 
 onMounted(async () => {
@@ -20,14 +23,22 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="page">
-    <div v-if="lesson?.img" class="cover" :style="{
-      backgroundImage: `url(${getProxiedImageUrl(lesson?.img || '')})`,
+  <div class="page" v-if="lesson">
+    <div v-if="lesson.img" class="cover" :style="{
+      backgroundImage: `url(${getProxiedImageUrl(lesson.img || '')})`,
     }" />
     <div class="info">
-      {{ lesson?.title }} - {{ lessonNo }}
+      <div class="info-title">
+        {{ lesson.title }} - {{ lesson.lessonNo }}
+      </div>
+      <div class="player-icon-wrapper">
+        <PlayerIcon
+          class="player-icon"
+          @click="play(lesson)"
+        />
+      </div>
     </div>
-    <div class="content" v-html="updateHtmlImgUrl(lesson?.html || '')" />
+    <div class="content" v-html="updateHtmlImgUrl(lesson.html || '')" />
     <div class="player-wrapper">
       <Player />
     </div>
@@ -46,8 +57,33 @@ onMounted(async () => {
 }
 
 .info {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   padding: 0 15px;
   margin-bottom: 15px;
+}
+
+.info-title {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.player-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .3);
+}
+
+.player-icon {
+  width: 30px;
+  height: 30px;
+  color: #fff;
 }
 
 .content {

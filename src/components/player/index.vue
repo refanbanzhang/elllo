@@ -1,27 +1,54 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import player from "@/composables/use-player"
 import ProgressBar from "@/components/progress-bar/index.vue"
+import Lesson from "@/components/lesson/index.vue"
+import popup from "@/components/popup/index.vue"
+import type { Lesson as LessonType } from "@/types"
+import usePageLocker from "@/composables/use-page-locker"
+import useCurrentLesson from "@/composables/use-current-lesson"
 
-const emit = defineEmits(["open"])
-
+const { setLesson } = useCurrentLesson
+const { lockPage, unlockPage } = usePageLocker()
 const { playingLesson, isPlaying, currentTime, duration, play, pause } = player
 const footerBgColor = ref("rgb(49, 128, 153)")
+const visible = ref(false)
+
+const onOpen = (lesson: LessonType) => {
+  setLesson(lesson)
+  visible.value = true
+}
+
+const onClose = () => {
+  visible.value = false
+}
 
 const onImageLoad = async (event: Event) => {
   const imgEl = event.target as HTMLImageElement
   footerBgColor.value = await getAverageColor(imgEl)
 }
+
+watch(() => visible.value , (newVal) => {
+  if (newVal) {
+    lockPage()
+  } else {
+    unlockPage()
+  }
+})
+
+defineExpose({
+  open: onOpen,
+})
 </script>
 
 <template>
   <div
     v-if="playingLesson"
     class="player"
-    @click.stop="emit('open', playingLesson)"
+    @click.stop="onOpen(playingLesson)"
   >
     <div class="player__content">
       <div
@@ -62,6 +89,12 @@ const onImageLoad = async (event: Event) => {
       </div>
     </div>
   </div>
+  <popup
+    :visible="visible"
+    @close="onClose"
+  >
+    <Lesson @close="onClose" />
+  </popup>
 </template>
 
 <style lang="less" scoped>

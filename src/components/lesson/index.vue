@@ -48,6 +48,7 @@ const onClose = () => {
 }
 
 const onNavigateTo = () => {
+  emit("close")
   router.push(`/lesson/${lesson.value?.lessonNo}`)
 }
 
@@ -152,10 +153,6 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-      <!-- <div
-        class="content"
-        v-html="updateHtmlImgUrl(lesson.html)"
-      /> -->
     </main>
     <footer class="footer">
       <IconPrev class="icon-prev" @click="onPrev()" />

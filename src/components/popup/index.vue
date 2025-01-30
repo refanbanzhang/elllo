@@ -5,7 +5,10 @@ defineProps<{
 </script>
 
 <template>
-  <div v-if="visible" class="popup">
+  <div
+    class="popup"
+    v-if="visible"
+  >
     <slot />
   </div>
 </template>
@@ -13,10 +16,6 @@ defineProps<{
 <style lang="less" scoped>
 .popup {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
 }
 </style>
