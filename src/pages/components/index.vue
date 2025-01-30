@@ -1,9 +1,18 @@
 <script setup lang="ts">
+import { ref } from "vue"
 import Button from "@/components/button/index.vue"
+import Slider from "@/components/slider/index.vue"
+
+const value = ref(30)
 </script>
 
 <template>
   <div class="page">
+    <h2>Slider</h2>
+    value: {{ value }}
+    <Slider v-model="value" />
+
+    <h2>Button</h2>
     type:
     <Button type="primary">按钮</Button>
     <Button type="secondary">按钮</Button>
