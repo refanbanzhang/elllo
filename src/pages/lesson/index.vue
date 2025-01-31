@@ -7,13 +7,19 @@ import { updateHtmlImgUrl, getProxiedImageUrl } from "@/utils"
 import { showLoading, hideLoading } from "@/components/toast"
 import Player from "@/components/player/index.vue"
 import PlayerIcon from "@/assets/play.svg"
+import IconArrow from "@/assets/arrow-left.svg"
 import usePlayer from "@/composables/use-player"
+import { useRouter } from "vue-router"
 
 const route = useRoute()
-const lessonNo = route.params.lessonNo as string
-
+const router = useRouter()
 const { play } = usePlayer
 const lesson = ref<Lesson | null>(null)
+const lessonNo = route.params.lessonNo as string
+
+const onBack = () => {
+  router.push("/")
+}
 
 onMounted(async () => {
   showLoading()
@@ -24,6 +30,10 @@ onMounted(async () => {
 
 <template>
   <div class="page" v-if="lesson">
+    <IconArrow
+      class="back"
+      @click="onBack"
+    />
     <div v-if="lesson.img" class="cover" :style="{
       backgroundImage: `url(${getProxiedImageUrl(lesson.img || '')})`,
     }" />
@@ -46,6 +56,16 @@ onMounted(async () => {
 </template>
 
 <style lang='less' scoped>
+.back {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1;
+  width: 25px;
+  height: 25px;
+  fill: #fff;
+}
+
 .cover {
   margin-bottom: 20px;
   width: 100%;
