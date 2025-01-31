@@ -6,6 +6,7 @@ import IconNext from "@/assets/next.svg"
 import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow.svg"
+import IconSettings from "@/assets/settings.svg"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import usePlayer from "@/composables/use-player"
 import { getLessonByNo } from "@/api/audio"
@@ -14,6 +15,9 @@ import useCurrentLesson from "@/composables/use-current-lesson"
 import { showLoading, hideLoading } from "@/components/toast"
 import Popup from "@/components/popup/index.vue"
 import Slider from "@/components/slider/index.vue"
+import IconMinClose from "@/assets/volume1.svg"
+import IconMediumClose from "@/assets/volume2.svg"
+import IconMaxClose from "@/assets/volume3.svg"
 
 const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60)
@@ -177,14 +181,19 @@ onUnmounted(() => {
         <IconPlay class="icon" />
       </button>
       <IconNext class="icon-next" @click="onNext()" />
-      <div
+      <IconSettings
         class="settings"
         @click="onSettings"
-      >settings</div>
+      />
     </footer>
     <Popup :visible="settingsPopupVisible">
       <div class="settings-popup">
         <div class="settings-popup__close" @click="settingsPopupVisible = false">close</div>
+        <div class="volume-group">
+          <IconMinClose class="volume" v-if="volume <= 30" />
+          <IconMediumClose class="volume" v-else-if="volume <= 60" />
+          <IconMaxClose class="volume" v-else />
+        </div>
         <Slider
           :model-value="volume"
           v-on:update:model-value="setVolume"
@@ -296,6 +305,9 @@ main {
   position: absolute;
   bottom: 15px;
   left: 15px;
+  width: 30px;
+  height: 30px;
+  fill: currentColor;
 }
 
 .settings-popup{
@@ -314,6 +326,18 @@ main {
   right: 15px;
   color: #fff;
   font-size: 16px;
+}
+
+.volume-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.volume {
+  width: 25px;
+  height: 25px;
+  fill: currentColor;
 }
 </style>
 
