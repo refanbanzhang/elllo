@@ -90,7 +90,9 @@ defineExpose({
     </div>
   </div>
   <popup
+    v-if="visible"
     :visible="visible"
+    @close="onClose"
   >
     <Lesson @close="onClose" />
   </popup>

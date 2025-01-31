@@ -85,10 +85,6 @@ watch(() => lesson.value?.lessonNo, (newVal, oldVal) => {
 }, { immediate: true })
 
 const onKeydown = (event: KeyboardEvent) => {
-  if (event.key === "Escape") {
-    emit("close")
-  }
-
   if (event.key === "ArrowLeft") {
     onPrev()
   }
@@ -186,7 +182,11 @@ onUnmounted(() => {
         @click="onSettings"
       />
     </footer>
-    <Popup :visible="settingsPopupVisible">
+    <Popup
+      v-if="settingsPopupVisible"
+      :visible="settingsPopupVisible"
+      @close="settingsPopupVisible = false"
+    >
       <div class="settings-popup">
         <div class="settings-popup__close" @click="settingsPopupVisible = false">close</div>
         <div class="volume-group">
