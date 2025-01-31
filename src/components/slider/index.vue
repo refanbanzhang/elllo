@@ -2,15 +2,17 @@
 import { ref } from "vue"
 import ProgressBar from "@/components/progress-bar/index.vue"
 
-const props = withDefaults(defineProps<{
-  modelValue: number
-}>(), {
-  modelValue: 0,
+type Props = {
+  value: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  value: 0,
 })
 
-const emit = defineEmits(["update:modelValue"])
+const emit = defineEmits(["change"])
 
-const stepValue = ref(props.modelValue)
+const stepValue = ref(props.value)
 const isDragging = ref(false)
 const slider = ref<HTMLElement | null>(null)
 
@@ -27,7 +29,7 @@ const calculatePercentage = (event: TouchEvent) => {
   const value = Math.min(Math.max(percentage, 0), 100)
   const roundedValue = Math.round(value)
 
-  emit("update:modelValue", roundedValue)
+  emit("change", roundedValue)
   stepValue.value = roundedValue
 }
 
@@ -57,7 +59,7 @@ const onTouchEnd = () => {
     @touchmove="onTouchMove"
     @touchend="onTouchEnd"
   >
-    <ProgressBar :model-value="stepValue" />
+    <ProgressBar :value="stepValue" />
     <div
       class="slider-dot"
       :style="{

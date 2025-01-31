@@ -84,7 +84,7 @@ defineExpose({
           <IconPlay class="icon" />
         </button>
         <div class="progress-bar-wrapper">
-          <ProgressBar :model-value="currentTime / duration * 100" />
+          <ProgressBar :value="currentTime / duration * 100" />
         </div>
       </div>
     </div>

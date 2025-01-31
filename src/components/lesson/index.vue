@@ -25,7 +25,7 @@ const formatTime = (seconds: number) => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`
 }
 
-const emit = defineEmits(["close", "update"])
+const emit = defineEmits(["close"])
 
 const router = useRouter()
 const { playingLesson, isPlaying, currentTime, duration, volume, setVolume, play, pause, playPrev, playNext } = usePlayer
@@ -156,7 +156,7 @@ onUnmounted(() => {
           v-if="playingLesson?.lessonNo === lesson.lessonNo"
           class="info__progress"
         >
-          <ProgressBar :model-value="currentTime / duration * 100" />
+          <ProgressBar :value="currentTime / duration * 100" />
           <div class="info__time">
             <span>{{ formatTime(currentTime) }}</span>
             <span>{{ formatTime(duration) }}</span>
@@ -195,8 +195,8 @@ onUnmounted(() => {
           <IconMaxClose class="volume" v-else />
         </div>
         <Slider
-          :model-value="volume"
-          v-on:update:model-value="setVolume"
+          :value="volume"
+          @change="setVolume($event)"
         />
       </div>
     </Popup>

@@ -3,14 +3,17 @@ import { ref } from "vue"
 import Button from "@/components/button/index.vue"
 import Slider from "@/components/slider/index.vue"
 
-const value = ref(30)
+const volumeValue = ref(30)
 </script>
 
 <template>
   <div class="page">
     <h2>Slider</h2>
-    value: {{ value }}
-    <Slider v-model="value" />
+    volumeValue: {{ volumeValue }}
+    <Slider
+      :value="volumeValue"
+      @change="volumeValue = $event"
+    />
 
     <h2>Button</h2>
     type:

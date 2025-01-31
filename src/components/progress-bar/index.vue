@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface Props {
-  modelValue: number
+  value: number
   color?: string
   trackColor?: string
 }
@@ -18,7 +18,7 @@ withDefaults(defineProps<Props>(), {
   >
     <div
       class="progress-bar__filled"
-      :style="{ width: `${modelValue}%`, backgroundColor: color }"
+      :style="{ width: `${value}%`, backgroundColor: color }"
     />
   </div>
 </template>
