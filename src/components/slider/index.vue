@@ -68,6 +68,8 @@ const onTouchEnd = () => {
 </template>
 
 <style lang="less" scoped>
+@height: 20px;
+
 .slider {
   position: relative;
   background-color: #000;
@@ -76,10 +78,11 @@ const onTouchEnd = () => {
 
 .slider-dot {
   position: absolute;
-  top: -10px;
+  // 2px为progress-bar高度的一半
+  top: -10px + 2px;
   left: 0;
-  width: 20px;
-  height: 20px;
+  width: @height;
+  height: @height;
   border-radius: 50%;
   background-color: #fff;
 }
