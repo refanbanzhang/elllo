@@ -8,6 +8,11 @@ const usePlayer = () => {
   const isPlaying = ref<boolean>(false)
   const duration = ref<number>(0)
   const playingLesson = ref<Lesson | null>(null)
+  const volume = ref<number>(100)
+
+  const setVolume = (value: number) => {
+    volume.value = value
+  }
 
   const pause = () => {
     audio.value.pause()
@@ -102,6 +107,15 @@ const usePlayer = () => {
     }
   })
 
+  watch(() => volume.value, (newVolume) => {
+    if (audio.value) {
+      // Ensure volume is between 0 and 1
+      const normalizedVolume = newVolume / 100
+      console.log(normalizedVolume)
+      audio.value.volume = normalizedVolume
+    }
+  })
+
   initEvents()
   initPlayingLesson()
 
@@ -110,6 +124,8 @@ const usePlayer = () => {
     isPlaying,
     currentTime,
     duration,
+    volume,
+    setVolume,
     play,
     pause,
     playPrev,

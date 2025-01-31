@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from "vue"
+import { useRouter } from "vue-router"
 import IconPrev from "@/assets/prev.svg"
 import IconNext from "@/assets/next.svg"
 import IconPlay from "@/assets/play.svg"
@@ -11,7 +12,8 @@ import { getLessonByNo } from "@/api/audio"
 import ProgressBar from "@/components/progress-bar/index.vue"
 import useCurrentLesson from "@/composables/use-current-lesson"
 import { showLoading, hideLoading } from "@/components/toast"
-import { useRouter } from "vue-router"
+import Popup from "@/components/popup/index.vue"
+import Slider from "@/components/slider/index.vue"
 
 const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60)
@@ -22,10 +24,14 @@ const formatTime = (seconds: number) => {
 const emit = defineEmits(["close", "update"])
 
 const router = useRouter()
-const { playingLesson, isPlaying, currentTime, duration, play, pause, playPrev, playNext } = usePlayer
+const { playingLesson, isPlaying, currentTime, duration, volume, setVolume, play, pause, playPrev, playNext } = usePlayer
 const { lesson, setLesson } = useCurrentLesson
-
+const settingsPopupVisible = ref(false)
 const bgColor = ref("#f7f7f8")
+
+const onSettings = () => {
+  settingsPopupVisible.value = true
+}
 
 const onPrev = async () => {
   await playPrev()
@@ -171,7 +177,20 @@ onUnmounted(() => {
         <IconPlay class="icon" />
       </button>
       <IconNext class="icon-next" @click="onNext()" />
+      <div
+        class="settings"
+        @click="onSettings"
+      >settings</div>
     </footer>
+    <Popup :visible="settingsPopupVisible">
+      <div class="settings-popup">
+        <div class="settings-popup__close" @click="settingsPopupVisible = false">close</div>
+        <Slider
+          :model-value="volume"
+          v-on:update:model-value="setVolume"
+        />
+      </div>
+    </Popup>
   </div>
 </template>
 
@@ -183,7 +202,7 @@ onUnmounted(() => {
   padding: 15px;
   color: #fff;
   background-image: linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6) 80%);
-    }
+}
 
 .header {
   display: flex;
@@ -272,4 +291,29 @@ main {
   color: rgb(179, 179, 179);
   font-size: 12px;
 }
+
+.settings {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+}
+
+.settings-popup{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  color: #fff;
+  background: #000;
+}
+
+.settings-popup__close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: #fff;
+  font-size: 16px;
+}
 </style>
+

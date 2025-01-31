@@ -91,7 +91,6 @@ defineExpose({
   </div>
   <popup
     :visible="visible"
-    @close="onClose"
   >
     <Lesson @close="onClose" />
   </popup>
