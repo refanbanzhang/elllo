@@ -4,8 +4,28 @@ import Button from "@/components/button/index.vue"
 import Slider from "@/components/slider/index.vue"
 import Picker from "@/components/picker/index.vue"
 
+type Option = {
+  label: string
+  value: number
+}
+
 const volumeValue = ref(30)
 const pickerVisible = ref(false)
+
+const options: Option[] =  [
+  {
+    label: '选项1',
+    value: 1,
+  },
+  {
+    label: '选项2',
+    value: 2,
+  },
+  {
+    label: '选项3',
+    value: 3,
+  },
+]
 
 const onPickerChange = (value: string) => {
   console.log(value)
@@ -18,8 +38,9 @@ const onPickerChange = (value: string) => {
     <Button @click="pickerVisible = true">打开</Button>
     <Picker
       :visible="pickerVisible"
+      :value="1"
+      :options="options"
       @close="pickerVisible = false"
-      :options="['选项1', '选项2', '选项3']"
       @change="onPickerChange"
     />
 
