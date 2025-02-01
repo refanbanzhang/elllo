@@ -16,6 +16,8 @@ html, body, #app {
 html {
   font-family: 'Untitled Sans', system-ui, sans-serif;
   background-color: #f6f6f6;
+
+  --index-popup: 1000;
 }
 
 button {

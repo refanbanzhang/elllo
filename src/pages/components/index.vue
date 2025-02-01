@@ -2,12 +2,22 @@
 import { ref } from "vue"
 import Button from "@/components/button/index.vue"
 import Slider from "@/components/slider/index.vue"
+import Picker from "@/components/picker/index.vue"
 
 const volumeValue = ref(30)
+const pickerVisible = ref(false)
 </script>
 
 <template>
   <div class="page">
+    <h2>Picker</h2>
+    <Button @click="pickerVisible = true">打开</Button>
+    <Picker
+      :visible="pickerVisible"
+      :options="['选项1', '选项2', '选项3']"
+      @change="pickerVisible = false"
+    />
+
     <h2>Slider</h2>
     volumeValue: {{ volumeValue }}
     <Slider
