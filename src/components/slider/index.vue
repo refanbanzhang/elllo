@@ -6,13 +6,12 @@ type Props = {
   value: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   value: 0,
 })
 
 const emit = defineEmits(["change"])
 
-const stepValue = ref(props.value)
 const isDragging = ref(false)
 const slider = ref<HTMLElement | null>(null)
 
@@ -30,7 +29,6 @@ const calculatePercentage = (event: TouchEvent) => {
   const roundedValue = Math.round(value)
 
   emit("change", roundedValue)
-  stepValue.value = roundedValue
 }
 
 const onTouchStart = (event: TouchEvent) => {
@@ -59,11 +57,11 @@ const onTouchEnd = () => {
     @touchmove="onTouchMove"
     @touchend="onTouchEnd"
   >
-    <ProgressBar :value="stepValue" />
+    <ProgressBar :value="value" />
     <div
       class="slider-dot"
       :style="{
-        left: `calc(${stepValue}% - 10px)`
+        left: `calc(${value}% - 10px)`
       }"
      />
   </div>

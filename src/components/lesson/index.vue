@@ -11,7 +11,6 @@ import IconVolume from "@/assets/volume.svg"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import usePlayer from "@/composables/use-player"
 import { getLessonByNo } from "@/api/audio"
-import ProgressBar from "@/components/progress-bar/index.vue"
 import useCurrentLesson from "@/composables/use-current-lesson"
 import { showLoading, hideLoading } from "@/components/toast"
 import Popup from "@/components/popup/index.vue"
@@ -39,7 +38,7 @@ const formatTime = (seconds: number) => {
 const emit = defineEmits(["close"])
 
 const router = useRouter()
-const { playingLesson, isPlaying, currentTime, duration, volume, setVolume, speed, setSpeed,play, pause, playPrev, playNext } = usePlayer
+const { playingLesson, isPlaying, currentTime, duration, percentage, updatePercentage, volume, setVolume, speed, setSpeed,play, pause, playPrev, playNext } = usePlayer
 const { lesson, setLesson } = useCurrentLesson
 const settingsPopupVisible = ref(false)
 const volumePopupVisible = ref(false)
@@ -220,7 +219,10 @@ onUnmounted(() => {
           v-if="playingLesson?.lessonNo === lesson.lessonNo"
           class="info__progress"
         >
-          <ProgressBar :value="currentTime / duration * 100" />
+          <Slider
+            :value="percentage"
+            @change="updatePercentage($event)"
+          />
           <div class="info__time">
             <span>{{ formatTime(currentTime) }}</span>
             <span>{{ formatTime(duration) }}</span>

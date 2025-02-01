@@ -1,4 +1,4 @@
-import { ref, watch } from "vue"
+import { ref, watch, computed } from "vue"
 import type { Lesson } from "@/types"
 import { getNextLesson, getPrevLesson } from "@/api/audio"
 
@@ -157,11 +157,21 @@ const usePlayer = () => {
   initEvents()
   initPlayingLesson()
 
+  const percentage = computed(() => currentTime.value / duration.value * 100)
+
+  const updatePercentage = (percentage: number) => {
+    const time = (percentage / 100) * duration.value
+    audio.value.currentTime = time
+    currentTime.value = time
+  }
+
   return {
     playingLesson,
     isPlaying,
     currentTime,
     duration,
+    percentage,
+    updatePercentage,
     volume,
     setVolume,
     speed,
