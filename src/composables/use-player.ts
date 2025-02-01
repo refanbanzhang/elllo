@@ -103,6 +103,17 @@ const usePlayer = () => {
 
   const initPlayingLesson = () => {
     const stored = localStorage.getItem(STORAGE_KEY)
+    const speed = localStorage.getItem("speed")
+    const volume = localStorage.getItem("volume")
+
+    if (speed) {
+      setSpeed(Number(speed))
+    }
+
+    if (volume) {
+      setVolume(Number(volume))
+    }
+
     if (stored) {
       const lesson = JSON.parse(stored) as Lesson
       playingLesson.value = lesson
@@ -120,14 +131,17 @@ const usePlayer = () => {
     if (audio.value) {
       // Ensure volume is between 0 and 1
       const normalizedVolume = newVolume / 100
-      console.log(normalizedVolume)
       audio.value.volume = normalizedVolume
+
+      localStorage.setItem("volume", String(newVolume))
     }
   })
 
   watch(() => speed.value, (newSpeed) => {
     if (audio.value) {
       audio.value.playbackRate = newSpeed
+
+      localStorage.setItem("speed", String(newSpeed))
     }
   })
 
