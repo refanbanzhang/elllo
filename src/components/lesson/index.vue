@@ -43,8 +43,20 @@ const { playingLesson, isPlaying, currentTime, duration, percentage, updatePerce
 const { lesson, setLesson } = useCurrentLesson
 const settingsPopupVisible = ref(false)
 const volumePopupVisible = ref(false)
+const sleepTimerPopupVisible = ref(false)
 const speedVisible = ref(false)
+
 const bgColor = ref("#f7f7f8")
+
+const sleepTimerOptions: SpeedOption[] = [
+  { label: "1分钟", value: 1 },
+  { label: "10分钟", value: 10 },
+  { label: "30分钟", value: 30 },
+  { label: "60分钟", value: 60 },
+  { label: "90分钟", value: 90 },
+  { label: "120分钟", value: 120 },
+  { label: "150分钟", value: 150 },
+]
 
 const speedOptions: SpeedOption[] = [
   { label: "0.5x", value: 0.5 },
@@ -52,6 +64,36 @@ const speedOptions: SpeedOption[] = [
   { label: "1.5x", value: 1.5 },
   { label: "2x", value: 2 },
 ]
+
+const sleepTimer = ref(0)
+const remainingTime = ref(0)
+const sleepTimerInterval = ref(0)
+
+const startSleepTimer = () => {
+  if (sleepTimerInterval.value) {
+    clearInterval(sleepTimerInterval.value)
+  }
+
+  // 转换为秒
+  remainingTime.value = sleepTimer.value * 60
+
+  // 每分钟更新一次剩余时间
+  sleepTimerInterval.value = window.setInterval(() => {
+    remainingTime.value -= 1
+    if (remainingTime.value <= 0) {
+      clearInterval(sleepTimerInterval.value)
+      pause() // 时间到暂停播放
+      sleepTimer.value = 0 // 重置定时器
+    }
+  }, 1000)
+}
+
+const onChangeSleepTimer = (option: SpeedOption) => {
+  sleepTimer.value = option.value
+  sleepTimerPopupVisible.value = false
+
+  startSleepTimer()
+}
 
 const onChangeSpeed = (option: SpeedOption) => {
   setSpeed(option.value)
@@ -62,7 +104,7 @@ const menuItems: MenuItem[] = [
   {
     name: "Sleep timer",
     action: () => {
-      console.log("sleep timer")
+      sleepTimerPopupVisible.value = true
     }
   },
   {
@@ -294,6 +336,14 @@ onUnmounted(() => {
         />
       </div>
     </Popup>
+    <Picker
+      v-if="sleepTimerPopupVisible"
+      :visible="sleepTimerPopupVisible"
+      :value="sleepTimer"
+      :options="sleepTimerOptions"
+      @close="sleepTimerPopupVisible = false"
+      @change="onChangeSleepTimer($event)"
+    />
     <Picker
       v-if="speedVisible"
       :value="speed"
