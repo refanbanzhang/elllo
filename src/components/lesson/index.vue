@@ -20,11 +20,12 @@ import IconMediumClose from "@/assets/volume2.svg"
 import IconMaxClose from "@/assets/volume3.svg"
 import Picker from "@/components/picker/index.vue"
 
-type MenuItem = {
+interface MenuItem {
   name: string
   action?: () => void
 }
-type SpeedOption = {
+
+interface SpeedOption {
   label: string
   value: number
 }
