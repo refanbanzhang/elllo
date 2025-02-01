@@ -64,9 +64,8 @@ onUnmounted(() => {
 }
 
 .popup__content {
-  padding: 15px;
   background: #fff;
-   border-radius: 10px 10px 0 0;
+  height: 100%;
 
   &.top {
     position: absolute;
@@ -74,6 +73,9 @@ onUnmounted(() => {
     left: 0;
     right: 0;
     bottom: auto;
+    height: auto;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
   }
 
   &.bottom {
@@ -82,6 +84,9 @@ onUnmounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
+    height: auto;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
   }
 }
 </style>

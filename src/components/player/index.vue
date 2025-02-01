@@ -6,7 +6,7 @@ import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import player from "@/composables/use-player"
 import ProgressBar from "@/components/progress-bar/index.vue"
 import Lesson from "@/components/lesson/index.vue"
-import popup from "@/components/popup/index.vue"
+import Popup from "@/components/popup/index.vue"
 import type { Lesson as LessonType } from "@/types"
 import usePageLocker from "@/composables/use-page-locker"
 import useCurrentLesson from "@/composables/use-current-lesson"
@@ -89,13 +89,12 @@ defineExpose({
       </div>
     </div>
   </div>
-  <popup
-    v-if="visible"
+  <Popup
     :visible="visible"
     @close="onClose"
   >
     <Lesson @close="onClose" />
-  </popup>
+  </Popup>
 </template>
 
 <style lang="less" scoped>

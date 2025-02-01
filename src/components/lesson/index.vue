@@ -128,6 +128,10 @@ onUnmounted(() => {
       <h1 class="title">
         {{ lesson.title }}
       </h1>
+      <IconSettings
+        class="settings"
+        @click="onSettings"
+      />
     </header>
     <main>
       <div
@@ -177,10 +181,6 @@ onUnmounted(() => {
         <IconPlay class="icon" />
       </button>
       <IconNext class="icon-next" @click="onNext()" />
-      <IconSettings
-        class="settings"
-        @click="onSettings"
-      />
     </footer>
     <Popup
       v-if="settingsPopupVisible"
@@ -302,9 +302,6 @@ main {
 }
 
 .settings {
-  position: absolute;
-  bottom: 15px;
-  left: 15px;
   width: 30px;
   height: 30px;
   fill: currentColor;
