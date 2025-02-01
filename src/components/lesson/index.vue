@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from "vue"
+import { ref, watch, onMounted, onUnmounted, computed } from "vue"
 import { useRouter } from "vue-router"
 import IconPrev from "@/assets/prev.svg"
 import IconNext from "@/assets/next.svg"
@@ -7,6 +7,7 @@ import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow.svg"
 import IconSettings from "@/assets/settings.svg"
+import IconVolume from "@/assets/volume.svg"
 import { getAverageColor, getProxiedImageUrl } from "@/utils"
 import usePlayer from "@/composables/use-player"
 import { getLessonByNo } from "@/api/audio"
@@ -18,6 +19,16 @@ import Slider from "@/components/slider/index.vue"
 import IconMinClose from "@/assets/volume1.svg"
 import IconMediumClose from "@/assets/volume2.svg"
 import IconMaxClose from "@/assets/volume3.svg"
+import Picker from "@/components/picker/index.vue"
+
+type MenuItem = {
+  name: string
+  action?: () => void
+}
+type SpeedOption = {
+  label: string
+  value: number
+}
 
 const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60)
@@ -28,13 +39,64 @@ const formatTime = (seconds: number) => {
 const emit = defineEmits(["close"])
 
 const router = useRouter()
-const { playingLesson, isPlaying, currentTime, duration, volume, setVolume, play, pause, playPrev, playNext } = usePlayer
+const { playingLesson, isPlaying, currentTime, duration, volume, setVolume, speed, setSpeed,play, pause, playPrev, playNext } = usePlayer
 const { lesson, setLesson } = useCurrentLesson
 const settingsPopupVisible = ref(false)
+const volumePopupVisible = ref(false)
+const speedVisible = ref(false)
 const bgColor = ref("#f7f7f8")
+
+const speedOptions: SpeedOption[] = [
+  { label: "0.5x", value: 0.5 },
+  { label: "1x", value: 1 },
+  { label: "1.5x", value: 1.5 },
+  { label: "2x", value: 2 },
+]
+
+const onChangeSpeed = (option: SpeedOption) => {
+  setSpeed(option.value)
+  speedVisible.value = false
+}
+
+const menuItems: MenuItem[] = [
+  {
+    name: "Sleep timer",
+    action: () => {
+      console.log("sleep timer")
+    }
+  },
+  {
+    name: "Set speed",
+    action: () => {
+      speedVisible.value = true
+    }
+  },
+  {
+    name: "Add to playlist",
+  },
+  {
+    name: "Hide song",
+  },
+  {
+    name: "Share",
+  },
+  {
+    name: "View artist",
+  },
+  {
+    name: "Report",
+  },
+  {
+    name: "Song credits",
+  }
+]
 
 const onSettings = () => {
   settingsPopupVisible.value = true
+}
+
+const onVolume = () => {
+  volumePopupVisible.value = true
 }
 
 const onPrev = async () => {
@@ -104,6 +166,8 @@ const onKeydown = (event: KeyboardEvent) => {
   }
 }
 
+const imgSrc = computed(() => lesson.value?.img ? getProxiedImageUrl(lesson.value?.img) : "")
+
 onMounted(() => {
   window.addEventListener("keydown", onKeydown)
 })
@@ -129,8 +193,8 @@ onUnmounted(() => {
         {{ lesson.title }}
       </h1>
       <IconSettings
-        class="settings"
-        @click="onSettings"
+        class="icon-settings"
+        @click="onSettings()"
       />
     </header>
     <main>
@@ -138,7 +202,7 @@ onUnmounted(() => {
         v-if="lesson.img"
         class="cover"
         :style="{
-          backgroundImage: `url(${getProxiedImageUrl(lesson.img)})`,
+          backgroundImage: `url(${imgSrc})`,
           'view-transition-name': `audio-${lesson.lessonNo}`
         }"
       />
@@ -181,14 +245,41 @@ onUnmounted(() => {
         <IconPlay class="icon" />
       </button>
       <IconNext class="icon-next" @click="onNext()" />
+      <IconVolume class="volume-icon" @click="onVolume()" />
     </footer>
     <Popup
       v-if="settingsPopupVisible"
       :visible="settingsPopupVisible"
       @close="settingsPopupVisible = false"
     >
-      <div class="settings-popup">
-        <div class="settings-popup__close" @click="settingsPopupVisible = false">close</div>
+      <div class="popup">
+        <img class="settings-cover" :src="imgSrc" alt="">
+        <div class="settings-title">
+          {{ lesson.title }}
+        </div>
+        <div class="settings-lesson-no">
+          {{ lesson.lessonNo }}
+        </div>
+        <div class="menus">
+          <div
+            class="menu-item"
+            v-for="(item, index) in menuItems"
+            :key="index"
+            @click="item.action?.()"
+          >
+            {{ item.name }}
+          </div>
+        </div>
+        <div class="popup__close" @click="settingsPopupVisible = false">close</div>
+      </div>
+    </Popup>
+    <Popup
+      v-if="volumePopupVisible"
+      :visible="volumePopupVisible"
+      @close="volumePopupVisible = false"
+    >
+      <div class="popup">
+        <div class="popup__close" @click="volumePopupVisible = false">close</div>
         <div class="volume-group">
           <IconMinClose class="volume" v-if="volume <= 30" />
           <IconMediumClose class="volume" v-else-if="volume <= 60" />
@@ -200,6 +291,14 @@ onUnmounted(() => {
         />
       </div>
     </Popup>
+    <Picker
+      v-if="speedVisible"
+      :value="speed"
+      :visible="speedVisible"
+      :options="speedOptions"
+      @close="speedVisible = false"
+      @change="onChangeSpeed($event)"
+    />
   </div>
 </template>
 
@@ -301,28 +400,52 @@ main {
   font-size: 12px;
 }
 
-.settings {
+.settings-cover {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.settings-title {
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.settings-lesson-no {
+  margin-bottom: 70px;
+  font-size: 16px;
+  color: #999;
+}
+
+.icon-settings {
   width: 30px;
   height: 30px;
   fill: currentColor;
 }
 
-.settings-popup{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.popup{
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: center;
+  overflow: auto;
   height: 100%;
   padding: 20px;
   color: #fff;
   background: #000;
 }
 
-.settings-popup__close {
+.popup__close {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
   color: #fff;
-  font-size: 16px;
+  font-size: 18px;
+  background: #000;
 }
 
 .volume-group {
@@ -335,6 +458,23 @@ main {
   width: 25px;
   height: 25px;
   fill: currentColor;
+}
+
+.volume-icon {
+  position: absolute;
+  left: 15px;
+  bottom: 15px;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.menus {
+  margin-bottom: 100px;
+}
+
+.menu-item {
+  padding: 15px 0;
 }
 </style>
 

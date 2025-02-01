@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import Popup from "@/components/popup/index.vue"
 
+type Option = {
+  label: string
+  value: number
+}
+
 defineProps<{
+  value: number
   visible: boolean
-  options: string[]
+  options: Option[]
 }>()
 
 const emit = defineEmits(["change", "close"])
 
-const selectOption = (option: string) => {
+const selectOption = (option: Option) => {
   emit("change", option)
 }
 </script>
@@ -23,11 +29,12 @@ const selectOption = (option: string) => {
   >
     <div
       class="option"
+      :class="{ 'active': value === option.value }"
       v-for="option in options"
-      :key="option"
+      :key="option.value"
       @click="selectOption(option)"
     >
-      {{ option }}
+      {{ option.label }}
     </div>
   </Popup>
 </template>
@@ -36,15 +43,22 @@ const selectOption = (option: string) => {
 .picker {
   display: flex;
   flex-direction: column;
+  background: rgba(0, 0, 0, .7) !important;
 }
 
 .option {
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
   border-radius: 5px;
+  color: #ccc;
 
   &:not(:last-child) {
     margin-bottom: 10px;
   }
+}
+
+.active {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 </style>

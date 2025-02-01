@@ -9,9 +9,14 @@ const usePlayer = () => {
   const duration = ref<number>(0)
   const playingLesson = ref<Lesson | null>(null)
   const volume = ref<number>(100)
+  const speed = ref<number>(1)
 
   const setVolume = (value: number) => {
     volume.value = value
+  }
+
+  const setSpeed = (value: number) => {
+    speed.value = value
   }
 
   const pause = () => {
@@ -45,6 +50,10 @@ const usePlayer = () => {
     if (lesson && playingLesson.value?.lessonNo !== lesson.lessonNo) {
       playingLesson.value = lesson
       audio.value.src = lesson.url
+
+      // 切换音源后，速度会被重置，这里需要重新设置，volume不会被重置，它会在浏览器级别被保持
+      audio.value.playbackRate = speed.value
+
       audio.value.play()
       return
     }
@@ -116,6 +125,12 @@ const usePlayer = () => {
     }
   })
 
+  watch(() => speed.value, (newSpeed) => {
+    if (audio.value) {
+      audio.value.playbackRate = newSpeed
+    }
+  })
+
   initEvents()
   initPlayingLesson()
 
@@ -126,6 +141,8 @@ const usePlayer = () => {
     duration,
     volume,
     setVolume,
+    speed,
+    setSpeed,
     play,
     pause,
     playPrev,

@@ -18,6 +18,8 @@ html {
   background-color: #f6f6f6;
 
   --index-popup: 1000;
+
+  --color-primary: #1ed760;
 }
 
 button {
