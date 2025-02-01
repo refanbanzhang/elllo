@@ -105,6 +105,7 @@ const usePlayer = () => {
     const stored = localStorage.getItem(STORAGE_KEY)
     const speed = localStorage.getItem("speed")
     const volume = localStorage.getItem("volume")
+    const currentTime = localStorage.getItem("currentTime")
 
     if (speed) {
       setSpeed(Number(speed))
@@ -112,6 +113,10 @@ const usePlayer = () => {
 
     if (volume) {
       setVolume(Number(volume))
+    }
+
+    if (currentTime) {
+      audio.value.currentTime = Number(currentTime)
     }
 
     if (stored) {
@@ -143,6 +148,10 @@ const usePlayer = () => {
 
       localStorage.setItem("speed", String(newSpeed))
     }
+  })
+
+  window.addEventListener("beforeunload", () => {
+    localStorage.setItem("currentTime", String(currentTime.value))
   })
 
   initEvents()
