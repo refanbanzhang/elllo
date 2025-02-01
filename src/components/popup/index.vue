@@ -5,6 +5,7 @@ import { push, pop, getTopPopupId } from "@/composables/use-popup-stack"
 type Props = {
   visible: boolean
   position?: "top" | "bottom"
+  closeOnOverlayClick?: boolean
 }
 
 defineProps<Props>()
@@ -12,13 +13,17 @@ defineProps<Props>()
 const emit = defineEmits(["close"])
 const popupId = push()
 
+const close = () => {
+  emit("close")
+}
+
 const escKeydown = (e: KeyboardEvent) => {
   if (getTopPopupId() !== popupId) {
     return
   }
 
   if (e.key === "Escape") {
-    emit("close")
+    close()
   }
 }
 
@@ -36,6 +41,7 @@ onUnmounted(() => {
   <div
     class="popup"
     v-if="visible"
+    @click="closeOnOverlayClick && close()"
   >
     <div
       class="popup__content"
@@ -60,7 +66,7 @@ onUnmounted(() => {
 .popup__content {
   padding: 15px;
   background: #fff;
-  border-radius: 10px 10px 0 0;
+   border-radius: 10px 10px 0 0;
 
   &.top {
     position: absolute;

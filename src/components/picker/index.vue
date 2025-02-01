@@ -6,7 +6,7 @@ defineProps<{
   options: string[]
 }>()
 
-const emit = defineEmits(["change"])
+const emit = defineEmits(["change", "close"])
 
 const selectOption = (option: string) => {
   emit("change", option)
@@ -14,7 +14,13 @@ const selectOption = (option: string) => {
 </script>
 
 <template>
-  <Popup class="picker" position="bottom" :visible="visible">
+  <Popup
+    class="picker"
+    closeOnOverlayClick
+    position="bottom"
+    :visible="visible"
+    @close="emit('close')"
+  >
     <div
       class="option"
       v-for="option in options"

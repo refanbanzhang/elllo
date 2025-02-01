@@ -6,6 +6,10 @@ import Picker from "@/components/picker/index.vue"
 
 const volumeValue = ref(30)
 const pickerVisible = ref(false)
+
+const onPickerChange = (value: string) => {
+  console.log(value)
+}
 </script>
 
 <template>
@@ -14,8 +18,9 @@ const pickerVisible = ref(false)
     <Button @click="pickerVisible = true">打开</Button>
     <Picker
       :visible="pickerVisible"
+      @close="pickerVisible = false"
       :options="['选项1', '选项2', '选项3']"
-      @change="pickerVisible = false"
+      @change="onPickerChange"
     />
 
     <h2>Slider</h2>
