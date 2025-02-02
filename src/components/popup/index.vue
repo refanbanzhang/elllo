@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from "vue"
+import { ref, watch,onUnmounted } from "vue"
 import { push, pop, getTopPopupId } from "@/composables/use-popup-stack"
 
 type Props = {
@@ -8,17 +8,17 @@ type Props = {
   closeOnOverlayClick?: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const emit = defineEmits(["close"])
-const popupId = push()
+const popupId = ref<string | null>(null)
 
 const close = () => {
   emit("close")
 }
 
 const onEscKeydown = (e: KeyboardEvent) => {
-  if (getTopPopupId() !== popupId) {
+  if (getTopPopupId() !== popupId.value) {
     return
   }
 
@@ -27,13 +27,31 @@ const onEscKeydown = (e: KeyboardEvent) => {
   }
 }
 
-onMounted(() => {
+const initializePopup = () => {
+  popupId.value = push()
   window.addEventListener("keydown", onEscKeydown)
-})
+}
 
-onUnmounted(() => {
+const cleanupPopup = () => {
+  if (popupId.value === null) {
+    return
+  }
+
   pop()
   window.removeEventListener("keydown", onEscKeydown)
+  popupId.value = null
+}
+
+watch(() => props.visible, (value) => {
+  if (value) {
+    initializePopup()
+  } else {
+    cleanupPopup()
+  }
+}, { immediate: true })
+
+onUnmounted(() => {
+  cleanupPopup()
 })
 </script>
 

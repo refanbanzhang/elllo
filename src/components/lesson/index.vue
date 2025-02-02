@@ -294,7 +294,6 @@ onUnmounted(() => {
       <IconVolume class="volume-icon" @click="onVolume()" />
     </footer>
     <Popup
-      v-if="settingsPopupVisible"
       :visible="settingsPopupVisible"
       @close="settingsPopupVisible = false"
     >
@@ -321,7 +320,6 @@ onUnmounted(() => {
       </div>
     </Popup>
     <Popup
-      v-if="volumePopupVisible"
       :visible="volumePopupVisible"
       @close="volumePopupVisible = false"
     >
