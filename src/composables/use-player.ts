@@ -2,13 +2,18 @@ import { ref, watch, computed } from "vue"
 import type { Lesson } from "@/types"
 import { getNextLesson, getPrevLesson } from "@/api/audio"
 
+const STORAGE_KEY = "playingLesson"
+const STORAGE_SPEED_KEY = "speed"
+const STORAGE_VOLUME_KEY = "volume"
+const STORAGE_CURRENT_TIME_KEY = "currentTime"
+
 const audio = ref<HTMLAudioElement>(new Audio())
-const currentTime = ref<number>(audio.value.currentTime)
-const isPlaying = ref<boolean>(false)
-const duration = ref<number>(0)
 const playingLesson = ref<Lesson | null>(null)
-const volume = ref<number>(100)
+const isPlaying = ref<boolean>(false)
 const speed = ref<number>(1)
+const volume = ref<number>(100)
+const duration = ref<number>(0)
+const currentTime = ref<number>(audio.value.currentTime)
 
 const updatePercentage = (percentage: number) => {
   const time = (percentage / 100) * duration.value
@@ -102,15 +107,17 @@ const initEvents = () => {
   audio.value.addEventListener("error", () => {
     playNext()
   })
+
+  window.addEventListener("beforeunload", () => {
+    localStorage.setItem("currentTime", String(currentTime.value))
+  })
 }
 
-const STORAGE_KEY = "playingLesson"
-
-const initPlayingLesson = () => {
+const initStorage = () => {
   const stored = localStorage.getItem(STORAGE_KEY)
-  const speed = localStorage.getItem("speed")
-  const volume = localStorage.getItem("volume")
-  const currentTime = localStorage.getItem("currentTime")
+  const speed = localStorage.getItem(STORAGE_SPEED_KEY)
+  const volume = localStorage.getItem(STORAGE_VOLUME_KEY)
+  const currentTime = localStorage.getItem(STORAGE_CURRENT_TIME_KEY)
 
   if (speed) {
     setSpeed(Number(speed))
@@ -131,38 +138,34 @@ const initPlayingLesson = () => {
   }
 }
 
-watch(playingLesson, (newLesson) => {
-  if (newLesson) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newLesson))
+watch(playingLesson, (value) => {
+  if (value) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(value))
   }
 })
 
-watch(() => volume.value, (newVolume) => {
+watch(volume, (value) => {
   if (audio.value) {
     // Ensure volume is between 0 and 1
-    const normalizedVolume = newVolume / 100
+    const normalizedVolume = value / 100
     audio.value.volume = normalizedVolume
 
-    localStorage.setItem("volume", String(newVolume))
+    localStorage.setItem(STORAGE_VOLUME_KEY, String(value))
   }
 })
 
-watch(() => speed.value, (newSpeed) => {
+watch(speed, (value) => {
   if (audio.value) {
-    audio.value.playbackRate = newSpeed
+    audio.value.playbackRate = value
 
-    localStorage.setItem("speed", String(newSpeed))
+    localStorage.setItem(STORAGE_SPEED_KEY, String(value))
   }
-})
-
-window.addEventListener("beforeunload", () => {
-  localStorage.setItem("currentTime", String(currentTime.value))
 })
 
 const percentage = computed(() => currentTime.value / duration.value * 100)
 
 initEvents()
-initPlayingLesson()
+initStorage()
 
 export default {
   playingLesson,
