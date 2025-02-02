@@ -44,18 +44,6 @@ const play = (lesson?: Lesson) => {
     return
   }
 
-  // 没有传入，播放当前
-  if (!lesson && playingLesson.value) {
-    audio.value.play()
-    return
-  }
-
-  // 传入 lesson 且和当前播放的 lesson 相同，播放
-  if (lesson && playingLesson.value?.lessonNo === lesson.lessonNo) {
-    audio.value.play()
-    return
-  }
-
   // 传入 lesson 且和当前播放的 lesson 不同，更新播放器，播放
   if (lesson && playingLesson.value?.lessonNo !== lesson.lessonNo) {
     playingLesson.value = lesson
@@ -63,10 +51,9 @@ const play = (lesson?: Lesson) => {
 
     // 切换音源后，速度会被重置，这里需要重新设置，volume不会被重置，它会在浏览器级别被保持
     audio.value.playbackRate = speed.value
-
-    audio.value.play()
-    return
   }
+
+  audio.value.play()
 }
 
 const playPrev = async () => {
