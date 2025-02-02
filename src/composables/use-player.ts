@@ -145,21 +145,16 @@ watch(playingLesson, (value) => {
 })
 
 watch(volume, (value) => {
-  if (audio.value) {
-    // Ensure volume is between 0 and 1
-    const normalizedVolume = value / 100
-    audio.value.volume = normalizedVolume
+  // Ensure volume is between 0 and 1
+  const normalizedVolume = value / 100
 
-    localStorage.setItem(STORAGE_VOLUME_KEY, String(value))
-  }
+  audio.value.volume = normalizedVolume
+  localStorage.setItem(STORAGE_VOLUME_KEY, String(value))
 })
 
 watch(speed, (value) => {
-  if (audio.value) {
-    audio.value.playbackRate = value
-
-    localStorage.setItem(STORAGE_SPEED_KEY, String(value))
-  }
+  audio.value.playbackRate = value
+  localStorage.setItem(STORAGE_SPEED_KEY, String(value))
 })
 
 const percentage = computed(() => currentTime.value / duration.value * 100)
