@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PlayerIcon from "@/assets/play.svg"
+import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow-left.svg"
 
@@ -50,7 +50,7 @@ onMounted(async () => {
           v-if="isPlaying && playingLesson?.lessonNo === lesson.lessonNo"
           @click="pause()"
         />
-        <PlayerIcon
+        <IconPlay
           class="player-icon"
           v-else
           @click="play(lesson)"
