@@ -1,19 +1,22 @@
 <script setup lang="ts">
+import PlayerIcon from "@/assets/play.svg"
+import IconPause from "@/assets/pause.svg"
+import IconArrow from "@/assets/arrow-left.svg"
+
 import { ref, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import type { Lesson } from "@/types"
 import { getLessonByNo } from "@/api/audio"
 import { updateHtmlImgUrl, getProxiedImageUrl } from "@/utils"
-import PlayerIcon from "@/assets/play.svg"
-import IconArrow from "@/assets/arrow-left.svg"
 import playerStore from "@/stores/player"
-import Player from "@/components/player/index.vue"
 import { showLoading, hideLoading } from "@/components/toast"
+import Player from "@/components/player/index.vue"
 
 const route = useRoute()
 const router = useRouter()
 
-const { play } = playerStore
+const { play, pause, isPlaying, playingLesson } = playerStore
+
 const lesson = ref<Lesson | null>(null)
 const lessonNo = route.params.lessonNo as string
 
@@ -42,8 +45,14 @@ onMounted(async () => {
         {{ lesson.title }} - {{ lesson.lessonNo }}
       </div>
       <div class="player-icon-wrapper">
+        <IconPause
+          class="player-icon"
+          v-if="isPlaying && playingLesson?.lessonNo === lesson.lessonNo"
+          @click="pause()"
+        />
         <PlayerIcon
           class="player-icon"
+          v-else
           @click="play(lesson)"
         />
       </div>
