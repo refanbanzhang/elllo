@@ -23,11 +23,13 @@ set /a seconds=!minutes! * 60
 
 timeout /t !seconds! /nobreak
 
+:: 参数1 0睡眠 1 休眠
+:: 参数2 0 不强制执行 1 强制执行 （该参数好像已经无效了？）
+:: 参数3 0 允许唤醒 1 不允许唤醒
+
 if errorlevel 1 (
     @echo 睡眠已取消。
 ) else (
     @echo 正在进入睡眠状态...
-    powercfg -h off
     rundll32.exe powrprof.dll,SetSuspendState 0,1,0
-    powercfg -h on
 )
