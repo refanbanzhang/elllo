@@ -17,7 +17,7 @@ const close = () => {
   emit("close")
 }
 
-const escKeydown = (e: KeyboardEvent) => {
+const onEscKeydown = (e: KeyboardEvent) => {
   if (getTopPopupId() !== popupId) {
     return
   }
@@ -28,12 +28,12 @@ const escKeydown = (e: KeyboardEvent) => {
 }
 
 onMounted(() => {
-  window.addEventListener("keydown", escKeydown)
+  window.addEventListener("keydown", onEscKeydown)
 })
 
 onUnmounted(() => {
   pop()
-  window.removeEventListener("keydown", escKeydown)
+  window.removeEventListener("keydown", onEscKeydown)
 })
 </script>
 
