@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
 import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
-import { getAverageColor, getProxiedImageUrl } from "@/utils"
-import player from "@/composables/use-player"
-import ProgressBar from "@/components/progress-bar/index.vue"
-import Lesson from "@/components/lesson/index.vue"
-import Popup from "@/components/popup/index.vue"
-import type { Lesson as LessonType } from "@/types"
-import usePageLocker from "@/composables/use-page-locker"
-import useCurrentLesson from "@/composables/use-current-lesson"
 
-const { setLesson } = useCurrentLesson
+import { ref, watch } from "vue"
+import type { Lesson as LessonType } from "@/types"
+import { getAverageColor, getProxiedImageUrl } from "@/utils"
+import playerStore from "@/stores/player"
+import currentLessonStore from "@/stores/current-lesson"
+import usePageLocker from "@/composables/use-page-locker"
+import ProgressBar from "@/components/progress-bar/index.vue"
+import Popup from "@/components/popup/index.vue"
+import Lesson from "@/components/lesson/index.vue"
+
+const { setLesson } = currentLessonStore
 const { lockPage, unlockPage } = usePageLocker()
-const { playingLesson, isPlaying, currentTime, duration, play, pause } = player
+const { playingLesson, isPlaying, currentTime, duration, play, pause } = playerStore
+
 const footerBgColor = ref("rgb(49, 128, 153)")
 const visible = ref(false)
 

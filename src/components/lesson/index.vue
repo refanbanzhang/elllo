@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted, computed } from "vue"
-import { useRouter } from "vue-router"
 import IconPrev from "@/assets/prev.svg"
 import IconNext from "@/assets/next.svg"
 import IconPlay from "@/assets/play.svg"
@@ -8,16 +6,19 @@ import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow.svg"
 import IconSettings from "@/assets/settings.svg"
 import IconVolume from "@/assets/volume.svg"
-import { getAverageColor, getProxiedImageUrl } from "@/utils"
-import usePlayer from "@/composables/use-player"
-import { getLessonByNo } from "@/api/audio"
-import useCurrentLesson from "@/composables/use-current-lesson"
-import { showLoading, hideLoading } from "@/components/toast"
-import Popup from "@/components/popup/index.vue"
-import Slider from "@/components/slider/index.vue"
 import IconMinClose from "@/assets/volume1.svg"
 import IconMediumClose from "@/assets/volume2.svg"
 import IconMaxClose from "@/assets/volume3.svg"
+
+import { ref, watch, onMounted, onUnmounted, computed } from "vue"
+import { useRouter } from "vue-router"
+import { getAverageColor, getProxiedImageUrl } from "@/utils"
+import { getLessonByNo } from "@/api/audio"
+import playerStore from "@/stores/player"
+import currentLessonStore from "@/stores/current-lesson"
+import { showLoading, hideLoading } from "@/components/toast"
+import Popup from "@/components/popup/index.vue"
+import Slider from "@/components/slider/index.vue"
 import Picker from "@/components/picker/index.vue"
 
 interface MenuItem {
@@ -39,8 +40,8 @@ const formatTime = (seconds: number) => {
 const emit = defineEmits(["close"])
 
 const router = useRouter()
-const { playingLesson, isPlaying, currentTime, duration, percentage, updatePercentage, volume, setVolume, speed, setSpeed,play, pause, playPrev, playNext } = usePlayer
-const { lesson, setLesson } = useCurrentLesson
+const { playingLesson, isPlaying, currentTime, duration, percentage, updatePercentage, volume, setVolume, speed, setSpeed,play, pause, playPrev, playNext } = playerStore
+const { lesson, setLesson } = currentLessonStore
 const settingsPopupVisible = ref(false)
 const volumePopupVisible = ref(false)
 const sleepTimerPopupVisible = ref(false)

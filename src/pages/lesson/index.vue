@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import type { Lesson } from "@/types"
 import { getLessonByNo } from "@/api/audio"
 import { updateHtmlImgUrl, getProxiedImageUrl } from "@/utils"
-import { showLoading, hideLoading } from "@/components/toast"
-import Player from "@/components/player/index.vue"
 import PlayerIcon from "@/assets/play.svg"
 import IconArrow from "@/assets/arrow-left.svg"
-import usePlayer from "@/composables/use-player"
-import { useRouter } from "vue-router"
+import playerStore from "@/stores/player"
+import Player from "@/components/player/index.vue"
+import { showLoading, hideLoading } from "@/components/toast"
 
 const route = useRoute()
 const router = useRouter()
-const { play } = usePlayer
+
+const { play } = playerStore
 const lesson = ref<Lesson | null>(null)
 const lessonNo = route.params.lessonNo as string
 

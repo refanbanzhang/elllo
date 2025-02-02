@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref,onMounted, onUnmounted } from "vue"
-import useLessons from "@/composables/use-lessons"
+import type { Lesson as LessonType } from "@/types"
+import lessonsStore from "@/stores/lessons"
+import playerStore from "@/stores/player"
 import Player from "@/components/player/index.vue"
 import Tabs from "@/components/tabs/index.vue"
 import ListItem from "./list-item/index.vue"
-import type { Lesson as LessonType } from "@/types"
-import playerStore from "@/stores/player"
 
+const { lessons, loadNextPage } = lessonsStore
 const { playingLesson, isPlaying, play, pause } = playerStore
-const { lessons, loadNextPage } = useLessons
 const player = ref<InstanceType<typeof Player> | null>(null)
 
-const open = (lesson: LessonType) => {
+const onOpen = (lesson: LessonType) => {
   player.value?.open(lesson)
 }
 
@@ -58,7 +58,7 @@ onUnmounted(() => {
         :key="lesson.url"
         :data="lesson"
         :isPlaying="isPlaying && playingLesson?.lessonNo === lesson.lessonNo"
-        @open="open(lesson)"
+        @open="onOpen(lesson)"
         @play="play(lesson)"
       />
     </div>
