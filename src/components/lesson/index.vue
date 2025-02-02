@@ -314,6 +314,7 @@ onUnmounted(() => {
             @click="item.action?.()"
           >
             {{ item.name }}
+            {{ item.name === "Sleep timer" && remainingTime > 0 ? `${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, "0")} left` : "" }}
           </div>
         </div>
         <div class="popup__close" @click="settingsPopupVisible = false">close</div>
