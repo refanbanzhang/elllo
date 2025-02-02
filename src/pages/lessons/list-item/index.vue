@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import type { Lesson } from "@/types"
-import { getProxiedImageUrl } from "@/utils"
-import usePlayer from "@/composables/use-player"
 import IconPlay from "@/assets/play.svg"
 import IconPause from "@/assets/pause.svg"
+import { getProxiedImageUrl } from "@/utils"
 
 defineProps<{
   data: Lesson
+  isPlaying: boolean
 }>()
 
 defineEmits(["play", "open"])
-
-const { playingLesson, isPlaying } = usePlayer;
 </script>
 
 <template>
@@ -20,8 +18,8 @@ const { playingLesson, isPlaying } = usePlayer;
     @click.stop="$emit('open')"
   >
     <img
-      v-if="data.img"
       class="audio__image"
+      v-if="data.img"
       :src="getProxiedImageUrl(data.img)"
       alt=""
     >
@@ -31,8 +29,14 @@ const { playingLesson, isPlaying } = usePlayer;
       {{ data.lessonNo }}
     </div>
     <div @click.stop="$emit('play')">
-      <IconPause v-if="isPlaying && playingLesson?.lessonNo === data.lessonNo" class="icon audio__pause" />
-      <IconPlay v-else class="icon" />
+      <IconPause
+        class="icon audio__pause"
+        v-if="isPlaying"
+      />
+      <IconPlay
+        class="icon"
+        v-else
+      />
     </div>
   </div>
 </template>
