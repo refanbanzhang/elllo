@@ -1,4 +1,4 @@
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import playerStore from "@/stores/player"
 
 interface SpeedOption {
@@ -53,6 +53,28 @@ const clearSleepTimer = () => {
   sleepTimer.value = 0
   remainingTime.value = 0
 }
+
+// 从本地存储中恢复定时器状态
+const restoreSleepTimer = () => {
+  const savedTimer = localStorage.getItem("sleepTimer")
+  const savedRemainingTime = localStorage.getItem("remainingTime")
+
+  if (savedTimer && savedRemainingTime) {
+    sleepTimer.value = Number(savedTimer)
+    remainingTime.value = Number(savedRemainingTime)
+
+    if (remainingTime.value > 0) {
+      startSleepTimer()
+    }
+  }
+}
+
+watch([sleepTimer, remainingTime], () => {
+  localStorage.setItem("sleepTimer", sleepTimer.value.toString())
+  localStorage.setItem("remainingTime", remainingTime.value.toString())
+})
+
+restoreSleepTimer()
 
 export default {
   sleepTimerOptions,
