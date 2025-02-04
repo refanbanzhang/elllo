@@ -20,6 +20,7 @@ import { showLoading, hideLoading } from "@/components/toast"
 import Popup from "@/components/popup/index.vue"
 import Slider from "@/components/slider/index.vue"
 import Picker from "@/components/picker/index.vue"
+import sleepTimerStore from "@/stores/sleep-timer"
 
 interface MenuItem {
   name: string
@@ -42,22 +43,13 @@ const emit = defineEmits(["close"])
 const router = useRouter()
 const { playingLesson, isPlaying, currentTime, duration, percentage, updatePercentage, volume, setVolume, speed, setSpeed,play, pause, playPrev, playNext } = playerStore
 const { lesson, setLesson } = currentLessonStore
+const { sleepTimer, remainingTime, setSleepTimer, sleepTimerOptions } = sleepTimerStore
 const settingsPopupVisible = ref(false)
 const volumePopupVisible = ref(false)
 const sleepTimerPopupVisible = ref(false)
 const speedVisible = ref(false)
 
 const bgColor = ref("#f7f7f8")
-
-const sleepTimerOptions: SpeedOption[] = [
-  { label: "1分钟", value: 1 },
-  { label: "10分钟", value: 10 },
-  { label: "30分钟", value: 30 },
-  { label: "60分钟", value: 60 },
-  { label: "90分钟", value: 90 },
-  { label: "120分钟", value: 120 },
-  { label: "150分钟", value: 150 },
-]
 
 const speedOptions: SpeedOption[] = [
   { label: "0.5x", value: 0.5 },
@@ -66,34 +58,9 @@ const speedOptions: SpeedOption[] = [
   { label: "2x", value: 2 },
 ]
 
-const sleepTimer = ref(0)
-const remainingTime = ref(0)
-const sleepTimerInterval = ref(0)
-
-const startSleepTimer = () => {
-  if (sleepTimerInterval.value) {
-    clearInterval(sleepTimerInterval.value)
-  }
-
-  // 转换为秒
-  remainingTime.value = sleepTimer.value * 60
-
-  // 每分钟更新一次剩余时间
-  sleepTimerInterval.value = window.setInterval(() => {
-    remainingTime.value -= 1
-    if (remainingTime.value <= 0) {
-      clearInterval(sleepTimerInterval.value)
-      pause() // 时间到暂停播放
-      sleepTimer.value = 0 // 重置定时器
-    }
-  }, 1000)
-}
-
 const onChangeSleepTimer = (option: SpeedOption) => {
-  sleepTimer.value = option.value
+  setSleepTimer(option.value)
   sleepTimerPopupVisible.value = false
-
-  startSleepTimer()
 }
 
 const onChangeSpeed = (option: SpeedOption) => {
