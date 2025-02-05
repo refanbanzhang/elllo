@@ -62,6 +62,7 @@ const menuItems = computed(() => [
 <template>
   <Popup
     :visible="visible"
+    blur-bg
     @close="onClose"
   >
     <div class="settings">
@@ -92,9 +93,8 @@ const menuItems = computed(() => [
 .settings {
   overflow: auto;
   height: 100%;
-  padding: 20px;
+  padding: 20px 40px;
   color: #fff;
-  background: #000;
 }
 
 .settings-cover {
@@ -125,7 +125,6 @@ const menuItems = computed(() => [
   text-align: center;
   color: #fff;
   font-size: 18px;
-  background: #000;
 }
 
 .menus {

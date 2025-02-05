@@ -6,6 +6,7 @@ type Props = {
   visible: boolean
   position?: "top" | "bottom"
   closeOnOverlayClick?: boolean
+  blurBg?: boolean
 }
 
 const props = defineProps<Props>()
@@ -58,6 +59,7 @@ onUnmounted(() => {
 <template>
   <div
     class="popup__mask"
+    :class="{ blur: blurBg }"
     v-if="visible"
     @click="closeOnOverlayClick && close()"
   >
@@ -79,6 +81,15 @@ onUnmounted(() => {
   left: 0;
   z-index: var(--index-popup);
   background: rgba(0, 0, 0, 0.5);
+
+  &.blur {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+  }
+
+  &.blur .popup__content {
+    background: none;
+  }
 }
 
 .popup__content {

@@ -28,6 +28,7 @@ const onChange = (value: number) => {
 <template>
   <Popup
     :visible="visible"
+    blur-bg
     @close="onClose"
   >
     <div class="volume">
@@ -54,7 +55,6 @@ const onChange = (value: number) => {
   height: 100%;
   padding: 20px;
   color: #fff;
-  background: #000;
 }
 
 .volume-close {
@@ -67,7 +67,6 @@ const onChange = (value: number) => {
   text-align: center;
   color: #fff;
   font-size: 18px;
-  background: #000;
 }
 
 .volume-group {
