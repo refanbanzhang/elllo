@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue"
 import IconPlay from "@/assets/play.svg"
 
-const items = ref([
+const items = [
   {
     label: "Home",
     icon: IconPlay,
@@ -19,7 +18,7 @@ const items = ref([
     label: "Premium",
     icon: IconPlay,
   }
-])
+]
 </script>
 
 <template>
