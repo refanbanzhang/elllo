@@ -15,9 +15,11 @@ declare module 'vue' {
     ProgressBar: typeof import('./src/components/progress-bar/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SettingsPopup: typeof import('./src/components/lesson/settings-popup.vue')['default']
     Slider: typeof import('./src/components/slider/index.vue')['default']
     Spinner: typeof import('./src/components/spinner/index.vue')['default']
     Tabs: typeof import('./src/components/tabs/index.vue')['default']
     Toast: typeof import('./src/components/toast/index.vue')['default']
+    VolumePopup: typeof import('./src/components/lesson/volume-popup.vue')['default']
   }
 }

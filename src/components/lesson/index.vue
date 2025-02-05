@@ -6,9 +6,6 @@ import IconPause from "@/assets/pause.svg"
 import IconArrow from "@/assets/arrow.svg"
 import IconSettings from "@/assets/settings.svg"
 import IconVolume from "@/assets/volume.svg"
-import IconMinClose from "@/assets/volume1.svg"
-import IconMediumClose from "@/assets/volume2.svg"
-import IconMaxClose from "@/assets/volume3.svg"
 
 import { ref, watch, onMounted, onUnmounted, computed } from "vue"
 import { useRouter } from "vue-router"
@@ -17,15 +14,11 @@ import { getLessonByNo } from "@/api/audio"
 import playerStore from "@/stores/player"
 import currentLessonStore from "@/stores/current-lesson"
 import { showLoading, hideLoading } from "@/components/toast"
-import Popup from "@/components/popup/index.vue"
 import Slider from "@/components/slider/index.vue"
 import Picker from "@/components/picker/index.vue"
 import sleepTimerStore from "@/stores/sleep-timer"
-
-interface MenuItem {
-  name: string
-  action?: () => void
-}
+import SettingsPopup from "./settings-popup.vue"
+import VolumePopup from "./volume-popup.vue"
 
 interface SpeedOption {
   label: string
@@ -41,9 +34,9 @@ const formatTime = (seconds: number) => {
 const emit = defineEmits(["close"])
 
 const router = useRouter()
-const { playingLesson, isPlaying, currentTime, duration, percentage, updatePercentage, volume, setVolume, speed, setSpeed,play, pause, playPrev, playNext } = playerStore
+const { playingLesson, isPlaying, currentTime, duration, percentage, updatePercentage, speed, setSpeed, play, pause, playPrev, playNext } = playerStore
 const { lesson, setLesson } = currentLessonStore
-const { sleepTimer, remainingTime, setSleepTimer, sleepTimerOptions } = sleepTimerStore
+const { sleepTimer, sleepTimerOptions, setSleepTimer } = sleepTimerStore
 const settingsPopupVisible = ref(false)
 const volumePopupVisible = ref(false)
 const sleepTimerPopupVisible = ref(false)
@@ -67,39 +60,6 @@ const onChangeSpeed = (option: SpeedOption) => {
   setSpeed(option.value)
   speedVisible.value = false
 }
-
-const menuItems: MenuItem[] = [
-  {
-    name: "Sleep timer",
-    action: () => {
-      sleepTimerPopupVisible.value = true
-    }
-  },
-  {
-    name: "Set speed",
-    action: () => {
-      speedVisible.value = true
-    }
-  },
-  {
-    name: "Add to playlist",
-  },
-  {
-    name: "Hide song",
-  },
-  {
-    name: "Share",
-  },
-  {
-    name: "View artist",
-  },
-  {
-    name: "Report",
-  },
-  {
-    name: "Song credits",
-  }
-]
 
 const onSettings = () => {
   settingsPopupVisible.value = true
@@ -203,7 +163,7 @@ onUnmounted(() => {
         {{ lesson.title }}
       </h1>
       <IconSettings
-        class="icon-settings"
+        class="settings-btn"
         @click="onSettings()"
       />
     </header>
@@ -258,51 +218,18 @@ onUnmounted(() => {
         <IconPlay class="icon" />
       </button>
       <IconNext class="icon-next" @click="onNext()" />
-      <IconVolume class="volume-icon" @click="onVolume()" />
+      <IconVolume class="volume-btn" @click="onVolume()" />
     </footer>
-    <Popup
+    <SettingsPopup
       :visible="settingsPopupVisible"
       @close="settingsPopupVisible = false"
-    >
-      <div class="popup">
-        <img class="settings-cover" :src="imgSrc" alt="">
-        <div class="settings-title">
-          {{ lesson.title }}
-        </div>
-        <div class="settings-lesson-no">
-          {{ lesson.lessonNo }}
-        </div>
-        <div class="menus">
-          <div
-            class="menu-item"
-            v-for="(item, index) in menuItems"
-            :key="index"
-            @click="item.action?.()"
-          >
-            {{ item.name }}
-            {{ item.name === "Sleep timer" && remainingTime > 0 ? `${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, "0")} left` : "" }}
-          </div>
-        </div>
-        <div class="popup__close" @click="settingsPopupVisible = false">close</div>
-      </div>
-    </Popup>
-    <Popup
+      @sleep-timer="sleepTimerPopupVisible = true"
+      @speed="speedVisible = true"
+    />
+    <VolumePopup
       :visible="volumePopupVisible"
       @close="volumePopupVisible = false"
-    >
-      <div class="popup">
-        <div class="popup__close" @click="volumePopupVisible = false">close</div>
-        <div class="volume-group">
-          <IconMinClose class="volume" v-if="volume <= 30" />
-          <IconMediumClose class="volume" v-else-if="volume <= 60" />
-          <IconMaxClose class="volume" v-else />
-        </div>
-        <Slider
-          :value="volume"
-          @change="setVolume($event)"
-        />
-      </div>
-    </Popup>
+    />
     <Picker
       v-if="sleepTimerPopupVisible"
       :visible="sleepTimerPopupVisible"
@@ -361,21 +288,6 @@ main {
   filter: drop-shadow(0 0 1px rgba(0, 0, 0, .3)) drop-shadow(0 0 10px rgba(0, 0, 0, .3));
 }
 
-.content {
-  flex: 1;
-  overflow: auto;
-
-  :deep(p) {
-    margin-bottom: 10px;
-  }
-
-  :deep(img) {
-    display: block;
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
-}
-
 .footer {
   display: flex;
   justify-content: center;
@@ -420,81 +332,19 @@ main {
   font-size: 12px;
 }
 
-.settings-cover {
-  margin-top: 40px;
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.settings-title {
-  margin-bottom: 10px;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.settings-lesson-no {
-  margin-bottom: 70px;
-  font-size: 16px;
-  color: #999;
-}
-
-.icon-settings {
+.settings-btn {
   width: 30px;
   height: 30px;
   fill: currentColor;
 }
 
-.popup{
-  // display: flex;
-  // flex-direction: column;
-  // justify-content: center;
-  overflow: auto;
-  height: 100%;
-  padding: 20px;
-  color: #fff;
-  background: #000;
-}
-
-.popup__close {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20px;
-  box-sizing: border-box;
-  text-align: center;
-  color: #fff;
-  font-size: 18px;
-  background: #000;
-}
-
-.volume-group {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.volume {
-  width: 25px;
-  height: 25px;
-  fill: currentColor;
-}
-
-.volume-icon {
+.volume-btn {
   position: absolute;
   left: 15px;
   bottom: 15px;
   width: 20px;
   height: 20px;
   fill: currentColor;
-}
-
-.menus {
-  margin-bottom: 100px;
-}
-
-.menu-item {
-  padding: 15px 0;
 }
 </style>
 
