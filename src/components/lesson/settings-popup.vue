@@ -29,15 +29,17 @@ const onClose = () => {
 const menuItems = computed(() => [
   {
     name: "Sleep timer",
-    action: () => {
-      emit("sleep-timer")
+    action: () => emit("sleep-timer"),
+    render: () => {
+      return remainingTime.value > 0
+        ? `${Math.floor(remainingTime.value / 60)}:${(remainingTime.value % 60).toString().padStart(2, "0")}`
+        : ""
     }
   },
   {
     name: "Set speed",
-    action: () => {
-      emit("speed")
-    }
+    action: () => emit("speed"),
+    render: () => speed.value > 0 ? `${speed.value}x` : ""
   },
   {
     name: "Add to playlist",
@@ -84,9 +86,8 @@ const menuItems = computed(() => [
           <span>
             {{ item.name }}
           </span>
-          <span>
-            {{ item.name === "Sleep timer" && remainingTime > 0 ? `${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, "0")}` : "" }}
-            {{ item.name === "Set speed" && speed > 0 ? `${speed}x` : "" }}
+          <span v-if="item.render">
+            {{ item.render() }}
           </span>
         </div>
       </div>
