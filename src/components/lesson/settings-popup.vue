@@ -69,6 +69,7 @@ const menuItems = computed(() => [
     @close="onClose"
   >
     <div class="settings">
+      <div class="settings-header" />
       <img class="settings-cover" :src="imgSrc" alt="">
       <div class="settings-title">
         {{ lesson?.title }}
@@ -103,6 +104,15 @@ const menuItems = computed(() => [
   padding: 20px 30px;
   color: #fff;
 
+  .settings-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 30px 20px;
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, #000 50%);
+  }
+
   .settings-cover {
     margin-top: 40px;
     margin-bottom: 20px;
@@ -126,11 +136,12 @@ const menuItems = computed(() => [
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 20px;
+    padding: 30px 20px;
     box-sizing: border-box;
     text-align: center;
     color: #fff;
     font-size: 18px;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #000 50%);
   }
 }
 
