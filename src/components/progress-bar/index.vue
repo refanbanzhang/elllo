@@ -38,6 +38,5 @@ withDefaults(defineProps<Props>(), {
   top: 0;
   height: 100%;
   background-color: #fff;
-  transition: width 0.1s linear;
 }
 </style>
