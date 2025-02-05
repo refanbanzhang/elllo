@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import Popup from "@/components/popup/index.vue"
 
+type Value = number | string
+
 type Option = {
   label: string
-  value: number
+  value: Value
 }
 
 defineProps<{
-  value: number
+  value: undefined | Value
   visible: boolean
   options: Option[]
 }>()
@@ -21,10 +23,9 @@ const selectOption = (option: Option) => {
 
 <template>
   <Popup
-    class="picker"
-    closeOnOverlayClick
-    position="bottom"
     :visible="visible"
+    position="bottom"
+    closeOnOverlayClick
     @close="emit('close')"
   >
     <div
@@ -40,16 +41,10 @@ const selectOption = (option: Option) => {
 </template>
 
 <style lang="less" scoped>
-.picker {
-  display: flex;
-  flex-direction: column;
-  background: rgba(0, 0, 0, .7) !important;
-}
-
 .option {
   padding: 10px;
-  border: 2px solid #ccc;
   border-radius: 5px;
+  border: 2px solid #ccc;
   color: #ccc;
 
   &:not(:last-child) {

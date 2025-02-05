@@ -57,7 +57,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="popup"
+    class="popup__mask"
     v-if="visible"
     @click="closeOnOverlayClick && close()"
   >
@@ -71,7 +71,7 @@ onUnmounted(() => {
 </template>
 
 <style lang="less" scoped>
-.popup {
+.popup__mask {
   position: fixed;
   top: 0;
   right: 0;
