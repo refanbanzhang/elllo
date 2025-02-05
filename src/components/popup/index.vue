@@ -85,25 +85,27 @@ onUnmounted(() => {
   background: #fff;
   height: 100%;
 
-  &.top {
+  .position {
     position: absolute;
-    top: 0;
     left: 0;
     right: 0;
-    bottom: auto;
     height: auto;
     padding: 15px;
-    border-radius: 10px 10px 0 0;
+  }
+
+  &.top {
+    .position;
+
+    top: 0;
+    bottom: auto;
+    border-radius: 0 0 10px 10px;
   }
 
   &.bottom {
-    position: absolute;
+    .position;
+
     top: auto;
-    left: 0;
-    right: 0;
     bottom: 0;
-    height: auto;
-    padding: 15px;
     border-radius: 10px 10px 0 0;
   }
 }
