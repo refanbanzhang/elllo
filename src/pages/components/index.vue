@@ -4,7 +4,7 @@ import Button from "@/components/button/index.vue"
 import Slider from "@/components/slider/index.vue"
 import Picker from "@/components/picker/index.vue"
 import { Form, FormItem } from "@/components/form"
-import type { FormInstance } from "@/components/form/types"
+import type { FormInstance, FormItemRule } from "@/components/form/types"
 
 const formRef = ref<FormInstance>()
 const formData = reactive({
@@ -12,14 +12,14 @@ const formData = reactive({
   password: ""
 })
 
-const rules = {
+const rules: FormItemRule = {
   username: [
-    { required: true, message: "请输入用户名" },
-    { validator: (value: string) => value.length >= 3, message: "用户名至少3个字符" }
+    { required: true, message: "请输入用户名", trigger: "blur" },
+    { validator: (value: string) => value.length >= 3, message: "用户名至少3个字符", trigger: "blur" }
   ],
   password: [
-    { required: true, message: "请输入密码" },
-    { validator: (value: string) => value.length >= 6, message: "密码至少6个字符" }
+    { required: true, message: "请输入密码", trigger: "blur" },
+    { validator: (value: string) => value.length >= 6, message: "密码至少6个字符", trigger: "blur" }
   ]
 }
 

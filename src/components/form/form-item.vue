@@ -67,7 +67,6 @@ const clearValidate = () => {
   errorMessage.value = ""
 }
 
-
 const onBlur = async () => {
   if (props.prop) {
     await validate()
@@ -92,7 +91,10 @@ onUnmounted(() => {
 <template>
   <div class="form-item">
     <label v-if="label" class="form-label">{{ label }}</label>
-    <div class="form-content" @blur.capture="onBlur">
+    <div
+      class="form-content"
+      @blur.capture="onBlur"
+    >
       <slot  />
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
