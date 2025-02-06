@@ -13,6 +13,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src")
     }
   },
+  server: {
+    proxy: {
+      "/uploadimg": {
+        target: "https://img.kuku9.com",
+        changeOrigin: true
+      }
+    }
+  },
   plugins: [
     vue(),
     svgLoader({
