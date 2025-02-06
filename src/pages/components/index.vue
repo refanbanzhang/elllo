@@ -9,7 +9,8 @@ import type { FormInstance, FormItemRule } from "@/components/form/types"
 const formRef = ref<FormInstance>()
 const formData = reactive({
   username: "",
-  password: ""
+  password: "",
+  age: 0
 })
 
 const rules: FormItemRule = {
@@ -20,6 +21,10 @@ const rules: FormItemRule = {
   password: [
     { required: true, message: "请输入密码", trigger: "blur" },
     { validator: (value: string) => value.length >= 6, message: "密码至少6个字符", trigger: "blur" }
+  ],
+  age: [
+    { required: true, message: "请输入年龄", trigger: "blur" },
+    { validator: (value: number) => value >= 50, message: "年龄至少50岁", trigger: "blur" }
   ]
 }
 
@@ -65,7 +70,7 @@ const onPickerChange = (value: string) => {
 <template>
   <div class="page">
     <h2>Form</h2>
-
+    formData: {{ formData }}
     <Form
       ref="formRef"
       :rules="rules"
@@ -76,6 +81,11 @@ const onPickerChange = (value: string) => {
       </FormItem>
       <FormItem label="密码" prop="password">
         <input type="password" v-model="formData.password" />
+      </FormItem>
+      <FormItem label="年龄" prop="age">
+        <Slider
+          v-model="formData.age"
+        />
       </FormItem>
       <Button @click="handleSubmit">提交</Button>
     </Form>
@@ -93,8 +103,7 @@ const onPickerChange = (value: string) => {
     <h2>Slider</h2>
     volumeValue: {{ volumeValue }}
     <Slider
-      :value="volumeValue"
-      @change="volumeValue = $event"
+      v-model="volumeValue"
     />
 
     <h2>Button</h2>
