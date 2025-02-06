@@ -8,6 +8,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Button: typeof import('./src/components/button/index.vue')['default']
+    Copy: typeof import('./src/components/button - Copy/index.vue')['default']
+    Form: typeof import('./src/components/form/form.vue')['default']
+    FormItem: typeof import('./src/components/form/form-item.vue')['default']
     Lesson: typeof import('./src/components/lesson/index.vue')['default']
     Picker: typeof import('./src/components/picker/index.vue')['default']
     Player: typeof import('./src/components/player/index.vue')['default']

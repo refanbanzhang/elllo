@@ -1,8 +1,38 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, reactive } from "vue"
 import Button from "@/components/button/index.vue"
 import Slider from "@/components/slider/index.vue"
 import Picker from "@/components/picker/index.vue"
+import { Form, FormItem } from "@/components/form"
+import type { FormInstance } from "@/components/form/types"
+
+const formRef = ref<FormInstance>()
+const formData = reactive({
+  username: "",
+  password: ""
+})
+
+const rules = {
+  username: [
+    { required: true, message: "请输入用户名" },
+    { validator: (value: string) => value.length >= 3, message: "用户名至少3个字符" }
+  ],
+  password: [
+    { required: true, message: "请输入密码" },
+    { validator: (value: string) => value.length >= 6, message: "密码至少6个字符" }
+  ]
+}
+
+const handleSubmit = async () => {
+  if (!formRef.value) {
+    return
+  }
+
+  const valid = await formRef.value.validate()
+  if (valid) {
+    console.log("表单验证通过", formData)
+  }
+}
 
 type Option = {
   label: string
@@ -34,6 +64,22 @@ const onPickerChange = (value: string) => {
 
 <template>
   <div class="page">
+    <h2>Form</h2>
+
+    <Form
+      ref="formRef"
+      :rules="rules"
+      :model="formData"
+    >
+      <FormItem label="用户名" prop="username">
+        <input v-model="formData.username" />
+      </FormItem>
+      <FormItem label="密码" prop="password">
+        <input type="password" v-model="formData.password" />
+      </FormItem>
+      <Button @click="handleSubmit">提交</Button>
+    </Form>
+
     <h2>Picker</h2>
     <Button @click="pickerVisible = true">打开</Button>
     <Picker
