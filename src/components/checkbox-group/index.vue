@@ -50,6 +50,7 @@ const onChange = (checked, value) => {
 <style scoped>
 .checkbox-group {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 </style>

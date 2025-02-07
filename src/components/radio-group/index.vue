@@ -36,6 +36,7 @@ const emit = defineEmits(['update:modelValue'])
 <style scoped>
 .radio-group {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 </style>
