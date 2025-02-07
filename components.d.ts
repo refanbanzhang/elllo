@@ -19,6 +19,8 @@ declare module 'vue' {
     Player: typeof import('./src/components/player/index.vue')['default']
     Popup: typeof import('./src/components/popup/index.vue')['default']
     ProgressBar: typeof import('./src/components/progress-bar/index.vue')['default']
+    Radio: typeof import('./src/components/radio/index.vue')['default']
+    RadioGroup: typeof import('./src/components/radio-group/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SettingsPopup: typeof import('./src/components/lesson/settings-popup.vue')['default']

@@ -9,6 +9,8 @@ import type { FormInstance, FormItemRule } from "@/components/form/types"
 import Switch from "@/components/switch/index.vue"
 import Checkbox from "@/components/checkbox/index.vue"
 import CheckboxGroup from "@/components/checkbox-group/index.vue"
+import RadioGroup from "@/components/radio-group/index.vue"
+
 const formRef = ref<FormInstance>()
 const formData = reactive({
   username: "",
@@ -16,7 +18,8 @@ const formData = reactive({
   age: 0,
   gender: 0,
   agree: false,
-  hobbies: [ 1, 2 ]
+  hobbies: [ 1, 2 ],
+  fruit: null,
 })
 
 const rules: FormItemRule = {
@@ -41,6 +44,9 @@ const rules: FormItemRule = {
   ],
   hobbies: [
     { required: true, message: "请选择爱好", trigger: "change" }
+  ],
+  fruit: [
+    { required: true, message: "请选择喜欢的水果", trigger: "change" }
   ]
 }
 
@@ -114,7 +120,16 @@ const options: Option[] =  [
         <Checkbox v-model="formData.agree" />
       </FormItem>
       <FormItem label="爱好" prop="hobbies">
-        <CheckboxGroup v-model="formData.hobbies" :options="options" />
+        <CheckboxGroup
+          v-model="formData.hobbies"
+          :options="options"
+        />
+      </FormItem>
+      <FormItem label="喜欢的水果" prop="fruit">
+        <RadioGroup
+          v-model="formData.fruit"
+          :options="options"
+        />
       </FormItem>
       <Button @click="handleSubmit">提交</Button>
     </Form>
