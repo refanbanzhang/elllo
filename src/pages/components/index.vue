@@ -18,7 +18,7 @@ const formData = reactive({
   username: "",
   password: "",
   age: 0,
-  gender: 0,
+  gender: [],
   agree: false,
   hobbies: [ 1, 2 ],
   fruit: null,
@@ -72,6 +72,7 @@ const handleSubmit = async () => {
 type Option = {
   label: string
   value: number
+  children?: Option[]
 }
 
 const volumeValue = ref(30)
@@ -79,8 +80,28 @@ const pickerVisible = ref(false)
 
 const options: Option[] =  [
   {
-    label: '选项1',
+    label: '深圳',
     value: 1,
+    children: [
+      {
+        label: '南山区',
+        value: 11,
+        children: [
+          {
+            label: '南山街道',
+            value: 111,
+          },
+          {
+            label: '南山街道2',
+            value: 112,
+          },
+        ]
+      },
+      {
+        label: '福田区',
+        value: 12,
+      },
+    ]
   },
   {
     label: '选项2',
@@ -89,6 +110,34 @@ const options: Option[] =  [
   {
     label: '选项3',
     value: 3,
+  },
+  {
+    label: '选项4',
+    value: 4,
+  },
+  {
+    label: '选项5',
+    value: 5,
+  },
+  {
+    label: '选项6',
+    value: 6,
+  },
+  {
+    label: '选项7',
+    value: 7,
+  },
+  {
+    label: '选项8',
+    value: 8,
+  },
+  {
+    label: '选项9',
+    value: 9,
+  },
+  {
+    label: '选项10',
+    value: 10,
   },
 ]
 
