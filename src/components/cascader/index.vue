@@ -69,6 +69,7 @@ const handleSelect = (item, level) => {
     // 添加下一层级的选项到面板中
     activePanels.value.push(item.children)
   } else {
+    activePanels.value = activePanels.value.slice(0, level + 1)
     isOpen.value = false
     emit('update:modelValue', selected.value.map(item => item.value))
     emit('change', selected.value)

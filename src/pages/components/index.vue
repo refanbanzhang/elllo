@@ -23,6 +23,7 @@ const formData = reactive({
   hobbies: [ 1, 2 ],
   fruit: null,
   rating: 1,
+  address: [],
 })
 
 const rules: FormItemRule = {
@@ -198,7 +199,7 @@ const addressOptions = [
       </FormItem>
       <FormItem label="地址" prop="address">
         <Cascader
-          v-model='selectedValue'
+          v-model='formData.address'
           :options='addressOptions'
           @change='handleChange'
         />
