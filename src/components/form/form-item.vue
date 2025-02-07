@@ -26,6 +26,26 @@ const getRules = () => {
   return form.rules[props.prop] || []
 }
 
+const isEmpty = (value: any) => {
+  if (value === null || value === undefined) {
+    return true
+  }
+
+  if (typeof value === 'string' && value.trim() === '') {
+    return true
+  }
+
+  if (Array.isArray(value) && value.length === 0) {
+    return true
+  }
+
+  if (value instanceof Object && Object.keys(value).length === 0) {
+    return true
+  }
+
+  return false
+}
+
 const validate = async () => {
   if (!props.prop) return true
 
@@ -37,7 +57,7 @@ const validate = async () => {
 
   try {
     for (const rule of rules) {
-      if (rule.required && !fieldValue.value) {
+      if (rule.required && isEmpty(fieldValue.value)) {
         errorMessage.value = rule.message || "此字段是必填的"
         return false
       }

@@ -8,14 +8,15 @@ import { Form, FormItem } from "@/components/form"
 import type { FormInstance, FormItemRule } from "@/components/form/types"
 import Switch from "@/components/switch/index.vue"
 import Checkbox from "@/components/checkbox/index.vue"
-
+import CheckboxGroup from "@/components/checkbox-group/index.vue"
 const formRef = ref<FormInstance>()
 const formData = reactive({
   username: "",
   password: "",
   age: 0,
   gender: 0,
-  agree: false
+  agree: false,
+  hobbies: [ 1, 2 ]
 })
 
 const rules: FormItemRule = {
@@ -37,6 +38,9 @@ const rules: FormItemRule = {
   ],
   agree: [
     { required: true, message: "请同意用户协议", trigger: "change" }
+  ],
+  hobbies: [
+    { required: true, message: "请选择爱好", trigger: "change" }
   ]
 }
 
@@ -108,6 +112,9 @@ const options: Option[] =  [
       </FormItem>
       <FormItem label="是否同意" prop="agree">
         <Checkbox v-model="formData.agree" />
+      </FormItem>
+      <FormItem label="爱好" prop="hobbies">
+        <CheckboxGroup v-model="formData.hobbies" :options="options" />
       </FormItem>
       <Button @click="handleSubmit">提交</Button>
     </Form>

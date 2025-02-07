@@ -39,6 +39,7 @@ const onClick = () => {
     >
       <span v-show="modelValue" class="checkbox-inner">✓</span>
     </span>
+    <slot />
   </div>
 </template>
 
