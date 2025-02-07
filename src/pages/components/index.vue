@@ -10,6 +10,7 @@ import Switch from "@/components/switch/index.vue"
 import Checkbox from "@/components/checkbox/index.vue"
 import CheckboxGroup from "@/components/checkbox-group/index.vue"
 import RadioGroup from "@/components/radio-group/index.vue"
+import Rate from '@/components/rate/index.vue'
 
 const formRef = ref<FormInstance>()
 const formData = reactive({
@@ -20,6 +21,7 @@ const formData = reactive({
   agree: false,
   hobbies: [ 1, 2 ],
   fruit: null,
+  rating: 1,
 })
 
 const rules: FormItemRule = {
@@ -47,6 +49,10 @@ const rules: FormItemRule = {
   ],
   fruit: [
     { required: true, message: "请选择喜欢的水果", trigger: "change" }
+  ],
+  rating: [
+    { required: true, message: '请评分', trigger: 'change' },
+    { validator: (value: number) => value >= 3, message: '评分不能低于3分', trigger: 'change' }
   ]
 }
 
@@ -130,6 +136,9 @@ const options: Option[] =  [
           v-model="formData.fruit"
           :options="options"
         />
+      </FormItem>
+      <FormItem label="评分" prop="rating">
+        <Rate v-model="formData.rating" />
       </FormItem>
       <Button @click="handleSubmit">提交</Button>
     </Form>
