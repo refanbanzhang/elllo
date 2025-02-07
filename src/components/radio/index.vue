@@ -4,10 +4,6 @@ const props = defineProps({
     type: [String, Number, Boolean],
     default: ''
   },
-  value: {
-    type: [String, Number, Boolean],
-    required: true
-  },
   disabled: {
     type: Boolean,
     default: false
@@ -21,7 +17,7 @@ const onClick = () => {
     return
   }
 
-  emit('update:modelValue', props.value)
+  emit('update:modelValue', props.modelValue)
 }
 </script>
 
@@ -34,11 +30,11 @@ const onClick = () => {
     <span
       class="radio"
       :class="{
-        'is-checked': modelValue === value,
+        'is-checked': modelValue,
         'is-disabled': disabled
       }"
     >
-      <span v-show="modelValue === value" class="radio-inner" />
+      <span v-show="modelValue" class="radio-inner" />
     </span>
     <slot />
   </div>

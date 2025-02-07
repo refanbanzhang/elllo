@@ -23,10 +23,9 @@ const emit = defineEmits(['update:modelValue'])
   <div class="radio-group">
     <template v-for="item in options" :key="item.value">
       <Radio
-        :model-value="modelValue"
-        :value="item.value"
+        :model-value="modelValue === item.value"
         :disabled="disabled"
-        @update:model-value="(val) => emit('update:modelValue', val)"
+        @update:model-value="(val) => emit('update:modelValue', item.value)"
       >
         {{ item.label }}
       </Radio>
@@ -39,4 +38,4 @@ const emit = defineEmits(['update:modelValue'])
   display: flex;
   gap: 12px;
 }
-</style> 
+</style>
