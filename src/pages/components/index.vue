@@ -85,9 +85,7 @@ const options: Option[] =  [
         <Input type="password" v-model="formData.password" />
       </FormItem>
       <FormItem label="年龄" prop="age">
-        <Slider
-          v-model="formData.age"
-        />
+        <Slider v-model="formData.age" />
       </FormItem>
       <FormItem label="性别" prop="gender" @click="pickerVisible = true">
         {{ formData.gender }}
