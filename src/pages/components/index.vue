@@ -7,6 +7,7 @@ import Picker from "@/components/picker/index.vue"
 import { Form, FormItem } from "@/components/form"
 import type { FormInstance, FormItemRule } from "@/components/form/types"
 import Switch from "@/components/switch/index.vue"
+import Checkbox from "@/components/checkbox/index.vue"
 
 const formRef = ref<FormInstance>()
 const formData = reactive({
@@ -104,6 +105,9 @@ const options: Option[] =  [
       </FormItem>
       <FormItem label="是否同意" prop="agree">
         <Switch v-model="formData.agree" />
+      </FormItem>
+      <FormItem label="是否同意" prop="agree">
+        <Checkbox v-model="formData.agree" />
       </FormItem>
       <Button @click="handleSubmit">提交</Button>
     </Form>

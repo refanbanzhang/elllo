@@ -8,7 +8,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Button: typeof import('./src/components/button/index.vue')['default']
-    Copy: typeof import('./src/components/input - Copy/index.vue')['default']
+    Checkbox: typeof import('./src/components/checkbox/index.vue')['default']
+    Copy: typeof import('./src/components/switch - Copy/index.vue')['default']
     Form: typeof import('./src/components/form/form.vue')['default']
     FormItem: typeof import('./src/components/form/form-item.vue')['default']
     Input: typeof import('./src/components/input/index.vue')['default']
