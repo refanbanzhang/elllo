@@ -61,7 +61,7 @@ onUnmounted(() => {
     class="popup__mask"
     :class="{ blur: blurBg }"
     v-if="visible"
-    @click="closeOnOverlayClick && close()"
+    @click.stop="closeOnOverlayClick && close()"
   >
     <div
       class="popup__content"

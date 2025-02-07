@@ -9,15 +9,16 @@ type Option = {
 }
 
 defineProps<{
-  value: undefined | Value
+  modelValue: undefined | Value
   visible: boolean
   options: Option[]
 }>()
 
-const emit = defineEmits(["change", "close"])
+const emit = defineEmits(["update:modelValue", "close"])
 
 const selectOption = (option: Option) => {
-  emit("change", option)
+  emit("update:modelValue", option.value)
+  emit("close")
 }
 </script>
 
@@ -30,10 +31,10 @@ const selectOption = (option: Option) => {
   >
     <div
       class="option"
-      :class="{ 'active': value === option.value }"
+      :class="{ 'active': modelValue === option.value }"
       v-for="option in options"
       :key="option.value"
-      @click="selectOption(option)"
+      @click.stop="selectOption(option)"
     >
       {{ option.label }}
     </div>

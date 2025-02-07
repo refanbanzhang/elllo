@@ -11,7 +11,8 @@ const formRef = ref<FormInstance>()
 const formData = reactive({
   username: "",
   password: "",
-  age: 0
+  age: 0,
+  gender: 0
 })
 
 const rules: FormItemRule = {
@@ -25,7 +26,11 @@ const rules: FormItemRule = {
   ],
   age: [
     { required: true, message: "请输入年龄", trigger: "blur" },
-    { validator: (value: number) => value >= 50, message: "年龄至少50岁", trigger: "blur" }
+    { validator: (value: number) => value >= 50, message: "年龄至少50岁", trigger: "change" }
+  ],
+  gender: [
+    { required: true, message: "请选择性别", trigger: "change" },
+    { validator: (value: number) => value >= 0 && value <= 1, message: "性别选择错误", trigger: "change" }
   ]
 }
 
@@ -62,10 +67,6 @@ const options: Option[] =  [
     value: 3,
   },
 ]
-
-const onPickerChange = (value: string) => {
-  console.log(value)
-}
 </script>
 
 <template>
@@ -88,18 +89,29 @@ const onPickerChange = (value: string) => {
           v-model="formData.age"
         />
       </FormItem>
+      <FormItem label="性别" prop="gender" @click="pickerVisible = true">
+        {{ formData.gender }}
+        <Picker
+          v-model="formData.gender"
+          :visible="pickerVisible"
+          :options="options"
+          closeOnOverlayClick
+          @close="pickerVisible = false"
+        />
+      </FormItem>
       <Button @click="handleSubmit">提交</Button>
     </Form>
 
+
     <h2>Picker</h2>
-    <Button @click="pickerVisible = true">打开</Button>
-    <Picker
+    <!-- <Button @click="pickerVisible = true">打开</Button> -->
+    <!-- <Picker
       :visible="pickerVisible"
-      :value="1"
+      :model-value="1"
       :options="options"
       @close="pickerVisible = false"
-      @change="onPickerChange"
-    />
+      @update:model-value="onPickerChange"
+    /> -->
 
     <h2>Slider</h2>
     volumeValue: {{ volumeValue }}
