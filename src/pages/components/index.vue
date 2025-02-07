@@ -6,13 +6,15 @@ import Slider from "@/components/slider/index.vue"
 import Picker from "@/components/picker/index.vue"
 import { Form, FormItem } from "@/components/form"
 import type { FormInstance, FormItemRule } from "@/components/form/types"
+import Switch from "@/components/switch/index.vue"
 
 const formRef = ref<FormInstance>()
 const formData = reactive({
   username: "",
   password: "",
   age: 0,
-  gender: 0
+  gender: 0,
+  agree: false
 })
 
 const rules: FormItemRule = {
@@ -31,6 +33,9 @@ const rules: FormItemRule = {
   gender: [
     { required: true, message: "请选择性别", trigger: "change" },
     { validator: (value: number) => value >= 0 && value <= 1, message: "性别选择错误", trigger: "change" }
+  ],
+  agree: [
+    { required: true, message: "请同意用户协议", trigger: "change" }
   ]
 }
 
@@ -96,6 +101,9 @@ const options: Option[] =  [
           closeOnOverlayClick
           @close="pickerVisible = false"
         />
+      </FormItem>
+      <FormItem label="是否同意" prop="agree">
+        <Switch v-model="formData.agree" />
       </FormItem>
       <Button @click="handleSubmit">提交</Button>
     </Form>

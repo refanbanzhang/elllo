@@ -8,7 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Button: typeof import('./src/components/button/index.vue')['default']
-    Copy: typeof import('./src/components/button - Copy/index.vue')['default']
+    Copy: typeof import('./src/components/input - Copy/index.vue')['default']
     Form: typeof import('./src/components/form/form.vue')['default']
     FormItem: typeof import('./src/components/form/form-item.vue')['default']
     Input: typeof import('./src/components/input/index.vue')['default']
@@ -22,6 +22,7 @@ declare module 'vue' {
     SettingsPopup: typeof import('./src/components/lesson/settings-popup.vue')['default']
     Slider: typeof import('./src/components/slider/index.vue')['default']
     Spinner: typeof import('./src/components/spinner/index.vue')['default']
+    Switch: typeof import('./src/components/switch/index.vue')['default']
     Tabs: typeof import('./src/components/tabs/index.vue')['default']
     Toast: typeof import('./src/components/toast/index.vue')['default']
     VolumePopup: typeof import('./src/components/lesson/volume-popup.vue')['default']
