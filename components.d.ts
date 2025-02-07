@@ -11,6 +11,7 @@ declare module 'vue' {
     Copy: typeof import('./src/components/button - Copy/index.vue')['default']
     Form: typeof import('./src/components/form/form.vue')['default']
     FormItem: typeof import('./src/components/form/form-item.vue')['default']
+    Input: typeof import('./src/components/input/index.vue')['default']
     Lesson: typeof import('./src/components/lesson/index.vue')['default']
     Picker: typeof import('./src/components/picker/index.vue')['default']
     Player: typeof import('./src/components/player/index.vue')['default']

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue"
+import Input from "@/components/input/index.vue"
 import Button from "@/components/button/index.vue"
 import Slider from "@/components/slider/index.vue"
 import Picker from "@/components/picker/index.vue"
@@ -77,10 +78,10 @@ const onPickerChange = (value: string) => {
       :model="formData"
     >
       <FormItem label="用户名" prop="username">
-        <input v-model="formData.username" />
+        <Input v-model="formData.username" />
       </FormItem>
       <FormItem label="密码" prop="password">
-        <input type="password" v-model="formData.password" />
+        <Input type="password" v-model="formData.password" />
       </FormItem>
       <FormItem label="年龄" prop="age">
         <Slider
