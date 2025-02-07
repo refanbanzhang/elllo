@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Button: typeof import('./src/components/button/index.vue')['default']
+    Cascader: typeof import('./src/components/cascader/index.vue')['default']
     Checkbox: typeof import('./src/components/checkbox/index.vue')['default']
     CheckboxGroup: typeof import('./src/components/checkbox-group/index.vue')['default']
     Copy: typeof import('./src/components/switch - Copy/index.vue')['default']

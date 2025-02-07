@@ -11,6 +11,7 @@ import Checkbox from "@/components/checkbox/index.vue"
 import CheckboxGroup from "@/components/checkbox-group/index.vue"
 import RadioGroup from "@/components/radio-group/index.vue"
 import Rate from '@/components/rate/index.vue'
+import Cascader from '@/components/cascader/index.vue'
 
 const formRef = ref<FormInstance>()
 const formData = reactive({
@@ -89,6 +90,61 @@ const options: Option[] =  [
     value: 3,
   },
 ]
+
+const selectedValue = ref([])
+
+const handleChange = (val: any) => {
+  console.log('选中值:', val)
+}
+
+const addressOptions = [
+  {
+    label: '选项1',
+    value: 1,
+    children: [
+      {
+        label: '选项1-1',
+        value: 11,
+        children: [
+          {
+            label: '选项1-1-1',
+            value: 111,
+            children: [
+              {
+                label: '选项1-1-1-1',
+                value: 1111,
+              },
+              {
+                label: '选项1-1-1-2',
+                value: 1112,
+              },
+              {
+                label: '选项1-1-1-3',
+                value: 1113,
+              },
+              {
+                label: '选项1-1-1-4',
+                value: 1114,
+              },
+              {
+                label: '选项1-1-1-5',
+                value: 1115,
+              },
+            ]
+          },
+        ]
+      },
+    ]
+  },
+  {
+    label: '选项2',
+    value: 2,
+  },
+  {
+    label: '选项3',
+    value: 3,
+  },
+]
 </script>
 
 <template>
@@ -140,6 +196,13 @@ const options: Option[] =  [
       <FormItem label="评分" prop="rating">
         <Rate v-model="formData.rating" />
       </FormItem>
+      <FormItem label="地址" prop="address">
+        <Cascader
+          v-model='selectedValue'
+          :options='addressOptions'
+          @change='handleChange'
+        />
+      </FormItem>
       <Button @click="handleSubmit">提交</Button>
     </Form>
 
@@ -184,6 +247,13 @@ const options: Option[] =  [
     <br>
     disabled:
     <Button type="primary" disabled>按钮</Button>
+
+    <h2>Cascader</h2>
+    <Cascader
+      v-model='selectedValue'
+      :options='options'
+      @change='handleChange'
+    />
   </div>
 </template>
 
