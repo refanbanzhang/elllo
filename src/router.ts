@@ -3,6 +3,7 @@ import { createWebHistory, createRouter } from "vue-router"
 import lessons from "./pages/lessons/index.vue"
 import lesson from "./pages/lesson/index.vue"
 import emoji from "./pages/emoji/index.vue"
+import demos from "./demos/index.vue"
 
 const demoPages = import.meta.glob('./demos/*/index.vue')
 const demoRoutes = Object.entries(demoPages).map(([path, component]) => {
@@ -17,6 +18,7 @@ const routes = [
   { path: "/", component: lessons },
   { path: "/lesson/:lessonNo", component: lesson },
   { path: "/emoji", component: emoji },
+  { path: "/demos", component: demos },
   ...demoRoutes
 ]
 
