@@ -24,6 +24,7 @@ const options = [
       v-model='value'
       :options='options'
       title='请选择'
+      @close="visible = false"
     />
     <div>选中值: {{ value }}</div>
   </div>

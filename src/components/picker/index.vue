@@ -1,5 +1,5 @@
 <template>
-  <Popup :visible="visible" position="bottom" @close="onClose">
+  <Popup :visible="visible" position="bottom" @close="onClose" closeOnOverlayClick>
     <div class='picker-content'>
       <div class='picker-header'>
         <div class='picker-cancel' @click='onClose'>取消</div>
@@ -104,14 +104,7 @@ const onTouchEnd = () => {
   const boundedOffset = Math.max(Math.min(targetOffset, maxOffset), minOffset)
 
   // 滚动到最近的选项
-  const finalOffset = Math.round(boundedOffset / itemHeight) * itemHeight
-
-  // 添加过渡动画
-  offset.value = finalOffset
-
-  // 计算选中项
-  const index = Math.abs(finalOffset / itemHeight)
-  emit('update:modelValue', props.options[index].value)
+  offset.value = Math.round(boundedOffset / itemHeight) * itemHeight
 }
 
 const initDefaultValue = () => {
