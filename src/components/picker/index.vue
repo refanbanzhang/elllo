@@ -1,120 +1,226 @@
-<script setup lang="ts">
-import { ref } from "vue"
-import Popup from "@/components/popup/index.vue"
+<template>
+  <popup v-model="visible" position="bottom" @close="onClose">
+    <div class='picker-content'>
+      <div class='picker-header'>
+        <div class='picker-cancel' @click='onClose'>取消</div>
+        <div class='picker-title'>{{ props.title }}</div>
+        <div class='picker-confirm' @click='onConfirm'>确定</div>
+      </div>
 
-type Value = number | string
+      <div
+        class='picker-body'
+        @touchstart='onTouchStart'
+        @touchmove='onTouchMove'
+        @touchend='onTouchEnd'
+      >
+        <div class='picker-column' :style='{ transform: `translateY(${offset}px)` }'>
+          <div
+            v-for='item in props.options'
+            :key='item.value'
+            class='picker-item'
+          >
+            {{ item.label }}
+          </div>
+        </div>
+        <div class='picker-frame'></div>
+      </div>
+    </div>
+  </popup>
+</template>
 
-interface Panel {
-  label: string
-  value: Value
-  children?: Panel[]
+<script setup>
+import { ref, onMounted, watch } from 'vue'
+import Popup from '../popup/index.vue'
+
+const props = defineProps({
+  title: {
+    type: String,
+    default: '请选择'
+  },
+  options: {
+    type: Array,
+    default: () => []
+  },
+  modelValue: {
+    type: [String, Number],
+    default: ''
+  },
+  modelVisible: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['update:modelValue', 'confirm', 'close'])
+
+// 记录滚动位置
+const offset = ref(0)
+// 每项高度
+const itemHeight = 44
+// 记录触摸开始时的Y坐标
+const startY = ref(0)
+// 记录触摸开始时的偏移量
+const moveY = ref(0)
+
+// 添加速度相关变量
+const lastY = ref(0)
+const lastTime = ref(0)
+const velocity = ref(0)
+
+// 添加 visible 控制显示隐藏
+const visible = ref(false)
+
+// 添加 watch 监听 modelVisible
+watch(
+  () => props.modelVisible,
+  (val) => {
+    visible.value = val
+  },
+  { immediate: true }
+)
+
+// 触摸事件处理
+const onTouchStart = (e) => {
+  // 记录触摸起始位置的Y坐标
+  startY.value = e.touches[0].clientY
+  // 记录当前偏移量,用于计算滑动距离
+  moveY.value = offset.value
+  // 重置速度相关变量
+  lastY.value = e.touches[0].clientY
+  lastTime.value = Date.now()
+  velocity.value = 0
 }
 
-const props = defineProps<{
-  modelValue: Panel[]
-  visible: boolean
-  options: Panel[]
-}>()
+const onTouchMove = (e) => {
+  // 计算手指移动的距离
+  const deltaY = e.touches[0].clientY - startY.value
+  // 更新偏移量 = 初始偏移量 + 移动距离
+  offset.value = moveY.value + deltaY
 
-const emit = defineEmits(['update:modelValue', 'close'])
+  // 计算速度
+  const now = Date.now()
+  const deltaTime = now - lastTime.value
+  if (deltaTime > 0) {
+    velocity.value = (e.touches[0].clientY - lastY.value) / deltaTime
+  }
+  lastY.value = e.touches[0].clientY
+  lastTime.value = now
+}
 
-const panels = ref<Panel[][]>([props.options])
-const selected = ref<Panel[]>(props.modelValue)
+const onTouchEnd = () => {
+  // 根据速度计算惯性滚动距离
+  const momentum = velocity.value * 300 // 调整系数控制惯性大小
+  const targetOffset = offset.value + momentum
 
-const selectOption = (panel: Panel, level: number) => {
-  // 清除当前层级之后的选中项,保留当前层级之前的选中项
-  selected.value = selected.value.slice(0, level)
-  selected.value[level] = panel
+  // 限制边界
+  const maxOffset = 0
+  const minOffset = -(props.options.length - 1) * itemHeight
+  const boundedOffset = Math.max(Math.min(targetOffset, maxOffset), minOffset)
 
-  if (panel.children) {
-    // 如果有子选项，将当前值加入路径
-    panels.value = panels.value.slice(0, level + 1)
-    panels.value.push(panel.children)
-  } else {
-    panels.value = panels.value.slice(0, level + 1)
-    emit('update:modelValue', selected.value.map(item => item.value))
-    emit('close')
+  // 滚动到最近的选项
+  const finalOffset = Math.round(boundedOffset / itemHeight) * itemHeight
+
+  // 添加过渡动画
+  offset.value = finalOffset
+
+  // 计算选中项
+  const index = Math.abs(finalOffset / itemHeight)
+  emit('update:modelValue', props.options[index].value)
+}
+
+const initDefaultValue = () => {
+  // 如果有传入的modelValue，计算对应的偏移量
+  if (props.modelValue) {
+    const selectedIndex = props.options.findIndex(item => item.value === props.modelValue)
+    const hasValue = selectedIndex !== -1
+    if (hasValue) {
+      offset.value = -selectedIndex * itemHeight
+    }
+  } else if (props.options.length > 0) {
+    // 如果没有传入modelValue，默认选中第一项
+    emit('update:modelValue', props.options[0].value)
   }
 }
 
-const isSelected = (option: Panel, level: number) => {
-  return selected.value[level]?.value === option.value
+onMounted(() => {
+  initDefaultValue()
+})
+
+const onConfirm = () => {
+  // 确保有选中值
+  const index = Math.abs(offset.value / itemHeight)
+  emit('update:modelValue', props.options[index].value)
+  emit('confirm')
+  onClose()
+}
+
+const onClose = () => {
+  emit('update:modelVisible', false)
+  emit('close')
 }
 </script>
 
-<template>
-  <Popup
-    :visible="visible"
-    position="bottom"
-    closeOnOverlayClick
-    @close="emit('close')"
-  >
-    <div class="picker">
-      <div
-        class="panel"
-        v-for="(panel, panelIndex) in panels"
-        :key="panelIndex"
-      >
-        <div
-          class="option"
-          :class="{
-            'active': isSelected(option, panelIndex),
-            'has-children': option.children?.length
-          }"
-          v-for="option in panel"
-          :key="option.value"
-          @click.stop="selectOption(option, panelIndex)"
-        >
-          {{ option.label }}
-          <span v-if="option.children?.length" class="arrow">›</span>
-        </div>
-      </div>
-    </div>
-  </Popup>
-</template>
-
-<style lang="less" scoped>
-.picker {
-  display: flex;
-  gap: 10px;
-  max-height: 300px;
-  padding: 10px;
+<style scoped>
+.picker-content {
+  background: #fff;
+  border-radius: 12px 12px 0 0;
 }
 
-.panels {
+.picker-header {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  overflow-y: auto;
-}
-
-.option {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border-radius: 5px;
-  border: 2px solid #ccc;
-  color: #ccc;
+  height: 44px;
+  border-bottom: 1px solid #eee;
 }
 
-.active {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
+.picker-title {
+  flex: 1;
+  text-align: center;
+  font-size: 16px;
 }
 
-.has-children {
-  cursor: pointer;
+.picker-cancel,
+.picker-confirm {
+  padding: 0 16px;
+  font-size: 14px;
 }
 
-.arrow {
-  font-size: 18px;
+.picker-body {
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 10%,
+    #000 40%,
+    #000 60%,
+    transparent 90%,
+    transparent 100%
+  );
+}
+
+.picker-column {
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  padding: 88px 0;
+}
+
+.picker-item {
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.picker-frame {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 44px;
+  pointer-events: none;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 </style>

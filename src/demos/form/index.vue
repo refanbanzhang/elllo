@@ -88,7 +88,15 @@ const addressData = ref([
 
 const pickerOptions = [
   { label: '男', value: 'male' },
-  { label: '女', value: 'female' }
+  { label: '女', value: 'female' },
+  { label: '其他', value: 'other' },
+  { label: '不愿透露', value: 'private' },
+  { label: '跨性别', value: 'trans' },
+  { label: '双性别', value: 'bi' },
+  { label: '流性别', value: 'fluid' },
+  { label: '无性别', value: 'none' },
+  { label: '酷儿', value: 'queer' },
+  { label: '待定', value: 'undecided' }
 ]
 
 const onSubmit = async () => {
@@ -152,9 +160,17 @@ const pickerVisible = ref(false)
       </FormItem>
       <FormItem prop='gender' label='选择器'>
         <Button @click='pickerVisible = true'>选择</Button>
-        <Picker :visible="pickerVisible" @close='pickerVisible = false' v-model='formData.gender' :options='pickerOptions' />
+        <picker
+          v-model='formData.gender'
+          v-model:visible='pickerVisible'
+          :options='pickerOptions'
+          title='选择城市'
+          @confirm='onConfirm'
+
+        />
       </FormItem>
       <FormItem>
+
         <Button @click='onSubmit'>提交</Button>
         <Button @click='onReset' type='secondary'>重置</Button>
       </FormItem>
