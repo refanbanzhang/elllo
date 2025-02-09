@@ -1,29 +1,34 @@
 <script setup lang="ts">
 import IconPlay from "@/assets/play.svg"
 
-const items = [
-  {
-    label: "Home",
-    icon: IconPlay,
+const props = defineProps({
+  items: {
+    type: Array,
+    required: true,
+    default: () => []
   },
-  {
-    label: "Search",
-    icon: IconPlay,
-  },
-  {
-    label: "Your Library",
-    icon: IconPlay,
-  },
-  {
-    label: "Premium",
-    icon: IconPlay,
+  modelValue: {
+    type: [String, Number],
+    default: ''
   }
-]
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+const handleClick = (item) => {
+  emit('update:modelValue', item.label)
+}
 </script>
 
 <template>
   <div class="tabs">
-    <div class="tabs__item" v-for="item in items" :key="item.label">
+    <div
+      class="tabs__item"
+      :class="{'tabs__item--active': modelValue === item.label}"
+      v-for="item in items"
+      :key="item.label"
+      @click="handleClick(item)"
+    >
       <component class="tabs__icon" :is="item.icon" />
       {{ item.label }}
     </div>
