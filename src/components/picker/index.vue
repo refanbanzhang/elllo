@@ -1,5 +1,5 @@
 <template>
-  <popup v-model="visible" position="bottom" @close="onClose">
+  <Popup :visible="visible" position="bottom" @close="onClose">
     <div class='picker-content'>
       <div class='picker-header'>
         <div class='picker-cancel' @click='onClose'>取消</div>
@@ -25,7 +25,7 @@
         <div class='picker-frame'></div>
       </div>
     </div>
-  </popup>
+  </Popup>
 </template>
 
 <script setup>
@@ -45,7 +45,7 @@ const props = defineProps({
     type: [String, Number],
     default: ''
   },
-  modelVisible: {
+  visible: {
     type: Boolean,
     default: false
   }
@@ -66,18 +66,6 @@ const moveY = ref(0)
 const lastY = ref(0)
 const lastTime = ref(0)
 const velocity = ref(0)
-
-// 添加 visible 控制显示隐藏
-const visible = ref(false)
-
-// 添加 watch 监听 modelVisible
-watch(
-  () => props.modelVisible,
-  (val) => {
-    visible.value = val
-  },
-  { immediate: true }
-)
 
 // 触摸事件处理
 const onTouchStart = (e) => {
@@ -103,8 +91,6 @@ const onTouchMove = (e) => {
   if (deltaTime > 0) {
     velocity.value = (e.touches[0].clientY - lastY.value) / deltaTime
   }
-  lastY.value = e.touches[0].clientY
-  lastTime.value = now
 }
 
 const onTouchEnd = () => {
@@ -155,7 +141,6 @@ const onConfirm = () => {
 }
 
 const onClose = () => {
-  emit('update:modelVisible', false)
   emit('close')
 }
 </script>

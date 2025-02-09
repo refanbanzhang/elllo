@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import MPicker from '@/components/m-picker/index.vue'
+import Button from '@/components/button/index.vue'
+import Picker from '@/components/picker/index.vue'
 
 const value = ref('')
+const visible = ref(false)
 
 const options = [
   { label: '选项1', value: 1 },
@@ -16,7 +18,9 @@ const options = [
 <template>
   <div class='m-picker-demo'>
     <h3>移动端选择器</h3>
-    <MPicker
+    <Button @click='visible = true'> 打开选择器 </Button>
+    <Picker
+      :visible='visible'
       v-model='value'
       :options='options'
       title='请选择'
