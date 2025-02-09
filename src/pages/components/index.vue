@@ -12,6 +12,8 @@ import CheckboxGroup from "@/components/checkbox-group/index.vue"
 import RadioGroup from "@/components/radio-group/index.vue"
 import Rate from '@/components/rate/index.vue'
 import Cascader from '@/components/cascader/index.vue'
+import MPicker from '@/components/m-picker/index.vue'
+import DatePicker from '@/components/datePicker/index.vue'
 
 const formRef = ref<FormInstance>()
 const formData = reactive({
@@ -195,10 +197,36 @@ const addressOptions = [
     value: 3,
   },
 ]
+
+const showPicker = ref(false)
+const selected = ref('')
+
+const MPickerOptions = Array.from({ length: 3 }, (_, i) => ({
+  label: `选项${i + 1}`,
+  value: `${i + 1}`
+}))
+
+const onConfirm = () => {
+  console.log('选中值:', selected.value)
+}
+
+const date = ref(new Date())
 </script>
 
 <template>
   <div class="page">
+    <DatePicker v-model="date" is-range />
+
+    <button @click='showPicker = true'>打开选择器</button>
+
+    <MPicker
+      v-if='showPicker'
+      v-model='selected'
+      :options='MPickerOptions'
+      title='请选择'
+      @confirm='onConfirm'
+      @close='showPicker = false'
+    />
     <h2>Form</h2>
     formData: {{ formData }}
     <Form
