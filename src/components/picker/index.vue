@@ -121,9 +121,11 @@ const initDefaultValue = () => {
   }
 }
 
-onMounted(() => {
-  initDefaultValue()
-})
+watch(() => props.visible, (newValue) => {
+  if (newValue) {
+    initDefaultValue()
+  }
+}, { immediate: true })
 
 const onConfirm = () => {
   // 确保有选中值
