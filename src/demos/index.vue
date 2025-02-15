@@ -22,7 +22,7 @@ const demoRoutes = [
   { path: '/demos/date-picker', name: '日期选择器' },
   { path: '/demos/form', name: '表单示例' },
   { path: '/demos/input', name: '输入框' },
-  { path: '/demos/m-picker', name: '移动端选择器' },
+  { path: '/demos/picker', name: '移动端选择器' },
   { path: '/demos/popup', name: '弹窗' },
   { path: '/demos/progress-bar', name: '进度条' },
   { path: '/demos/radio', name: '单选框' },
