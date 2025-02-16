@@ -7,18 +7,11 @@
         <div class='picker-confirm' @click='onConfirm'>确定</div>
       </div>
 
-      <div
-        class='picker-body'
-        @touchstart='onTouchStart'
-        @touchmove='onTouchMove'
-        @touchend='onTouchEnd'
-      >
-        <div class='picker-column' :style='{ transform: `translateY(${offset}px)` }'>
-          <div
-            v-for='item in props.options'
-            :key='item.value'
-            class='picker-item'
-          >
+      <div class='picker-body'>
+        <div class='picker-column' v-for="(column, index) in columns" :key="index" :data-index="index"
+          :style='{ transform: `translateY(${offsets[index]}px)` }' @touchstart='onTouchStart' @touchmove='onTouchMove'
+          @touchend='onTouchEnd'>
+          <div v-for='item in column' :key='item.value' class='picker-item'>
             {{ item.label }}
           </div>
         </div>
@@ -31,6 +24,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import Popup from '../popup/index.vue'
+
 
 const props = defineProps({
   title: {
@@ -53,6 +47,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'confirm', 'close'])
 
+// 存储所有列的数据
+const columns = ref([])
+const offsets = ref([])
+
 // 记录滚动位置
 const offset = ref(0)
 // 每项高度
@@ -67,12 +65,41 @@ const lastY = ref(0)
 const lastTime = ref(0)
 const velocity = ref(0)
 
+const updateChildren = (columnIndex) => {
+  if (columnIndex >= columns.value.length - 1) {
+    return
+  }
+
+  const index = Math.abs(offsets.value[columnIndex] / itemHeight)
+  const currentOptions = columns.value[columnIndex][index]?.children || []
+
+  columns.value.splice(columnIndex + 1)
+  offsets.value.splice(columnIndex + 1)
+
+  // 递归更新后续列
+  const updateNextColumn = (options, level) => {
+
+    columns.value[level] = options
+    offsets.value[level] = 0
+
+    // 递归更新下一级
+    const firstOption = options[0]
+    if (firstOption?.children?.length) {
+      updateNextColumn(firstOption.children, level + 1)
+    }
+  }
+
+  updateNextColumn(currentOptions, columnIndex + 1)
+}
+
 // 触摸事件处理
 const onTouchStart = (e) => {
+  const columnIndex = Number(e.currentTarget.dataset.index)
+
   // 记录触摸起始位置的Y坐标
   startY.value = e.touches[0].clientY
   // 记录当前偏移量,用于计算滑动距离
-  moveY.value = offset.value
+  moveY.value = offsets.value[columnIndex]
   // 重置速度相关变量
   lastY.value = e.touches[0].clientY
   lastTime.value = Date.now()
@@ -80,10 +107,13 @@ const onTouchStart = (e) => {
 }
 
 const onTouchMove = (e) => {
+  const columnIndex = Number(e.currentTarget.dataset.index)
+
   // 计算手指移动的距离
   const deltaY = e.touches[0].clientY - startY.value
   // 更新偏移量 = 初始偏移量 + 移动距离
-  offset.value = moveY.value + deltaY
+  offsets.value[columnIndex] = moveY.value + deltaY
+
 
   // 计算速度
   const now = Date.now()
@@ -93,44 +123,79 @@ const onTouchMove = (e) => {
   }
 }
 
-const onTouchEnd = () => {
+const onTouchEnd = (e) => {
+  const columnIndex = Number(e.currentTarget.dataset.index)
+
   // 根据速度计算惯性滚动距离
   const momentum = velocity.value * 300 // 调整系数控制惯性大小
-  const targetOffset = offset.value + momentum
+  const targetOffset = offsets.value[columnIndex] + momentum
 
   // 限制边界
   const maxOffset = 0
-  const minOffset = -(props.options.length - 1) * itemHeight
+  const minOffset = -(columns.value[columnIndex].length - 1) * itemHeight
   const boundedOffset = Math.max(Math.min(targetOffset, maxOffset), minOffset)
 
   // 滚动到最近的选项
-  offset.value = Math.round(boundedOffset / itemHeight) * itemHeight
+  offsets.value[columnIndex] = Math.round(boundedOffset / itemHeight) * itemHeight
+
+  updateChildren(columnIndex)
 }
 
-const initDefaultValue = () => {
-  // 如果有传入的modelValue，计算对应的偏移量
-  if (props.modelValue) {
-    const selectedIndex = props.options.findIndex(item => item.value === props.modelValue)
-    const hasValue = selectedIndex !== -1
-    if (hasValue) {
-      offset.value = -selectedIndex * itemHeight
-    }
-  } else if (props.options.length > 0) {
-    // 如果没有传入modelValue，默认选中第一项
-    emit('update:modelValue', props.options[0].value)
+const initializeColumn = (options, level = 0) => {
+  if (!options?.length) {
+    return
   }
+
+  columns.value[level] = options
+  offsets.value[level] = 0
+
+  const selectedValue = props.modelValue?.[level]
+  const selectedOption = options.find(item => item.value === selectedValue) ?? options[0]
+
+  selectedOption?.children?.length && initializeColumn(selectedOption.children, level + 1)
+}
+
+const initColumns = () => {
+  columns.value = []
+  offsets.value = []
+
+  initializeColumn(props.options)
+}
+
+const initOffsets = () => {
+  const setOffsets = (options, level = 0) => {
+    const selectedIndex = options.findIndex(item => item.value === props.modelValue[level])
+    if (selectedIndex !== -1) {
+      offsets.value[level] = -selectedIndex * itemHeight
+      const selectedOption = options[selectedIndex]
+      if (selectedOption?.children?.length) {
+        setOffsets(selectedOption.children, level + 1)
+      }
+    }
+  }
+
+  setOffsets(props.options, 0)
 }
 
 watch(() => props.visible, (newValue) => {
   if (newValue) {
-    initDefaultValue()
+    initColumns()
+    if (props.modelValue) {
+      initOffsets()
+    }
   }
 }, { immediate: true })
 
 const onConfirm = () => {
-  // 确保有选中值
-  const index = Math.abs(offset.value / itemHeight)
-  emit('update:modelValue', props.options[index].value)
+  // 根据每列的偏移量计算选中值
+  const selectedValues = offsets.value.map((offset, columnIndex) => {
+    const selectedIndex = Math.abs(offset / itemHeight)
+    return columns.value[columnIndex][selectedIndex].value
+  })
+
+  // 返回所有级别的选中值
+  const finalValue = selectedValues
+  emit("update:modelValue", finalValue)
   emit('confirm')
   onClose()
 }
@@ -166,21 +231,21 @@ const onClose = () => {
 }
 
 .picker-body {
+  display: flex;
   height: 220px;
   position: relative;
   overflow: hidden;
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 10%,
-    #000 40%,
-    #000 60%,
-    transparent 90%,
-    transparent 100%
-  );
+  mask-image: linear-gradient(to bottom,
+      transparent 0%,
+      transparent 10%,
+      #000 40%,
+      #000 60%,
+      transparent 90%,
+      transparent 100%);
 }
 
 .picker-column {
+  flex: 1;
   transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   padding: 88px 0;
 }
