@@ -157,15 +157,16 @@ const updateChildren = (level) => {
   // 使用Math.abs() 获取绝对值，确保索引为正数，因为我们只需要知道移动了几个选项，不关心方向
   const optionIndex = Math.abs(offsets.value[level] / ITEM_HEIGHT)
 
-  // 取出当前列的子元素
-  const children = columns.value[level][optionIndex]?.children || []
-
   // 清空当前级别后的数据
   columns.value.splice(level + 1)
   offsets.value.splice(level + 1)
 
+  // 取出当前列的子元素
+  const children = columns.value[level][optionIndex]?.children
   // 重置当前选中项子孙节点的选项和位置，位置默认为0
-  updateNextColumn(children, level + 1)
+  if (children?.length) {
+    updateNextColumn(children, level + 1)
+  }
 }
 
 const initializeColumn = (options, level = 0) => {
