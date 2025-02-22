@@ -95,15 +95,18 @@ const updateChildren = (columnIndex) => {
     return
   }
 
-  const index = Math.abs(offsets.value[columnIndex] / ITEM_HEIGHT)
-  const currentOptions = columns.value[columnIndex][index]?.children || []
+  // 通过偏移量计算当前列的索引
+  // 使用Math.abs() 获取绝对值，确保索引为正数，因为我们只需要知道移动了几个选项，不关心方向
+  const optionIndex = Math.abs(offsets.value[columnIndex] / ITEM_HEIGHT)
+
+  // 取出当前列的子元素
+  const childrenOptions = columns.value[columnIndex][optionIndex]?.children || []
 
   columns.value.splice(columnIndex + 1)
   offsets.value.splice(columnIndex + 1)
 
   // 递归更新后续列
   const updateNextColumn = (options, level) => {
-
     columns.value[level] = options
     offsets.value[level] = 0
 
@@ -114,7 +117,8 @@ const updateChildren = (columnIndex) => {
     }
   }
 
-  updateNextColumn(currentOptions, columnIndex + 1)
+  // 重置当前选中项子孙节点的选项和位置，位置默认为0
+  updateNextColumn(childrenOptions, columnIndex + 1)
 }
 
 // 触摸事件处理
@@ -161,8 +165,10 @@ const onTouchEnd = (e) => {
   const boundedOffset = Math.max(Math.min(targetOffset, maxOffset), minOffset)
 
   // 滚动到最近的选项
+  // 这行代码的目的是确保选择器最终停在某个选项的精确位置上，不会停在两个选项之间
   offsets.value[columnIndex] = Math.round(boundedOffset / ITEM_HEIGHT) * ITEM_HEIGHT
 
+  // 更新当前选中项子孙节点的选项和位置
   updateChildren(columnIndex)
 }
 
