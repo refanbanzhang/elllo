@@ -1,25 +1,41 @@
 <template>
-  <div class='cascader-wrapper'>
-    <div class='cascader-input' @click='toggleDropdown'>
+  <div class="cascader-wrapper">
+    <div
+      class="cascader-input"
+      @click="toggleDropdown"
+    >
       <input
-        type='text'
+        type="text"
         readonly
-        :value='selectedLabel'
-        :placeholder='placeholder'
-      />
-      <span class='arrow' :class='{ "arrow-active": isOpen }'>▼</span>
+        :value="selectedLabel"
+        :placeholder="placeholder"
+      >
+      <span
+        class="arrow"
+        :class="{ arrowActive: isOpen }"
+      >▼</span>
     </div>
-    <div v-show='isOpen' class='cascader-dropdown'>
-      <div v-for='(menu, index) in activePanels' :key='index' class='cascader-menu'>
+    <div
+      v-show="isOpen"
+      class="cascader-dropdown"
+    >
+      <div
+        v-for="(menu, index) in activePanels"
+        :key="index"
+        class="cascader-menu"
+      >
         <div
-          v-for='item in menu'
-          :key='item.value'
-          class='cascader-item'
-          :class='{ "active": isSelected(item, index) }'
-          @click='handleSelect(item, index)'
+          v-for="item in menu"
+          :key="item.value"
+          class="cascader-item"
+          :class="{ active: isSelected(item, index) }"
+          @click="handleSelect(item, index)"
         >
           {{ item.label }}
-          <span v-if='item.children' class='arrow-right'>▶</span>
+          <span
+            v-if="item.children"
+            class="arrow-right"
+          >▶</span>
         </div>
       </div>
     </div>
@@ -27,40 +43,44 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from "vue"
 
 const props = defineProps({
+  modelValue: {
+    type: Array,
+    default: () => []
+  },
   options: {
     type: Array,
     default: () => []
   },
   placeholder: {
     type: String,
-    default: '请选择'
+    default: "请选择"
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'change'])
+const emit = defineEmits(["update:modelValue", "change"])
 
 const isOpen = ref(false)
 const selected = ref([])
+
 const activePanels = ref([props.options])
 
 const selectedLabel = computed(() => {
-  return selected.value.map(item => item.label).join(' / ') || ''
+  return props.modelValue.map(item => item.label).join(" / ") || ""
 })
 
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value
 }
 
-const isSelected = (item, level) => {
-  return selected.value[level]?.value === item.value
-}
+const isSelected = (item, level) => selected.value[level]?.value === item.value
 
 const handleSelect = (item, level) => {
-  // 清除当前层级之后的选中项,保留当前层级之前的选中项
+  // 清除当前层级之后的选中项
   selected.value = selected.value.slice(0, level)
+  // 更新当前层级的选中项
   selected.value[level] = item
 
   if (item.children) {
@@ -69,10 +89,10 @@ const handleSelect = (item, level) => {
     // 添加下一层级的选项到面板中
     activePanels.value.push(item.children)
   } else {
-    activePanels.value = activePanels.value.slice(0, level + 1)
     isOpen.value = false
-    emit('update:modelValue', selected.value.map(item => item.value))
-    emit('change', selected.value)
+    activePanels.value = activePanels.value.slice(0, level + 1)
+    emit("update:modelValue", selected.value)
+    emit("change", selected.value)
   }
 }
 </script>
