@@ -90,37 +90,6 @@ const lastY = ref(0)
 const lastTime = ref(0)
 const velocity = ref(0)
 
-const updateChildren = (columnIndex) => {
-  if (columnIndex >= columns.value.length - 1) {
-    return
-  }
-
-  // 通过偏移量计算当前列的索引
-  // 使用Math.abs() 获取绝对值，确保索引为正数，因为我们只需要知道移动了几个选项，不关心方向
-  const optionIndex = Math.abs(offsets.value[columnIndex] / ITEM_HEIGHT)
-
-  // 取出当前列的子元素
-  const childrenOptions = columns.value[columnIndex][optionIndex]?.children || []
-
-  columns.value.splice(columnIndex + 1)
-  offsets.value.splice(columnIndex + 1)
-
-  // 递归更新后续列
-  const updateNextColumn = (options, level) => {
-    columns.value[level] = options
-    offsets.value[level] = 0
-
-    // 递归更新下一级
-    const firstOption = options[0]
-    if (firstOption?.children?.length) {
-      updateNextColumn(firstOption.children, level + 1)
-    }
-  }
-
-  // 重置当前选中项子孙节点的选项和位置，位置默认为0
-  updateNextColumn(childrenOptions, columnIndex + 1)
-}
-
 // 触摸事件处理
 const onTouchStart = (e) => {
   const columnIndex = Number(e.currentTarget.dataset.index)
@@ -142,7 +111,6 @@ const onTouchMove = (e) => {
   const deltaY = e.touches[0].clientY - startY.value
   // 更新偏移量 = 初始偏移量 + 移动距离
   offsets.value[columnIndex] = moveY.value + deltaY
-
 
   // 计算速度
   const now = Date.now()
@@ -172,12 +140,39 @@ const onTouchEnd = (e) => {
   updateChildren(columnIndex)
 }
 
-const initializeColumn = (options, level = 0) => {
-  if (!options?.length) {
+const updateChildren = (columnIndex) => {
+  if (columnIndex >= columns.value.length - 1) {
     return
   }
 
-  // TODO: 感觉这里换成push会更好理解一些
+  // 通过偏移量计算当前列的索引
+  // 使用Math.abs() 获取绝对值，确保索引为正数，因为我们只需要知道移动了几个选项，不关心方向
+  const optionIndex = Math.abs(offsets.value[columnIndex] / ITEM_HEIGHT)
+
+  // 取出当前列的子元素
+  const childrenOptions = columns.value[columnIndex][optionIndex]?.children || []
+
+  columns.value.splice(columnIndex + 1)
+  offsets.value.splice(columnIndex + 1)
+
+  // 重置当前选中项子孙节点的选项和位置，位置默认为0
+  updateNextColumn(childrenOptions, columnIndex + 1)
+}
+
+// 递归更新后续列
+const updateNextColumn = (options, level) => {
+  columns.value[level] = options
+  offsets.value[level] = 0
+
+  // 递归更新下一级
+  const selectedOption = options[0]
+
+  if (selectedOption?.children?.length) {
+    updateNextColumn(selectedOption.children, level + 1)
+  }
+}
+
+const initializeColumn = (options, level = 0) => {
   columns.value[level] = options
   offsets.value[level] = 0
 
@@ -186,7 +181,6 @@ const initializeColumn = (options, level = 0) => {
   // 找到第一级值对于的选项 如果找不到就默认为第一项
   const selectedOption = options.find(item => item.value === selectedValue) ?? options[0]
 
-  // 只有当前选项有子选项，就继续递归
   if (selectedOption?.children?.length) {
     initializeColumn(selectedOption.children, level + 1)
   }
