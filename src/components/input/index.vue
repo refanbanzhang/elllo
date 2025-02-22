@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject } from "vue"
+import { inject } from "vue"
 
 const props = defineProps<{
   modelValue?: string
@@ -11,22 +11,19 @@ const emit = defineEmits<{
 
 const formItem = inject("formItem", {
   modelValue: "",
-  updateValue: () => {}
+  updateModelValue: () => {}
 }) as {
   modelValue: string
-  updateValue: (value: string) => void
+  updateModelValue: (value: string) => void
 }
 
-const value = computed({
-  get: () => props.modelValue || formItem.modelValue,
-  set: (newValue: string) => {
-    emit("update:modelValue", newValue)
-    formItem.updateValue(newValue)
-  }
-})
+const value = props.modelValue || formItem.modelValue
 
 const onInput = (e: Event) => {
-  value.value = (e.target as HTMLInputElement).value
+  const newValue = (e.target as HTMLInputElement).value
+
+  emit("update:modelValue", newValue)
+  formItem.updateModelValue(newValue)
 }
 </script>
 

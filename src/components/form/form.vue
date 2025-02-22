@@ -3,7 +3,7 @@ import { provide, reactive } from "vue"
 import type { FormItemRule, FormItemInstance, FormInstance } from "./types"
 
 const props = defineProps<{
-  model: Record<string, any>
+  model: Record<string, string | number | boolean | string[] | number[] | boolean[]>
   rules?: FormItemRule
 }>()
 
@@ -50,6 +50,6 @@ defineExpose<FormInstance>({
 
 <template>
   <form @submit.prevent>
-    <slot></slot>
+    <slot />
   </form>
 </template>

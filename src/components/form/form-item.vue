@@ -19,7 +19,7 @@ const removeFormItem = inject("removeFormItem") as (item: FormItemInstance) => v
 
 provide("formItem", {
   modelValue: props.prop ? form.model[props.prop] : undefined,
-  updateValue: (value: string) => {
+  updateModelValue: (value: string) => {
     if (props.prop) {
       form.model[props.prop] = value
     }
