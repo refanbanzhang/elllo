@@ -79,7 +79,7 @@ const columns = ref([])
 const offsets = ref([])
 
 // 每项高度
-const itemHeight = 44
+const ITEM_HEIGHT = 44
 // 记录触摸开始时的Y坐标
 const startY = ref(0)
 // 记录触摸开始时的偏移量
@@ -95,7 +95,7 @@ const updateChildren = (columnIndex) => {
     return
   }
 
-  const index = Math.abs(offsets.value[columnIndex] / itemHeight)
+  const index = Math.abs(offsets.value[columnIndex] / ITEM_HEIGHT)
   const currentOptions = columns.value[columnIndex][index]?.children || []
 
   columns.value.splice(columnIndex + 1)
@@ -157,11 +157,11 @@ const onTouchEnd = (e) => {
 
   // 限制边界
   const maxOffset = 0
-  const minOffset = -(columns.value[columnIndex].length - 1) * itemHeight
+  const minOffset = -(columns.value[columnIndex].length - 1) * ITEM_HEIGHT
   const boundedOffset = Math.max(Math.min(targetOffset, maxOffset), minOffset)
 
   // 滚动到最近的选项
-  offsets.value[columnIndex] = Math.round(boundedOffset / itemHeight) * itemHeight
+  offsets.value[columnIndex] = Math.round(boundedOffset / ITEM_HEIGHT) * ITEM_HEIGHT
 
   updateChildren(columnIndex)
 }
@@ -192,7 +192,7 @@ const setOffsets = (options, level = 0) => {
 
   if (selectedIndex !== -1) {
     // 保存当前级别的位置
-    offsets.value[level] = -selectedIndex * itemHeight
+    offsets.value[level] = -selectedIndex * ITEM_HEIGHT
 
     // 获取当前选项的的子元素
     const selectedOption = options[selectedIndex]
@@ -219,7 +219,7 @@ watch(() => props.visible, (newValue) => {
 const onConfirm = () => {
   // 根据每列的偏移量计算选中值
   const selectedValues = offsets.value.map((offset, columnIndex) => {
-    const selectedIndex = Math.abs(offset / itemHeight)
+    const selectedIndex = Math.abs(offset / ITEM_HEIGHT)
     return columns.value[columnIndex][selectedIndex].value
   })
 
