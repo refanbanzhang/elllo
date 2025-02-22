@@ -140,36 +140,32 @@ const onTouchEnd = (e) => {
   updateChildren(columnIndex)
 }
 
-const updateChildren = (columnIndex) => {
-  if (columnIndex >= columns.value.length - 1) {
-    return
-  }
-
-  // 通过偏移量计算当前列的索引
-  // 使用Math.abs() 获取绝对值，确保索引为正数，因为我们只需要知道移动了几个选项，不关心方向
-  const optionIndex = Math.abs(offsets.value[columnIndex] / ITEM_HEIGHT)
-
-  // 取出当前列的子元素
-  const childrenOptions = columns.value[columnIndex][optionIndex]?.children || []
-
-  columns.value.splice(columnIndex + 1)
-  offsets.value.splice(columnIndex + 1)
-
-  // 重置当前选中项子孙节点的选项和位置，位置默认为0
-  updateNextColumn(childrenOptions, columnIndex + 1)
-}
-
-// 递归更新后续列
+// 递归重置后续列
 const updateNextColumn = (options, level) => {
   columns.value[level] = options
   offsets.value[level] = 0
 
   // 递归更新下一级
-  const selectedOption = options[0]
-
-  if (selectedOption?.children?.length) {
-    updateNextColumn(selectedOption.children, level + 1)
+  const firstOption = options[0]
+  if (firstOption?.children?.length) {
+    updateNextColumn(firstOption.children, level + 1)
   }
+}
+
+const updateChildren = (level) => {
+  // 通过偏移量计算当前列的索引
+  // 使用Math.abs() 获取绝对值，确保索引为正数，因为我们只需要知道移动了几个选项，不关心方向
+  const optionIndex = Math.abs(offsets.value[level] / ITEM_HEIGHT)
+
+  // 取出当前列的子元素
+  const children = columns.value[level][optionIndex]?.children || []
+
+  // 清空当前级别后的数据
+  columns.value.splice(level + 1)
+  offsets.value.splice(level + 1)
+
+  // 重置当前选中项子孙节点的选项和位置，位置默认为0
+  updateNextColumn(children, level + 1)
 }
 
 const initializeColumn = (options, level = 0) => {
