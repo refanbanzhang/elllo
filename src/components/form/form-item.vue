@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, onUnmounted, ref } from "vue"
+import { computed, inject, provide, onMounted, onUnmounted, ref } from "vue"
 import type { FormItemInstance } from "./types"
 
 const props = defineProps<{
@@ -11,11 +11,20 @@ const errorMessage = ref("")
 const isValidating = ref(false)
 
 const form = inject("form") as {
-  model: Record<string, any>
-  rules?: Record<string, any>
+  model: Record<string, string | number | boolean | string[] | number[] | boolean[]>
+  rules?: Record<string, { required: boolean, message: string, validator?: (value: string | number | boolean | string[] | number[] | boolean[]) => boolean }[]>
 }
 const addFormItem = inject("addFormItem") as (item: FormItemInstance) => void
 const removeFormItem = inject("removeFormItem") as (item: FormItemInstance) => void
+
+provide("formItem", {
+  modelValue: props.prop ? form.model[props.prop] : undefined,
+  updateValue: (value: string) => {
+    if (props.prop) {
+      form.model[props.prop] = value
+    }
+  }
+})
 
 const fieldValue = computed(() => {
   return props.prop ? form.model[props.prop] : undefined
@@ -26,12 +35,12 @@ const getRules = () => {
   return form.rules[props.prop] || []
 }
 
-const isEmpty = (value: any) => {
+const isEmpty = (value: string | number | boolean | string[] | number[] | boolean[]) => {
   if (value === null || value === undefined) {
     return true
   }
 
-  if (typeof value === 'string' && value.trim() === '') {
+  if (typeof value === "string" && value.trim() === "") {
     return true
   }
 
@@ -110,13 +119,19 @@ onUnmounted(() => {
 
 <template>
   <div class="form-item">
-    <label v-if="label" class="form-label">{{ label }}</label>
+    <label
+      v-if="label"
+      class="form-label"
+    >{{ label }}</label>
     <div
       class="form-content"
       @blur.capture="onBlur"
     >
-      <slot  />
-      <div v-if="errorMessage" class="error-message">
+      <slot />
+      <div
+        v-if="errorMessage"
+        class="error-message"
+      >
         {{ errorMessage }}
       </div>
     </div>

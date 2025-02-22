@@ -1,18 +1,40 @@
 <script setup lang="ts">
-defineProps<{
-  modelValue: string
+import { computed, inject } from "vue"
+
+const props = defineProps<{
+  modelValue?: string
 }>()
 
 const emit = defineEmits<{
   "update:modelValue": [value: string]
 }>()
+
+const formItem = inject("formItem", {
+  modelValue: "",
+  updateValue: () => {}
+}) as {
+  modelValue: string
+  updateValue: (value: string) => void
+}
+
+const value = computed({
+  get: () => props.modelValue || formItem.modelValue,
+  set: (newValue: string) => {
+    emit("update:modelValue", newValue)
+    formItem.updateValue(newValue)
+  }
+})
+
+const onInput = (e: Event) => {
+  value.value = (e.target as HTMLInputElement).value
+}
 </script>
 
 <template>
   <input
-    :value="modelValue"
-    @input="(e) => emit('update:modelValue', (e.target as HTMLInputElement).value)"
-  />
+    :value="value"
+    @input="onInput"
+  >
 </template>
 
 <style lang="less" scoped>

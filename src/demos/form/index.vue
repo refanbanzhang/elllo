@@ -133,14 +133,13 @@ const pickerVisible = ref(false)
         prop="username"
         label="用户名"
       >
-        <Input v-model="formData.username" />
+        <Input />
       </FormItem>
       <FormItem
         prop="password"
         label="密码"
       >
         <Input
-          v-model="formData.password"
           type="password"
         />
       </FormItem>
