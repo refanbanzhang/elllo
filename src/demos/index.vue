@@ -1,47 +1,53 @@
 <template>
-  <div class="demo-nav">
-    <h2>Demo 导航</h2>
+  <div class="demo-container">
+    <div class="demo-nav">
+      <h2>Demo 导航</h2>
 
-    <div class="category">
-      <h3>通用组件</h3>
-      <nav>
-        <router-link
-          v-for="route in commonRoutes"
-          :key="route.path"
-          :to="route.path"
-          class="nav-item"
-        >
-          {{ route.name }}
-        </router-link>
-      </nav>
+      <div class="category">
+        <h3>通用组件</h3>
+        <nav>
+          <router-link
+            v-for="route in commonRoutes"
+            :key="route.path"
+            :to="route.path"
+            class="nav-item"
+          >
+            {{ route.name }}
+          </router-link>
+        </nav>
+      </div>
+
+      <div class="category">
+        <h3>桌面端组件</h3>
+        <nav>
+          <router-link
+            v-for="route in desktopRoutes"
+            :key="route.path"
+            :to="route.path"
+            class="nav-item"
+          >
+            {{ route.name }}
+          </router-link>
+        </nav>
+      </div>
+
+      <div class="category">
+        <h3>移动端组件</h3>
+        <nav>
+          <router-link
+            v-for="route in mobileRoutes"
+            :key="route.path"
+            :to="route.path"
+            class="nav-item"
+          >
+            {{ route.name }}
+          </router-link>
+        </nav>
+      </div>
     </div>
 
-    <div class="category">
-      <h3>桌面端组件</h3>
-      <nav>
-        <router-link
-          v-for="route in desktopRoutes"
-          :key="route.path"
-          :to="route.path"
-          class="nav-item"
-        >
-          {{ route.name }}
-        </router-link>
-      </nav>
-    </div>
-
-    <div class="category">
-      <h3>移动端组件</h3>
-      <nav>
-        <router-link
-          v-for="route in mobileRoutes"
-          :key="route.path"
-          :to="route.path"
-          class="nav-item"
-        >
-          {{ route.name }}
-        </router-link>
-      </nav>
+    <div class="demo-content">
+      <router-view />
     </div>
   </div>
 </template>
@@ -74,8 +80,27 @@ const mobileRoutes = [
 </script>
 
 <style scoped>
+.demo-container {
+  display: flex;
+  min-height: 100vh;
+}
+
 .demo-nav {
+  width: 250px;
   padding: 20px;
+  border-right: 1px solid #eee;
+  background: #fff;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.demo-content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 250px;
 }
 
 h2 {
