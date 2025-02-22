@@ -1,35 +1,62 @@
 <template>
-  <Popup :visible="visible" position="bottom" @close="onClose" closeOnOverlayClick>
-    <div class='picker-content'>
-      <div class='picker-header'>
-        <div class='picker-cancel' @click='onClose'>取消</div>
-        <div class='picker-title'>{{ props.title }}</div>
-        <div class='picker-confirm' @click='onConfirm'>确定</div>
+  <Popup
+    :visible="visible"
+    position="bottom"
+    @close="onClose"
+    close-on-overlay-click
+  >
+    <div class="picker-content">
+      <div class="picker-header">
+        <div
+          class="picker-cancel"
+          @click="onClose"
+        >
+          取消
+        </div>
+        <div class="picker-title">
+          {{ props.title }}
+        </div>
+        <div
+          class="picker-confirm"
+          @click="onConfirm"
+        >
+          确定
+        </div>
       </div>
 
-      <div class='picker-body'>
-        <div class='picker-column' v-for="(column, index) in columns" :key="index" :data-index="index"
-          :style='{ transform: `translateY(${offsets[index]}px)` }' @touchstart='onTouchStart' @touchmove='onTouchMove'
-          @touchend='onTouchEnd'>
-          <div v-for='item in column' :key='item.value' class='picker-item'>
+      <div class="picker-body">
+        <div
+          class="picker-column"
+          v-for="(column, index) in columns"
+          :key="index"
+          :data-index="index"
+          :style="{ transform: `translateY(${offsets[index]}px)` }"
+          @touchstart="onTouchStart"
+          @touchmove="onTouchMove"
+          @touchend="onTouchEnd"
+        >
+          <div
+            v-for="item in column"
+            :key="item.value"
+            class="picker-item"
+          >
             {{ item.label }}
           </div>
         </div>
-        <div class='picker-frame'></div>
+        <div class="picker-frame" />
       </div>
     </div>
   </Popup>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import Popup from '../popup/index.vue'
-
+import { ref, watch } from "vue"
+import Popup from "../popup/index.vue"
 
 const props = defineProps({
   title: {
     type: String,
-    default: '请选择'
+    default: "请选择"
   },
   options: {
     type: Array,
@@ -37,7 +64,7 @@ const props = defineProps({
   },
   modelValue: {
     type: [String, Number],
-    default: ''
+    default: ""
   },
   visible: {
     type: Boolean,
@@ -45,14 +72,12 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'confirm', 'close'])
+const emit = defineEmits(["update:modelValue", "confirm", "close"])
 
 // 存储所有列的数据
 const columns = ref([])
 const offsets = ref([])
 
-// 记录滚动位置
-const offset = ref(0)
 // 每项高度
 const itemHeight = 44
 // 记录触摸开始时的Y坐标
@@ -146,42 +171,47 @@ const initializeColumn = (options, level = 0) => {
     return
   }
 
+  // TODO: 感觉这里换成push会更好理解一些
   columns.value[level] = options
   offsets.value[level] = 0
 
+  // 取出第一级的值
   const selectedValue = props.modelValue?.[level]
+  // 找到第一级值对于的选项 如果找不到就默认为第一项
   const selectedOption = options.find(item => item.value === selectedValue) ?? options[0]
 
-  selectedOption?.children?.length && initializeColumn(selectedOption.children, level + 1)
+  // 只有当前选项有子选项，就继续递归
+  if (selectedOption?.children?.length) {
+    initializeColumn(selectedOption.children, level + 1)
+  }
 }
 
-const initColumns = () => {
-  columns.value = []
-  offsets.value = []
+const setOffsets = (options, level = 0) => {
+  const currentLevelValue = props.modelValue[level]
+  const selectedIndex = options.findIndex(item => item.value === currentLevelValue)
 
-  initializeColumn(props.options)
-}
+  if (selectedIndex !== -1) {
+    // 保存当前级别的位置
+    offsets.value[level] = -selectedIndex * itemHeight
 
-const initOffsets = () => {
-  const setOffsets = (options, level = 0) => {
-    const selectedIndex = options.findIndex(item => item.value === props.modelValue[level])
-    if (selectedIndex !== -1) {
-      offsets.value[level] = -selectedIndex * itemHeight
-      const selectedOption = options[selectedIndex]
-      if (selectedOption?.children?.length) {
-        setOffsets(selectedOption.children, level + 1)
-      }
+    // 获取当前选项的的子元素
+    const selectedOption = options[selectedIndex]
+
+    // 如果有子元素，则递归计算子元素的位置
+    if (selectedOption?.children?.length) {
+      setOffsets(selectedOption.children, level + 1)
     }
   }
-
-  setOffsets(props.options, 0)
 }
 
 watch(() => props.visible, (newValue) => {
   if (newValue) {
-    initColumns()
+    columns.value = []
+    offsets.value = []
+    initializeColumn(props.options)
+
     if (props.modelValue) {
-      initOffsets()
+      setOffsets(props.options, 0)
     }
   }
 }, { immediate: true })
@@ -196,12 +226,12 @@ const onConfirm = () => {
   // 返回所有级别的选中值
   const finalValue = selectedValues
   emit("update:modelValue", finalValue)
-  emit('confirm')
+  emit("confirm")
   onClose()
 }
 
 const onClose = () => {
-  emit('close')
+  emit("close")
 }
 </script>
 
