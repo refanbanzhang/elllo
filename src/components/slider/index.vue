@@ -14,6 +14,7 @@ const emit = defineEmits(["update:modelValue"])
 
 const isDragging = ref(false)
 const slider = ref<HTMLElement | null>(null)
+const isActive = ref(false)
 
 const calculatePercentage = (event: TouchEvent) => {
   if (!slider.value) {
@@ -33,6 +34,7 @@ const calculatePercentage = (event: TouchEvent) => {
 
 const onTouchStart = (event: TouchEvent) => {
   isDragging.value = true
+  isActive.value = true
   calculatePercentage(event)
 }
 
@@ -46,6 +48,7 @@ const onTouchMove = (event: TouchEvent) => {
 
 const onTouchEnd = () => {
   isDragging.value = false
+  isActive.value = false
 }
 </script>
 
@@ -60,30 +63,44 @@ const onTouchEnd = () => {
     <ProgressBar :value="modelValue" />
     <div
       class="slider-dot"
+      :class="{ 'is-active': isActive }"
       :style="{
         left: `calc(${modelValue}% - 10px)`
       }"
-     />
+    />
   </div>
 </template>
 
 <style lang="less" scoped>
 @height: 20px;
+@transition-duration: 0.2s;
 
 .slider {
   position: relative;
-  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.1);
   margin: 20px 0;
+  border-radius: 2px;
+  cursor: pointer;
+
+  &:hover .slider-dot {
+    transform: scale(1.1);
+  }
 }
 
 .slider-dot {
   position: absolute;
-  // 2px为progress-bar高度的一半
   top: -10px + 2px;
   left: 0;
   width: @height;
   height: @height;
   border-radius: 50%;
   background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all @transition-duration ease;
+
+  &.is-active {
+    transform: scale(1.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  }
 }
 </style>

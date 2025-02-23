@@ -18,40 +18,84 @@ const props = withDefaults(defineProps<{
 })
 
 const buttonClass = computed(() => [
+  "button-base",
   props.type,
   props.size,
   {
     loading: props.loading,
     disabled: props.disabled
-  }])
+  }
+])
 </script>
 
 <template>
-  <button :class="buttonClass">
-    <Spinner class="icon" v-if="loading" />
-    <slot></slot>
+  <button
+    :class="buttonClass"
+    :disabled="disabled || loading"
+  >
+    <Spinner
+      class="icon"
+      v-if="loading"
+    />
+    <span class="button-content">
+      <slot />
+    </span>
   </button>
 </template>
 
 <style lang="less" scoped>
+.button-base {
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(0);
+  }
+}
+
+.button-content {
+  display: inline-flex;
+  align-items: center;
+}
+
 .loading,
 .disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 .icon {
-  margin-right: 5px;
+  margin-right: 8px;
 }
 
 .primary {
-  background: #007bff;
+  background: linear-gradient(145deg, #0088ff, #0066ff);
   color: #fff;
+
+  &:not(:disabled):hover {
+    background: linear-gradient(145deg, #0066ff, #0052ff);
+  }
 }
 
 .secondary {
-  background: #6c757d;
+  background: linear-gradient(145deg, #7a8288, #5a6268);
   color: #fff;
+
+  &:not(:disabled):hover {
+    background: linear-gradient(145deg, #5a6268, #4a5258);
+  }
 }
 
 .success {
@@ -70,17 +114,20 @@ const buttonClass = computed(() => [
 }
 
 .small {
-  padding: 3px 6px;
-  font-size: 12px;
+  padding: 6px 12px;
+  font-size: 13px;
+  min-height: 32px;
 }
 
 .medium {
-  padding: 5px 10px;
+  padding: 8px 16px;
   font-size: 14px;
+  min-height: 38px;
 }
 
 .large {
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-size: 16px;
+  min-height: 44px;
 }
 </style>
