@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import Spinner from "@/components/spinner/index.vue"
 
-type ButtonType = "primary" | "secondary" | "success" | "warning" | "danger"
+type ButtonType = "primary" | "secondary" | "success" | "warning" | "danger" | "info"
 type ButtonSize = "small" | "medium" | "large"
 
 const props = withDefaults(defineProps<{
@@ -111,6 +111,15 @@ const buttonClass = computed(() => [
 .danger {
   background: #dc3545;
   color: #fff;
+}
+
+.info {
+  background: linear-gradient(145deg, #17a2b8, #138496);
+  color: #fff;
+
+  &:not(:disabled):hover {
+    background: linear-gradient(145deg, #138496, #117a8b);
+  }
 }
 
 .small {

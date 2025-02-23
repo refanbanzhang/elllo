@@ -71,6 +71,7 @@ const commonRoutes = [
 const desktopRoutes = [
   { path: "/demos/cascader", name: "级联选择器" },
   { path: "/demos/date-picker", name: "日期选择器" },
+  { path: "/demos/select", name: "选择器" }
 ]
 
 const mobileRoutes = [
