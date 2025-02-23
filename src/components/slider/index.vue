@@ -16,14 +16,20 @@ const isDragging = ref(false)
 const slider = ref<HTMLElement | null>(null)
 const isActive = ref(false)
 
-const calculatePercentage = (event: TouchEvent) => {
+const calculatePercentage = (event: TouchEvent | MouseEvent) => {
   if (!slider.value) {
     return
   }
 
   const sliderRect = slider.value.getBoundingClientRect()
   const width = sliderRect.width
-  const touchX = event.touches[0].clientX
+  const offsetLeft = slider.value.offsetLeft
+
+  // 根据事件类型获取不同的clientX
+  const clientX = event instanceof TouchEvent
+    ? event.touches[0].clientX
+    : event.clientX
+  const touchX = clientX - offsetLeft
 
   const percentage = (touchX / width) * 100
   const value = Math.min(Math.max(percentage, 0), 100)
@@ -32,23 +38,33 @@ const calculatePercentage = (event: TouchEvent) => {
   emit("update:modelValue", roundedValue)
 }
 
-const onTouchStart = (event: TouchEvent) => {
+const handleStart = (event: TouchEvent | MouseEvent) => {
   isDragging.value = true
   isActive.value = true
   calculatePercentage(event)
-}
 
-const onTouchMove = (event: TouchEvent) => {
-  if (!isDragging.value) {
-    return
+  // 添加全局事件监听
+  // 为什么不在元素上监听呢？
+  // 因为元素上监听的话，当用户在元素上按下后，拖动到元素外，无法触发元素上的mouseup事件
+  if (event instanceof MouseEvent) {
+    document.addEventListener("mousemove", handleMove)
+    document.addEventListener("mouseup", handleEnd)
   }
-
-  calculatePercentage(event)
 }
 
-const onTouchEnd = () => {
+const handleMove = (event: TouchEvent | MouseEvent) => {
+  if (isDragging.value) {
+    calculatePercentage(event)
+  }
+}
+
+const handleEnd = () => {
   isDragging.value = false
   isActive.value = false
+
+  // 移除全局事件监听
+  document.removeEventListener("mousemove", handleMove)
+  document.removeEventListener("mouseup", handleEnd)
 }
 </script>
 
@@ -56,9 +72,10 @@ const onTouchEnd = () => {
   <div
     class="slider"
     ref="slider"
-    @touchstart="onTouchStart"
-    @touchmove="onTouchMove"
-    @touchend="onTouchEnd"
+    @touchstart="handleStart"
+    @touchmove="handleMove"
+    @touchend="handleEnd"
+    @mousedown="handleStart"
   >
     <ProgressBar :value="modelValue" />
     <div
