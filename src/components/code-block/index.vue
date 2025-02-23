@@ -14,22 +14,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
+import { ref, onMounted, watchEffect } from "vue"
 import hljs from "highlight.js"
+import javascript from "highlight.js/lib/languages/javascript"
+import typescript from "highlight.js/lib/languages/typescript"
+import vue from "highlight.js/lib/languages/xml"
 import "highlight.js/styles/github.css"
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   code: string
   language?: string
-}>()
+}>(), {
+  language: "vue"
+})
 
 const copied = ref(false)
 const codeRef = ref<HTMLElement | null>(null)
 
+hljs.registerLanguage("javascript", javascript)
+hljs.registerLanguage("typescript", typescript)
+hljs.registerLanguage("vue", vue)
+
+hljs.configure({
+  ignoreUnescapedHTML: true
+})
+
 onMounted(() => {
-  if (codeRef.value) {
-    hljs.highlightElement(codeRef.value)
-  }
+  watchEffect(() => {
+    if (codeRef.value) {
+      hljs.highlightElement(codeRef.value)
+    }
+  })
 })
 
 const copyCode = async () => {

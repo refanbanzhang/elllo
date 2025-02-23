@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import IconPlay from "@/assets/play.svg"
-
-const props = defineProps({
+defineProps<{
   items: {
-    type: Array,
-    required: true,
-    default: () => []
-  },
-  modelValue: {
-    type: [String, Number],
-    default: ''
-  }
-})
+    label: string
+    icon: string
+  }[],
+  modelValue: string
+}>()
+const emit = defineEmits(["update:modelValue"])
 
-const emit = defineEmits(['update:modelValue'])
-
-const handleClick = (item) => {
-  emit('update:modelValue', item.label)
+const onClick = (item: { label: string }) => {
+  emit("update:modelValue", item.label)
 }
 </script>
 
@@ -27,41 +20,36 @@ const handleClick = (item) => {
       :class="{'tabs__item--active': modelValue === item.label}"
       v-for="item in items"
       :key="item.label"
-      @click="handleClick(item)"
+      @click="onClick(item)"
     >
-      <component class="tabs__icon" :is="item.icon" />
+      <component
+        class="tabs__icon"
+        :is="item.icon"
+      />
       {{ item.label }}
     </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-@height: 60px;
-
 .tabs {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: @height;
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 80%);
 
   &__item {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    color: rgb(179, 179, 179);
-    font-size: 12px;
-  }
+    cursor: pointer;
 
-  &__item--active {
-    color: #fff;
+    &--active {
+      font-weight: bold;
+    }
   }
 
   &__icon {
     width: 25px;
-    height: 25px;
   }
 }
 </style>

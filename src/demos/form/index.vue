@@ -181,13 +181,15 @@ const validateCode = `const rules = {
             </FormItem>
 
             <FormItem>
-              <Button @click="onSubmit">提交</Button>
-              <Button
-                @click="onReset"
-                type="secondary"
-              >
-                重置
-              </Button>
+              <div class="btns">
+                <Button @click="onSubmit">提交</Button>
+                <Button
+                  @click="onReset"
+                  type="secondary"
+                >
+                  重置
+                </Button>
+              </div>
             </FormItem>
           </Form>
         </template>
@@ -242,6 +244,44 @@ const validateCode = `const rules = {
               label="评分"
             >
               <Rate v-model="formData.rate" />
+            </FormItem>
+
+            <FormItem
+              prop="date"
+              label="日期"
+            >
+              <DatePicker v-model="formData.date" />
+            </FormItem>
+
+            <FormItem
+              prop="switch"
+              label="开启通知"
+            >
+              <Switch v-model="formData.switch" />
+            </FormItem>
+
+            <FormItem
+              prop="gender"
+              label="性别选择器"
+            >
+              <Button @click="pickerVisible = true">选择性别</Button>
+              <Picker
+                v-model="pickerVisible"
+                :options="pickerOptions"
+                v-model:value="formData.gender"
+              />
+            </FormItem>
+
+            <FormItem>
+              <div class="btns">
+                <Button @click="onSubmit">提交</Button>
+                <Button
+                  @click="onReset"
+                  type="secondary"
+                >
+                  重置
+                </Button>
+              </div>
             </FormItem>
           </Form>
         </template>
@@ -376,5 +416,10 @@ const validateCode = `const rules = {
 
 .props-table th {
   background: #f5f7fa;
+}
+
+.btns {
+  display: flex;
+  gap: 10px;
 }
 </style>

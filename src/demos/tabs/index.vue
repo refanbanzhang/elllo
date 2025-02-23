@@ -21,7 +21,7 @@ const items = [
   }
 ]
 
-const basicCode = `<Tabs :items="items" v-model="modelValue" />`
+const basicCode = "<Tabs :items=\"items\" v-model=\"modelValue\" />"
 </script>
 
 <template>
@@ -37,10 +37,15 @@ const basicCode = `<Tabs :items="items" v-model="modelValue" />`
       <h3>基础用法</h3>
       <DemoBlock>
         <template #demo>
-          <div style="background: #000; padding: 20px">
-            <Tabs :items="items" v-model="modelValue" />
+          <div>
+            <Tabs
+              :items="items"
+              v-model="modelValue"
+            />
           </div>
-          <div class="demo-value">当前标签: {{ modelValue }}</div>
+          <div class="demo-value">
+            当前标签: {{ modelValue }}
+          </div>
         </template>
         <template #code>
           <CodeBlock :code="basicCode" />
