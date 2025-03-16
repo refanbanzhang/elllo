@@ -14,6 +14,8 @@ const demoRoutes = Object.entries(demoPages).map(([path, component]) => {
   }
 })
 
+const allPages = import.meta.glob("./pages/*/index.vue")
+
 const routes = [
   { path: "/", component: lessons },
   { path: "/lesson/:lessonNo", component: lesson },
@@ -22,7 +24,14 @@ const routes = [
     path: "/demos",
     component: demos,
     children: demoRoutes
-  }
+  },
+  ...Object.entries(allPages).map(([path, component]) => {
+    const name = path.match(/\.\/pages\/(.*)\/index\.vue$/)?.[1]
+    return {
+      path: "/" + name,
+      component,
+    }
+  })
 ]
 
 const router = createRouter({
