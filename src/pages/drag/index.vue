@@ -48,11 +48,11 @@ const ITEM_MARGIN = 10 // 项目间距
 const ITEM_TOTAL_HEIGHT = ITEM_HEIGHT + ITEM_MARGIN // 项目总高度（包含间距）
 
 // 拖拽相关状态
+const isDragging = ref(false) // 是否正在拖动中
 const dragIndex = ref(-1) // 当前拖拽项的索引
+const targetIndex = ref(-1) // 目标交换位置的索引
 const startY = ref(0) // 开始拖拽时手指的Y坐标
 const currentY = ref(0) // 当前手指的Y坐标
-const targetIndex = ref(-1) // 目标交换位置的索引
-const isDragging = ref(false) // 是否正在拖动中
 
 /**
  * 计算当前拖拽项的偏移量
@@ -70,6 +70,12 @@ const setupGlobalListeners = () => {
   // 添加全局事件监听
   document.addEventListener("touchend", handleGlobalTouchEnd)
   document.addEventListener("touchcancel", handleGlobalTouchEnd)
+}
+
+const removeGlobalListeners = () => {
+  // 移除全局事件监听
+  document.removeEventListener("touchend", handleGlobalTouchEnd)
+  document.removeEventListener("touchcancel", handleGlobalTouchEnd)
 }
 
 /**
@@ -97,16 +103,18 @@ const updateDragPosition = throttle((event, index) => {
 
 // 修改handleDragStart以添加全局监听
 const handleDragStart = (event, index) => {
+  const startYValue = event.touches[0].clientY
+
+  // 是否正在拖动中
+  isDragging.value = true
   // 记录当前拖拽的元素索引
   dragIndex.value = index
   // 记录目标位置
   targetIndex.value = index
   // 记录开始拖拽时手指的Y坐标
-  startY.value = event.touches[0].clientY
+  startY.value = startYValue
   // 当前手指的Y坐标
-  currentY.value = startY.value
-  // 是否正在拖动中
-  isDragging.value = true
+  currentY.value = startYValue
 
   // 添加全局事件监听
   setupGlobalListeners()
@@ -128,8 +136,9 @@ const handleDragMove = (event, index) => {
 // 处理全局的触摸结束事件
 const handleGlobalTouchEnd = () => {
   if (isDragging.value && dragIndex.value !== -1) {
+    const offset = currentY.value - startY.value
     // 计算目标交换位置的索引
-    const newIndex = calculateTargetIndex(dragIndex.value, currentY.value - startY.value)
+    const newIndex = calculateTargetIndex(dragIndex.value, offset)
     // 如果目标交换位置的索引和当前拖拽的元素索引不同，则交换位置
     if (newIndex !== dragIndex.value) {
       // 记录当前拖拽的元素
@@ -147,11 +156,13 @@ const handleGlobalTouchEnd = () => {
 
 // 修改reset函数
 const reset = () => {
+  isDragging.value = false
   dragIndex.value = -1
   targetIndex.value = -1
   startY.value = 0
   currentY.value = 0
-  isDragging.value = false
+
+  removeGlobalListeners()
 }
 
 /**
